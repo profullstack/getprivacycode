@@ -8,12 +8,12 @@
       "dependsOn": [],
       "outputs": ["dist/**"]
     },
-    "opencode#test": {
+    "privacycode#test": {
       "dependsOn": ["^build"],
       "outputs": [],
       "passThroughEnv": ["*"]
     },
-    "@opencode-ai/core#test": {
+    "@privacycode-ai/core#test": {
       "dependsOn": ["^build"],
       "outputs": []
     },
@@ -24,11 +24,11 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "@opencode-ai/ui#test": {
+    "@privacycode-ai/ui#test": {
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "@opencode-ai/session-ui#test": {
+    "@privacycode-ai/session-ui#test": {
       "dependsOn": ["^build"],
       "outputs": []
     }

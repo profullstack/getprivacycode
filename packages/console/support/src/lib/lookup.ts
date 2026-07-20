@@ -1,8 +1,8 @@
 "use server"
 
-import { Database, and, eq, isNull, sql } from "@opencode-ai/console-core/drizzle/index.js"
-import { AuthTable } from "@opencode-ai/console-core/schema/auth.sql.js"
-import { UserTable } from "@opencode-ai/console-core/schema/user.sql.js"
+import { Database, and, eq, isNull, sql } from "@privacycode-ai/console-core/drizzle/index.js"
+import { AuthTable } from "@privacycode-ai/console-core/schema/auth.sql.js"
+import { UserTable } from "@privacycode-ai/console-core/schema/user.sql.js"
 import {
   BillingTable,
   PaymentTable,
@@ -10,15 +10,15 @@ import {
   BlackPlans,
   UsageTable,
   LiteTable,
-} from "@opencode-ai/console-core/schema/billing.sql.js"
-import { WorkspaceTable } from "@opencode-ai/console-core/schema/workspace.sql.js"
-import { KeyTable } from "@opencode-ai/console-core/schema/key.sql.js"
-import { ModelTable } from "@opencode-ai/console-core/schema/model.sql.js"
-import { BlackData } from "@opencode-ai/console-core/black.js"
-import { LiteData } from "@opencode-ai/console-core/lite.js"
-import { Subscription } from "@opencode-ai/console-core/subscription.js"
-import { centsToMicroCents } from "@opencode-ai/console-core/util/price.js"
-import { getWeekBounds } from "@opencode-ai/console-core/util/date.js"
+} from "@privacycode-ai/console-core/schema/billing.sql.js"
+import { WorkspaceTable } from "@privacycode-ai/console-core/schema/workspace.sql.js"
+import { KeyTable } from "@privacycode-ai/console-core/schema/key.sql.js"
+import { ModelTable } from "@privacycode-ai/console-core/schema/model.sql.js"
+import { BlackData } from "@privacycode-ai/console-core/black.js"
+import { LiteData } from "@privacycode-ai/console-core/lite.js"
+import { Subscription } from "@privacycode-ai/console-core/subscription.js"
+import { centsToMicroCents } from "@privacycode-ai/console-core/util/price.js"
+import { getWeekBounds } from "@privacycode-ai/console-core/util/date.js"
 
 export type LookupResult = {
   identifier: string

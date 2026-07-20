@@ -1,9 +1,9 @@
 import { Component, For, Match, Show, Switch } from "solid-js"
-import { FileIcon } from "@opencode-ai/ui/file-icon"
-import { Icon } from "@opencode-ai/ui/icon"
-import { Tag } from "@opencode-ai/ui/v2/badge-v2"
-import { KeybindV2 } from "@opencode-ai/ui/v2/keybind-v2"
-import { getDirectory, getFilename } from "@opencode-ai/core/util/path"
+import { FileIcon } from "@privacycode-ai/ui/file-icon"
+import { Icon } from "@privacycode-ai/ui/icon"
+import { Tag } from "@privacycode-ai/ui/v2/badge-v2"
+import { KeybindV2 } from "@privacycode-ai/ui/v2/keybind-v2"
+import { getDirectory, getFilename } from "@privacycode-ai/core/util/path"
 
 export type AtOption =
   | { type: "agent"; name: string; display: string }

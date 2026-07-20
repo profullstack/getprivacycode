@@ -14,7 +14,7 @@ export type {
   WslServerRuntime,
   WslServersEvent,
   WslServersState,
-} from "@opencode-ai/app/wsl/types"
+} from "@privacycode-ai/app/wsl/types"
 
 export type ServerReadyData = {
   url: string

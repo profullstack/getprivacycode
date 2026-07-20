@@ -262,6 +262,7 @@ export const dict = {
 
   "go.promo.step5": "新モデル Step 5 Preview Free を期間限定で無料提供中です。",
   "go.title": "OpenCode Go | すべての人のための低価格なコーディングモデル",
+  "go.banner.text": "Kimi K3の利用上限が期間限定で2倍に",
   "go.meta.description":
     "Goは月額$10で、主要なコーディングモデルへのゆとりある利用上限と安定したアクセスを提供します。",
   "go.hero.title": "すべての人のための低価格なコーディングモデル",

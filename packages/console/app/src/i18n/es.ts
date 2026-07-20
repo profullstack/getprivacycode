@@ -266,6 +266,7 @@ export const dict = {
 
   "go.promo.step5": "Step 5 Preview Free, un nuevo modelo, está disponible gratis por tiempo limitado.",
   "go.title": "OpenCode Go | Modelos de programación de bajo coste para todos",
+  "go.banner.text": "Kimi K3 tiene límites de uso 2x mayores por tiempo limitado",
   "go.meta.description":
     "Go cuesta 10 $/mes, con límites de uso generosos y acceso fiable a modelos de programación líderes.",
   "go.hero.title": "Modelos de programación de bajo coste para todos",

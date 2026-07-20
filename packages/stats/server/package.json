@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",
-    "@opencode-ai/stats-core": "workspace:*",
+    "@privacycode-ai/stats-core": "workspace:*",
     "effect": "catalog:",
     "sst": "catalog:"
   },

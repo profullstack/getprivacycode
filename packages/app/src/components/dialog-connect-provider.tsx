@@ -167,7 +167,6 @@ function ProviderPicker(props: {
     if (id === "anthropic") return language.t("dialog.provider.anthropic.note")
     if (id === "openai") return language.t("dialog.provider.openai.note")
     if (id.startsWith("github-copilot")) return language.t("dialog.provider.copilot.note")
-    if (id === "opencode-go") return language.t("dialog.provider.opencodeGo.tagline")
     return undefined
   }
 
@@ -216,7 +215,7 @@ function ProviderPicker(props: {
             <Tag>{language.t("dialog.provider.tag.recommended")}</Tag>
           </Show>
           <Show when={note(i.id)}>{(value) => <div class="text-14-regular text-text-weak">{value()}</div>}</Show>
-          <Show when={i.id === "opencode-go"}>
+          <Show when={i.id === }>
             <Tag>{language.t("dialog.provider.tag.recommended")}</Tag>
           </Show>
         </div>
@@ -437,7 +436,12 @@ function ProviderConnection(props: {
     methodIndex: undefined as undefined | number,
     authorization: undefined as undefined | IntegrationOauthConnectOutput["data"],
     promptInputs: undefined as undefined | Record<string, string>,
-    state: "pending" as undefined | "pending" | "complete" | "error" | "prompt",
+    state: (directMethod === undefined ? "pending" : undefined) as
+      | undefined
+      | "pending"
+      | "complete"
+      | "error"
+      | "prompt",
     error: undefined as string | undefined,
   })
 

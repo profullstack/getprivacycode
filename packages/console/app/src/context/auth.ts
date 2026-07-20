@@ -4,7 +4,7 @@ import { UserTable } from "@opencode-ai/console-core/schema/user.sql.js"
 import { WorkspaceTable } from "@opencode-ai/console-core/schema/workspace.sql.js"
 import { BillingTable } from "@opencode-ai/console-core/schema/billing.sql.js"
 import { redirect } from "@solidjs/router"
-import { Actor } from "@opencode-ai/console-core/actor.js"
+import { Actor } from "@privacycode-ai/console-core/actor.js"
 
 import { createClient } from "@openauthjs/openauth/client"
 
@@ -14,7 +14,7 @@ export const AuthClient = createClient({
 })
 
 import { useSession } from "@solidjs/start/http"
-import { Resource } from "@opencode-ai/console-resource"
+import { Resource } from "@privacycode-ai/console-resource"
 
 export interface AuthSession {
   account?: Record<

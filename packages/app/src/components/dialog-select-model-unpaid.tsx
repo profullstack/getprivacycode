@@ -1,10 +1,10 @@
-import { Button } from "@opencode-ai/ui/button"
-import { useDialog } from "@opencode-ai/ui/context/dialog"
-import { Dialog } from "@opencode-ai/ui/dialog"
-import { List, type ListRef } from "@opencode-ai/ui/list"
-import { ProviderIcon } from "@opencode-ai/ui/provider-icon"
-import { Tag } from "@opencode-ai/ui/tag"
-import { Tooltip } from "@opencode-ai/ui/tooltip"
+import { Button } from "@privacycode-ai/ui/button"
+import { useDialog } from "@privacycode-ai/ui/context/dialog"
+import { Dialog } from "@privacycode-ai/ui/dialog"
+import { List, type ListRef } from "@privacycode-ai/ui/list"
+import { ProviderIcon } from "@privacycode-ai/ui/provider-icon"
+import { Tag } from "@privacycode-ai/ui/tag"
+import { Tooltip } from "@privacycode-ai/ui/tooltip"
 import { type Component, Show } from "solid-js"
 import { useLocal } from "@/context/local"
 import { popularProviders, useProviders } from "@/hooks/use-providers"
@@ -61,7 +61,7 @@ export const DialogSelectModelUnpaid: Component<{ model?: ModelState }> = (props
                 <ModelTooltip
                   model={item}
                   latest={item.latest}
-                  free={item.provider.id === "opencode" && (!item.cost || item.cost.input === 0)}
+                  free={false}
                 />
               }
             >
@@ -116,7 +116,7 @@ export const DialogSelectModelUnpaid: Component<{ model?: ModelState }> = (props
                     <Show when={i.id === "opencode"}>
                       <Tag>{language.t("dialog.provider.tag.recommended")}</Tag>
                     </Show>
-                    <Show when={i.id === "opencode-go"}>
+                    <Show when={i.id === }>
                       <>
                         <div class="text-14-regular text-text-weak">
                           {language.t("dialog.provider.opencodeGo.tagline")}

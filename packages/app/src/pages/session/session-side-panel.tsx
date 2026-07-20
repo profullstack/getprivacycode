@@ -26,7 +26,7 @@ import { TooltipV2 } from "@opencode-ai/ui/v2/tooltip-v2"
 import type { SnapshotFileDiff, VcsFileDiff } from "@opencode-ai/sdk/v2"
 import type { FileDiffInfo } from "@opencode-ai/client/promise"
 import { ConstrainDragYAxis, getDraggableId } from "@/utils/solid-dnd"
-import { useDialog } from "@opencode-ai/ui/context/dialog"
+import { useDialog } from "@privacycode-ai/ui/context/dialog"
 
 import FileTree from "@/components/file-tree"
 import { normalizeFileTreeV2Path } from "@/components/file-tree-v2-model"
@@ -74,6 +74,9 @@ export function SessionSidePanel(props: {
   reviewHasFocusableContent: () => boolean
   reviewCount: () => number
   reviewPanel: () => JSX.Element
+  diffVersion?: number
+  loadDiff?: (path: string, version?: number) => Promise<RenderDiff | undefined>
+  expandUnchanged?: boolean
   reviewSidebarToggle?: (disabled: boolean) => JSX.Element
   fileBrowserState?: SessionFileBrowserState
   activeDiff?: string
@@ -91,6 +94,11 @@ export function SessionSidePanel(props: {
   const sdk = useSDK()
   const { sessionKey, tabs, view, params } = useSessionLayout()
   const projectDirectory = createMemo(() => sdk().directory)
+  const diffForTab = (tab: string) => {
+    const path = file.pathFromTab(tab)
+    if (!path) return
+    return props.diffs().find((diff): diff is RenderDiff => renderDiff(diff) && diff.file === path)
+  }
 
   const isDesktop = createMediaQuery("(min-width: 768px)")
   const shown = settings.visibility.fileTree
@@ -743,6 +751,10 @@ export function SessionSidePanel(props: {
                               active={file.pathFromTab(browserTab() ?? activeFileTab() ?? "")}
                               kinds={kinds()}
                               state={props.fileBrowserState!}
+                              diff={diffForTab(browserTab() ?? activeFileTab() ?? "")}
+                              diffVersion={props.diffVersion}
+                              loadDiff={props.loadDiff}
+                              expandUnchanged={props.expandUnchanged}
                               onSelect={(path) => previewTab(file.tab(path))}
                               onSelectPermanent={(path) => openTab(file.tab(path))}
                               filterRef={(element) => (fileFilter = element)}

@@ -1,7 +1,7 @@
-import { Global } from "@opencode-ai/core/global"
-import { InstallationVersion } from "@opencode-ai/core/installation/version"
-import { createOpencodeClient } from "@opencode-ai/sdk/v2/client"
-import { ServerAuth } from "@opencode-ai/server/auth"
+import { Global } from "@privacycode-ai/core/global"
+import { InstallationVersion } from "@privacycode-ai/core/installation/version"
+import { createOpencodeClient } from "@privacycode-ai/sdk/v2/client"
+import { ServerAuth } from "@privacycode-ai/server/auth"
 import { Context, Effect, FileSystem, Layer, Option, Schedule, Schema, Scope } from "effect"
 import { HttpServer } from "effect/unstable/http"
 import { randomBytes, randomUUID } from "crypto"
@@ -18,7 +18,7 @@ export interface Interface {
   readonly register: (address: HttpServer.Address) => Effect.Effect<void, unknown, Scope.Scope>
 }
 
-export class Service extends Context.Service<Service, Interface>()("@opencode/cli/Daemon") {}
+export class Service extends Context.Service<Service, Interface>()("@privacycode/cli/Daemon") {}
 
 const Registration = Schema.Struct({
   id: Schema.optional(Schema.String),

@@ -1,28 +1,41 @@
-import { createEffect, createMemo, createSignal, Match, on, onCleanup, Show, Switch } from "solid-js"
+import { createEffect, createMemo, createResource, createSignal, Match, on, onCleanup, Show, Switch } from "solid-js"
 import { createStore } from "solid-js/store"
 import { Dynamic } from "solid-js/web"
 import { makeEventListener } from "@solid-primitives/event-listener"
-import type { FileSearchHandle } from "@opencode-ai/session-ui/file"
-import { useFileComponent } from "@opencode-ai/ui/context/file"
-import { cloneSelectedLineRange, previewSelectedLines } from "@opencode-ai/session-ui/pierre/selection-bridge"
-import { createLineCommentController } from "@opencode-ai/session-ui/line-comment-annotations"
-import { createLineCommentControllerV2 } from "@opencode-ai/session-ui/v2/line-comment-annotations-v2"
-import { sampledChecksum } from "@opencode-ai/core/util/encode"
-import { DropdownMenu } from "@opencode-ai/ui/dropdown-menu"
-import { IconButton } from "@opencode-ai/ui/icon-button"
-import { LineCommentV2OverflowIcon } from "@opencode-ai/ui/v2/line-comment-v2"
-import { MenuV2 } from "@opencode-ai/ui/v2/menu-v2"
-import { Tabs } from "@opencode-ai/ui/tabs"
-import { ScrollView } from "@opencode-ai/ui/scroll-view"
+import type { FileSearchHandle } from "@privacycode-ai/session-ui/file"
+import { useFileComponent } from "@privacycode-ai/ui/context/file"
+import { cloneSelectedLineRange, previewSelectedLines } from "@privacycode-ai/session-ui/pierre/selection-bridge"
+import { createLineCommentController } from "@privacycode-ai/session-ui/line-comment-annotations"
+import { createLineCommentControllerV2 } from "@privacycode-ai/session-ui/v2/line-comment-annotations-v2"
+import { sampledChecksum } from "@privacycode-ai/core/util/encode"
+import { normalize, text } from "@privacycode-ai/session-ui/session-diff"
+import { DropdownMenu } from "@privacycode-ai/ui/dropdown-menu"
+import { IconButton } from "@privacycode-ai/ui/icon-button"
+import { LineCommentV2OverflowIcon } from "@privacycode-ai/ui/v2/line-comment-v2"
+import { MenuV2 } from "@privacycode-ai/ui/v2/menu-v2"
+import { Tabs } from "@privacycode-ai/ui/tabs"
+import { ScrollView } from "@privacycode-ai/ui/scroll-view"
 import { showToast } from "@/utils/toast"
 import { selectionFromLines, useFile, type FileSelection, type SelectedLineRange } from "@/context/file"
 import { useComments } from "@/context/comments"
 import { useLanguage } from "@/context/language"
+import { useLayout } from "@/context/layout"
 import { usePrompt } from "@/context/prompt"
 import { useSettings } from "@/context/settings"
 import { getSessionHandoff } from "@/pages/session/handoff"
 import { useSessionLayout } from "@/pages/session/session-layout"
 import { createSessionTabs } from "@/pages/session/helpers"
+import { reviewDiffNeedsLoad, type RenderDiff } from "@/pages/session/v2/review-diff-kinds"
+
+type SessionFileViewProps = {
+  tab: string
+  diff?: RenderDiff
+  diffVersion?: number
+  loadDiff?: (path: string, version?: number) => Promise<RenderDiff | undefined>
+  expandUnchanged?: boolean
+}
+
+const selectionSide = (range: SelectedLineRange) => range.endSide ?? range.side ?? "additions"
 
 type SessionFileViewProps = {
   tab: string
@@ -218,7 +231,7 @@ export function SessionFileView(props: SessionFileViewProps) {
 
   return (
     <Show when={settings.general.newLayoutDesigns()} fallback={<SessionFileViewV1 tab={props.tab} />}>
-      <SessionFileViewV2 tab={props.tab} />
+      <SessionFileViewV2 tab={props.tab} diff={diff()} expandUnchanged={props.expandUnchanged} />
     </Show>
   )
 }
@@ -508,11 +521,12 @@ function SessionFileViewV1(props: { tab: string }) {
   return content()
 }
 
-function SessionFileViewV2(props: { tab: string }) {
+function SessionFileViewV2(props: { tab: string; diff?: ReturnType<typeof normalize>; expandUnchanged?: boolean }) {
   const file = useFile()
   const comments = useComments()
   const language = useLanguage()
   const prompt = usePrompt()
+  const layout = useLayout()
   const fileComponent = useFileComponent()
   const { sessionKey, tabs, view } = useSessionLayout()
   const activeFileTab = createSessionTabs({
@@ -733,12 +747,21 @@ function SessionFileViewV2(props: { tab: string }) {
     <div class="relative overflow-hidden pb-40">
       <Dynamic
         component={fileComponent}
-        mode="text"
-        file={{
-          name: path() ?? "",
-          contents: source,
-          cacheKey: cacheKey(),
-        }}
+        {...(props.diff
+          ? {
+              mode: "diff" as const,
+              fileDiff: props.diff.fileDiff,
+              diffStyle: layout.review.diffStyle(),
+              expandUnchanged: props.expandUnchanged,
+            }
+          : {
+              mode: "text" as const,
+              file: {
+                name: path() ?? "",
+                contents: source,
+                cacheKey: cacheKey(),
+              },
+            })}
         enableLineSelection
         enableGutterUtility
         selectedLines={activeSelection()}
@@ -768,6 +791,7 @@ function SessionFileViewV2(props: { tab: string }) {
         media={{
           mode: "auto",
           path: path(),
+          deleted: props.diff?.status === "deleted",
           current: state()?.content,
           onLoad: scrollSync.queueRestore,
           onError: (args: { kind: "image" | "audio" | "svg" }) => {
@@ -786,6 +810,7 @@ function SessionFileViewV2(props: { tab: string }) {
     <div class="mt-3 relative h-full min-h-0">
       <ScrollView class="h-full" viewportRef={scrollSync.setViewport} onScroll={scrollSync.handleScroll as any}>
         <Switch>
+          <Match when={props.diff}>{renderFile(contents())}</Match>
           <Match when={state()?.loaded}>{renderFile(contents())}</Match>
           <Match when={state()?.loading}>
             <div class="px-6 py-4 text-text-weak">{language.t("common.loading")}...</div>

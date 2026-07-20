@@ -25,8 +25,8 @@ const npmLayer = (cache: string) =>
 
 describe("Npm.sanitize", () => {
   test("keeps normal scoped package specs unchanged", () => {
-    expect(Npm.sanitize("@opencode/acme")).toBe("@opencode/acme")
-    expect(Npm.sanitize("@opencode/acme@1.0.0")).toBe("@opencode/acme@1.0.0")
+    expect(Npm.sanitize("@privacycode/acme")).toBe("@privacycode/acme")
+    expect(Npm.sanitize("@privacycode/acme@1.0.0")).toBe("@privacycode/acme@1.0.0")
     expect(Npm.sanitize("prettier")).toBe("prettier")
   })
 
