@@ -58,6 +58,14 @@ async function resolve(pathname) {
 
 const server = createServer(async (req, res) => {
   try {
+    // Canonical host: redirect www.* -> apex over https, preserving path + query.
+    const host = (req.headers.host || "").toLowerCase()
+    if (host.startsWith("www.")) {
+      res.writeHead(301, { location: `https://${host.slice(4)}${req.url}` })
+      res.end()
+      return
+    }
+
     const { pathname } = new URL(req.url, "http://localhost")
     const match = (await resolve(pathname)) ?? (await resolve("/404.html"))
     if (!match) {
