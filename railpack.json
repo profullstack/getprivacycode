@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "provider": "node",
+  "packages": {
+    "bun": "latest"
+  },
+  "steps": {
+    "install": {
+      "commands": []
+    },
+    "build": {
+      "commands": []
+    }
+  },
+  "deploy": {
+    "startCommand": "bun run serve.ts",
+    "inputs": [
+      { "step": "build", "include": ["."] }
+    ]
+  }
+}
