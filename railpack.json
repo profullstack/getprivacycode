@@ -1,9 +1,6 @@
 {
   "$schema": "https://schema.railpack.com",
   "provider": "node",
-  "packages": {
-    "bun": "latest"
-  },
   "steps": {
     "install": {
       "commands": []
@@ -13,7 +10,7 @@
     }
   },
   "deploy": {
-    "startCommand": "bun run serve.ts",
+    "startCommand": "node serve.mjs",
     "inputs": [
       { "step": "build", "include": ["."] }
     ]
