@@ -115,7 +115,7 @@ export const TuiThreadCommand = cmd({
     withNetworkOptions(yargs)
       .positional("project", {
         type: "string",
-        describe: "path to start opencode in",
+        describe: "path to start privacycode in",
       })
       .option("model", {
         type: "string",
@@ -282,7 +282,7 @@ export const TuiThreadCommand = cmd({
             headers,
           }
         : {
-            url: "http://opencode.internal",
+            url: "http://privacycode.internal",
             fetch: createWorkerFetch(client),
             events: createEventSource(client),
           }
