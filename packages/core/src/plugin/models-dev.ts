@@ -142,7 +142,7 @@ export const ModelsDevPlugin = define({
     yield* ctx.catalog.transform(
       Effect.fn(function* (catalog) {
         const data = yield* modelsDev.get()
-        const blocked = new Set(["opencode", "opencode-go"])
+        const blocked = new Set(["privacycode", "privacycode-go"])
         for (const item of Object.values(data)) {
           if (blocked.has(item.id)) continue
           const providerID = ProviderV2.ID.make(item.id)

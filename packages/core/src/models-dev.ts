@@ -151,7 +151,7 @@ const layer = Layer.effect(
       ),
     )
 
-    const source = Flag.PRIVACYCODE_MODELS_URL || ""
+    const source = Flag.PRIVACYCODE_MODELS_URL || "https://models.dev"
     const filepath = path.join(
       Global.Path.cache,
       source === "https://models.dev" ? "models.json" : `models-${Hash.fast(source)}.json`,
