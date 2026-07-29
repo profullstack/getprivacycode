@@ -23,8 +23,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,9,11,.8);-
 .nav-links{display:flex;gap:4px;align-items:center}
 .nav-links a{padding:6px 14px;border-radius:var(--radius-sm);font-size:14px;font-weight:500;color:var(--text-secondary);transition:all .2s}
 .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--accent-dim)}
-.nav-cta{padding:7px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;background:var(--accent);color:#08090b;margin-left:8px;transition:opacity .2s}
-.nav-cta:hover{opacity:.9;color:#08090b}
+.nav-cta{padding:7px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;background:var(--accent);color:#fff;margin-left:8px;transition:opacity .2s}
+.nav-cta:hover{opacity:.9;color:#fff}
 .nav-mobile-btn{display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;padding:4px}
 
 /* main */
@@ -55,23 +55,27 @@ main{max-width:1200px;margin:0 auto;padding:0 24px}
 
 /* comparison */
 .comparison{padding:80px 0}
-.comparison h2{text-align:center;font-size:clamp(28px,4vw,40px);font-weight:700;margin-bottom:48px;letter-spacing:-.02em}
-.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:800px;margin:0 auto}
-.compare-card{border-radius:var(--radius);padding:28px;border:1px solid var(--border);position:relative}
-.compare-card.bad{background:var(--red-bg);border-color:rgba(248,113,113,.15)}
-.compare-card.good{background:var(--green-bg);border-color:rgba(0,212,170,.15)}
-.compare-card h3{font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px}
-.compare-card.bad h3{color:var(--red)}
-.compare-card.good h3{color:var(--accent)}
-.compare-label{font-size:12px;color:var(--text-muted);margin-bottom:4px;font-weight:500}
-.compare-code{font-family:var(--font-mono);font-size:13px;padding:12px 14px;border-radius:var(--radius-sm);margin-bottom:12px;line-height:1.7;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
-.compare-card.bad .compare-code{background:rgba(248,113,113,.06);color:var(--red)}
-.compare-card.good .compare-code{background:rgba(0,212,170,.06);color:var(--accent)}
-.compare-tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;margin-bottom:12px}
-.compare-card.bad .compare-tag{background:rgba(248,113,113,.12);color:var(--red)}
-.compare-card.good .compare-tag{background:rgba(0,212,170,.12);color:var(--accent)}
-.compare-divider{display:flex;align-items:center;justify-content:center;position:relative}
-.compare-divider span{background:var(--surface);border:1px solid var(--border);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--text-muted)}
+.comparison h2{text-align:center;font-size:clamp(28px,4vw,40px);font-weight:700;margin-bottom:12px;letter-spacing:-.02em}
+.comparison-sub{text-align:center;color:var(--text-secondary);font-size:15px;margin-bottom:40px}
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:840px;margin:0 auto}
+.term-card{background:#0a0c0e;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .3s}
+.term-card:hover{border-color:var(--border-2)}
+.term-card-header{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface-2)}
+.term-card-header .dot{width:9px;height:9px;border-radius:50%}
+.term-card-header .dot:nth-child(1){background:#f87171}
+.term-card-header .dot:nth-child(2){background:#fbbf24}
+.term-card-header .dot:nth-child(3){background:#34d399}
+.term-card-title{font-size:11px;color:var(--text-muted);margin-left:auto;font-family:var(--font-mono);font-weight:500;letter-spacing:.02em}
+.term-card-body{padding:16px 18px;font-family:var(--font-mono);font-size:12px;line-height:1.8;min-height:200px}
+.term-line{display:flex;align-items:flex-start;gap:6px;padding:2px 0}
+.term-line .label{color:var(--text-secondary);min-width:16px}
+.term-line .text{color:#e8eaed;word-break:break-all}
+.term-line .bad-text{color:var(--red);word-break:break-all}
+.term-line .good-text{color:var(--accent);word-break:break-all}
+.term-divider{margin:10px 0;border-top:1px dashed var(--border)}
+.term-status{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:6px 10px;border-radius:6px;font-size:11px;font-weight:600;font-family:var(--font-sans)}
+.term-status.bad{background:var(--red-bg);color:var(--red)}
+.term-status.good{background:var(--green-bg);color:var(--accent)}
 
 /* terminal demo */
 .terminal-demo{padding:60px 0 80px}
@@ -170,27 +174,81 @@ footer{margin-top:80px;border-top:1px solid var(--border);padding:40px 0 60px}
 
 /* responsive */
 @media(max-width:900px){
+  main{padding:0 16px}
   .features-grid{grid-template-columns:1fr 1fr}
-  .footer-inner{grid-template-columns:1fr 1fr}
-  .hero-command{min-width:auto;width:100%;max-width:500px;font-size:13px}
-  .comparison-grid{grid-template-columns:1fr}
-  .comparison-divider{display:none}
-  .comparison .compare-card.bad{margin-bottom:0}
+  .footer-inner{grid-template-columns:1fr 1fr;gap:24px}
+  .hero-command{min-width:auto;width:100%;max-width:none;font-size:13px;padding:10px 14px}
+  .comparison-grid{grid-template-columns:1fr;max-width:480px}
+  .term-card-body{font-size:11px;min-height:auto;padding:14px 16px}
+  .enterprise-grid{grid-template-columns:1fr 1fr}
+  .terminal{max-width:100%}
 }
 @media(max-width:640px){
-  .nav-links a.nav-hide-mobile{display:none}
+  .nav-inner{padding:0 16px}
+  .nav-links{display:none}
+  .nav-links.active{display:flex;flex-direction:column;position:absolute;top:60px;left:0;right:0;background:rgba(8,9,11,.96);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:12px 16px;gap:2px}
+  .nav-links.active a{display:block;padding:12px 14px;font-size:15px}
+  .nav-links.active .nav-cta{text-align:center;margin-left:0;margin-top:4px}
   .nav-mobile-btn{display:block}
-  .nav-links.active{display:flex;flex-direction:column;position:absolute;top:60px;left:0;right:0;background:rgba(8,9,11,.96);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:12px 24px;gap:4px}
-  .nav-links.active a{display:block;padding:10px 14px}
-  .nav-links.active .nav-cta{text-align:center}
-  .features-grid{grid-template-columns:1fr}
-  .footer-inner{grid-template-columns:1fr}
-  .enterprise-grid{grid-template-columns:1fr}
-  .hero{padding:120px 0 60px}
-  .cta-box{padding:40px 24px}
-  .cta-command{font-size:13px;padding:12px 14px}
-  .page-content{padding-top:80px}
-  .terminal-body{font-size:12px;padding:16px;min-height:200px}
+  .nav-hide-mobile{display:block}
+
+  .hero{padding:100px 0 40px}
+  .hero h1{font-size:clamp(32px,10vw,44px)}
+  .hero p{font-size:15px;margin-bottom:28px}
+  .hero-commands{gap:8px;margin-bottom:32px}
+  .hero-command{font-size:12px;padding:10px 12px;flex-wrap:nowrap}
+  .hero-command .cmd-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .comparison{padding:40px 0}
+  .comparison-sub{font-size:14px;margin-bottom:28px}
+  .comparison-grid{max-width:none}
+  .term-card-body{font-size:11px;padding:12px 14px;min-height:auto}
+  .term-card-body .term-line{padding:1px 0}
+  .term-status{font-size:10px;padding:4px 8px}
+
+  .terminal-demo{padding:20px 0 40px}
+  .terminal-body{font-size:11px;padding:14px;min-height:180px}
+  .terminal-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .features{padding:40px 0}
+  .features h2{font-size:clamp(24px,8vw,30px)}
+  .features-sub{font-size:14px;margin-bottom:28px}
+  .features-grid{grid-template-columns:1fr;gap:14px}
+  .feature-card{padding:20px}
+
+  .cta{padding:60px 0}
+  .cta-box{padding:32px 20px}
+  .cta h2{font-size:clamp(22px,7vw,28px)}
+  .cta p{font-size:14px;margin-bottom:24px}
+  .cta-command{font-size:12px;padding:10px 12px;overflow:hidden}
+  .cta-command span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cta-alt{font-size:12px;flex-wrap:wrap;justify-content:center}
+
+  .footer-inner{grid-template-columns:1fr;gap:28px}
+  footer{margin-top:40px;padding:28px 0 40px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center;padding-top:16px}
+
+  .page-content{padding-top:80px;padding-bottom:40px}
+  .page-content h1{font-size:clamp(24px,7vw,32px)}
+  .page-content .page-lead{font-size:14px;margin-bottom:28px}
+  .page-content h2{font-size:18px}
+  .page-content pre{font-size:12px;padding:14px 16px}
+  .page-content .cmd-table{font-size:13px}
+  .page-content .cmd-table td, .page-content .cmd-table th{padding:8px 10px}
+  .page-content .cmd-table td:first-child{font-size:12px;white-space:normal;word-break:break-all}
+
+  .enterprise-hero{padding:100px 0 40px}
+  .enterprise-hero h1{font-size:clamp(24px,7vw,36px)}
+  .enterprise-hero p{font-size:15px}
+  .enterprise-grid{grid-template-columns:1fr;gap:14px;margin-bottom:40px}
+  .enterprise-card{padding:20px}
+}
+
+@media(max-width:400px){
+  .hero-command{font-size:11px;padding:8px 10px}
+  .hero-command .cmd-copy svg{width:14px;height:14px}
+  .term-card-body{font-size:10px;padding:10px 12px}
+  .terminal-body{font-size:10px;padding:10px;min-height:150px}
 }
 </style>
 <style id="pc-dynamic"></style>
@@ -239,23 +297,37 @@ footer{margin-top:80px;border-top:1px solid var(--border);padding:40px 0 60px}
 
 <div class="comparison" id="comparison">
   <h2>See the difference</h2>
+  <p class="comparison-sub">Watch how PrivacyCode protects your data before it reaches the AI provider.</p>
   <div class="comparison-grid">
-    <div class="compare-card bad">
-      <h3>Without PrivacyCode</h3>
-      <span class="compare-tag">&#9888;&#65039; Sent in plain text</span>
-      <div class="compare-label">Your prompt</div>
-      <div class="compare-code">Fix auth for jane@acme.com<br>sk-live-51HdF8xKd...</div>
-      <div class="compare-label">Sent to provider</div>
-      <div class="compare-code">jane@acme.com<br>sk-live-51HdF8xKd...</div>
+    <div class="term-card">
+      <div class="term-card-header">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="term-card-title">Without PrivacyCode</span>
+      </div>
+      <div class="term-card-body">
+        <div class="term-line"><span class="label">$</span><span class="text">Fix auth for jane@acme.com</span></div>
+        <div class="term-line"><span class="label"></span><span class="bad-text">sk-live-51HdF8xKd...</span></div>
+        <div class="term-divider"></div>
+        <div class="term-line"><span class="label">→</span><span class="text">Sent to provider:</span></div>
+        <div class="term-line"><span class="label"></span><span class="bad-text">jane@acme.com</span></div>
+        <div class="term-line"><span class="label"></span><span class="bad-text">sk-live-51HdF8xKd...</span></div>
+        <div class="term-status bad">&#9888;&#65039; Provider sees your real data</div>
+      </div>
     </div>
-    <div class="compare-divider"><span>vs</span></div>
-    <div class="compare-card good">
-      <h3>With PrivacyCode</h3>
-      <span class="compare-tag">&#10003; Tokenized</span>
-      <div class="compare-label">Your prompt</div>
-      <div class="compare-code">Fix auth for [EMAI-1A2B...]<br>[KEY-E65774...]</div>
-      <div class="compare-label">Sent to provider</div>
-      <div class="compare-code">[EMAI-1A2B...]<br>[KEY-E65774...]</div>
+    <div class="term-card">
+      <div class="term-card-header">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="term-card-title">With PrivacyCode</span>
+      </div>
+      <div class="term-card-body">
+        <div class="term-line"><span class="label">$</span><span class="text">Fix auth for [EMAI-1A2B...]</span></div>
+        <div class="term-line"><span class="label"></span><span class="good-text">[KEY-E65774...]</span></div>
+        <div class="term-divider"></div>
+        <div class="term-line"><span class="label">→</span><span class="text">Sent to provider:</span></div>
+        <div class="term-line"><span class="label"></span><span class="good-text">[EMAI-1A2B...]</span></div>
+        <div class="term-line"><span class="label"></span><span class="good-text">[KEY-E65774...]</span></div>
+        <div class="term-status good">&#10003; Provider sees only tokens</div>
+      </div>
     </div>
   </div>
 </div>
@@ -510,7 +582,7 @@ export ANTHROPIC_API_KEY=sk-ant-...</pre>
 <div style="text-align:center;padding:40px 0">
   <h2 style="margin-bottom:12px;font-size:24px">Interested?</h2>
   <p style="color:var(--text-secondary);margin-bottom:24px">Contact us for pricing and a demo.</p>
-  <a href="mailto:enterprise@getprivacycode.com" style="display:inline-block;padding:12px 32px;border-radius:var(--radius-sm);font-weight:600;background:var(--accent);color:#08090b;font-size:15px">Contact Sales</a>
+  <a href="mailto:enterprise@getprivacycode.com" style="display:inline-block;padding:12px 32px;border-radius:var(--radius-sm);font-weight:600;background:var(--accent);color:#fff;font-size:15px">Contact Sales</a>
 </div>
 </div>
 </section>
