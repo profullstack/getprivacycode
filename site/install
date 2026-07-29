@@ -268,8 +268,8 @@ download_with_progress() {
         exec 4>/dev/null
     fi
 
-    tmp_dir="${TMPDIR:-/tmp}"
-    basename="${tmp_dir}/privacycode_install_$$"
+    dl_tmp="${TMPDIR:-/tmp}"
+    basename="${dl_tmp}/privacycode_install_$$"
     tracefile="${basename}.trace"
 
     rm -f "$tracefile"
