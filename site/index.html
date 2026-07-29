@@ -1,1 +1,637 @@
-<!DOCTYPE html><html lang="en" class="dm_sans_5501b6fe-module__2pad1q__variable jetbrains_mono_4ba603de-module__Zo4tiq__variable dark scroll-smooth"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="_next/static/media/051742360c26797e-s.p.1bkzbscqrt8rl.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="preload" href="_next/static/media/5c285b27cdda1fe8-s.p.2_mbdogr7ni8i.woff2" as="font" crossorigin="" type="font/woff2"/><link rel="stylesheet" href="_next/static/chunks/248sfhp5y_nap.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="_next/static/chunks/1jq4o6yq14o4c.js"/><script src="_next/static/chunks/0atut6a2uuyid.js" async=""></script><script src="_next/static/chunks/3rxl-jt3pdxgx.js" async=""></script><script src="_next/static/chunks/turbopack-38l7qwik-h828.js" async=""></script><script src="_next/static/chunks/158myu8e_yme3.js" async=""></script><script src="_next/static/chunks/3n5aemrutu5l1.js" async=""></script><meta name="next-size-adjust" content=""/><title>PrivacyCode — The privacy-first AI coding agent</title><meta name="description" content="Open-source AI coding agent that keeps your data private."/><link rel="icon" href="favicon.ico%3Ffavicon.2vob68tjqpejf.ico" sizes="256x256" type="image/x-icon"/><script src="_next/static/chunks/0cz1d0mv5g_q7.js" noModule=""></script><style id="pc-static-reveal-fix">[class*="opacity-0"][class*="transition"]{opacity:1!important;transform:none!important;filter:none!important}</style></head><body class="bg-bg text-text font-sans antialiased"><div hidden=""><!--$--><!--/$--></div><div class="fixed right-6 top-1/2 -translate-y-1/2 z-50 nav-blur bg-bg-card/80 border border-border rounded-2xl px-2 py-3 flex max-md:flex-row max-md:right-auto max-md:bottom-6 max-md:left-1/2 max-md:-translate-x-1/2 max-md:top-auto max-md:-translate-y-0 max-md:px-2 max-md:py-2 flex-col items-center gap-1 shadow-2xl shadow-black/50"><a href="index.html#hero" title="Home" class="w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300 bg-accent/15 text-accent"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles w-4 h-4" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg></a><a href="index.html#platforms" title="Platforms" class="w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300 text-text-dim hover:text-text-muted"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor w-4 h-4" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></a><a href="index.html#features" title="Features" class="w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300 text-text-dim hover:text-text-muted"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield w-4 h-4" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path></svg></a><a href="index.html#install" title="Install" class="w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300 text-text-dim hover:text-text-muted"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right w-4 h-4" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a></div><section id="hero" class="min-h-screen flex items-center px-6 relative overflow-hidden"><div class="absolute inset-0 grid-bg opacity-40"></div><div class="absolute top-0 right-0 w-[800px] h-[800px] bg-accent/2 rounded-full blur-3xl"></div><div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent/2 rounded-full blur-3xl"></div><div class="max-w-5xl mx-auto w-full relative z-10"><div class="opacity-0 translate-y-6 transition-all duration-700 ease-out"><div class="flex justify-center mb-8"><div class="flex items-center gap-3"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="#62ff94" stroke-width="1.5"></rect><rect x="9" y="11" width="6" height="4" rx="1.5" stroke="#62ff94" stroke-width="1.5"></rect><circle cx="12" cy="9" r="1.5" fill="#62ff94"></circle></svg><span class="font-display text-xl font-bold text-text tracking-tight">Privacy<span class="text-text-dim font-normal">Code</span></span></div></div></div><div class="opacity-0 translate-y-6 transition-all duration-700 ease-out"><div class="text-center mb-10"><div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-bg-muted border border-accent/10 text-text-dim text-xs font-medium mb-8 tracking-wide"><span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>PRIVACY BY DEFAULT</div><h1 class="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.92] mb-6">Your AI shouldn&#x27;t<br/><span class="gradient-text">see your secrets.</span></h1><p class="text-base sm:text-lg text-text-muted max-w-xl mx-auto font-light px-4 leading-relaxed">Every time you use an AI coding tool, your API keys, customer data, and credentials are sent to cloud providers in plain text. PrivacyCode tokenizes them first.</p></div></div><div class="opacity-0 translate-y-6 transition-all duration-700 ease-out"><div class="max-w-3xl mx-auto"><div class="rounded-2xl border border-border bg-bg-card overflow-hidden shadow-2xl"><div class="grid grid-cols-2 divide-x divide-border"><div class="p-5 space-y-3"><div class="flex items-center gap-2 text-red-400/60 text-[10px] font-mono tracking-wider"><span class="w-1.5 h-1.5 rounded-full bg-red-400/60"></span>WITHOUT PRIVACYCODE</div><div class="bg-[#0a0f0a] rounded-xl p-3 font-mono text-[10px] text-text-code border border-border space-y-1.5"><div class="text-text-dim">Your prompt:</div><div>Fix auth for <span class="text-red-400/60">jane@acme.com</span></div><div>Key: <span class="text-red-400/60">sk-live-51HdF8xKd...</span></div><div class="h-px bg-border my-1"></div><div class="text-text-dim">Sent to provider:</div><div class="text-red-400/60">jane@acme.com</div><div class="text-red-400/60">sk-live-51HdF8xKd...</div></div><div class="flex items-center gap-2 text-red-400/40 text-[9px]"><span>⚠</span> Provider sees your real data</div></div><div class="p-5 space-y-3 bg-accent/[0.02]"><div class="flex items-center gap-2 text-accent text-[10px] font-mono tracking-wider"><span class="w-1.5 h-1.5 rounded-full bg-accent"></span>WITH PRIVACYCODE</div><div class="bg-[#0a0f0a] rounded-xl p-3 font-mono text-[10px] text-text-code border border-accent/10 space-y-1.5"><div class="text-text-dim">Your prompt:</div><div>Fix auth for <span class="text-accent">[EMAI-1A2B...]</span></div><div>Key: <span class="text-accent">[KEY-E65774...]</span></div><div class="h-px bg-border my-1"></div><div class="text-text-dim">Sent to provider:</div><div class="text-accent">[EMAI-1A2B...]</div><div class="text-accent">[KEY-E65774...]</div></div><div class="flex items-center gap-2 text-accent text-[9px]"><span>🛡</span> Provider sees only tokens</div></div></div><div class="border-t border-border px-4 py-2.5 flex items-center justify-between text-[10px] font-mono"><span class="text-text-dim">Defender™ tokenizes 18 PII types automatically</span><span class="text-accent font-bold">on by default</span></div></div></div></div><div class="flex justify-center mt-12 animate-bounce"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down w-5 h-5 text-text-dim" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></div></div></section><section id="platforms" class="min-h-screen flex items-center px-6 py-24 relative border-t border-border overflow-hidden"><div class="absolute inset-0 bg-gradient-to-b from-transparent via-bg-muted/30 to-transparent"></div><div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-accent/[0.015] rounded-full blur-3xl"></div><div class="max-w-6xl mx-auto w-full relative"><div class="opacity-0 translate-y-6 transition-all duration-700 ease-out"><div class="text-center mb-14"><div class="text-accent font-mono text-[10px] tracking-[0.2em] mb-4">PLATFORMS</div><h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-text leading-[1.1]">Every device. One agent.</h2><p class="text-text-muted text-lg mt-4 font-light max-w-xl mx-auto">Start on desktop, approve from mobile, share via web. Syncs your sessions everywhere.</p></div></div><div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-12"><button class="p-4 rounded-2xl border transition-all duration-300 text-center border-accent/40 bg-accent/5"><div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 transition-all bg-accent/20"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-terminal w-5 h-5 text-accent" aria-hidden="true"><path d="M12 19h8"></path><path d="m4 17 6-6-6-6"></path></svg></div><span class="text-sm font-medium text-accent">CLI</span></button><button class="p-4 rounded-2xl border transition-all duration-300 text-center border-border bg-bg-card hover:border-accent/20"><div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 transition-all bg-bg-muted"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor w-5 h-5 text-text-dim" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></div><span class="text-sm font-medium text-text-muted">Desktop</span></button><button class="p-4 rounded-2xl border transition-all duration-300 text-center border-border bg-bg-card hover:border-accent/20"><div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 transition-all bg-bg-muted"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-smartphone w-5 h-5 text-text-dim" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg></div><span class="text-sm font-medium text-text-muted">Mobile</span></button><button class="p-4 rounded-2xl border transition-all duration-300 text-center border-border bg-bg-card hover:border-accent/20"><div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 transition-all bg-bg-muted"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe w-5 h-5 text-text-dim" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg></div><span class="text-sm font-medium text-text-muted">Web</span></button></div><div class="opacity-0 translate-y-6 transition-all duration-700 ease-out"><div class="max-w-2xl mx-auto transition-all duration-500"><div class="max-w-2xl mx-auto"><div class="rounded-xl overflow-hidden shadow-2xl shadow-black/60 border border-[#1a221a] bg-[#0a0f0a]"><div class="font-mono text-[11px] leading-relaxed"><div class="px-5 pt-4 pb-2 flex items-center justify-between text-[10px] text-[#757575]"><span><span class="text-[#62ff94] font-bold">◉</span> tab agents</span><span class="text-[#62ff94] font-bold">ctrl+p commands</span></div><div class="px-5 space-y-2.5 pb-14"><div class="transition-opacity duration-500 opacity-100"><div class="flex gap-2"><span class="text-[#62ff94] font-bold text-xs mt-px">▶</span><div class="text-[#8ca391] text-[12px]">Debug payment timeout for invoice #INV-08842. Stripe key is <span class="text-red-400/60">sk_live_51HdF8xK...</span>. Customer is <span class="text-red-400/60">jane@acmecorp.com</span>.</div></div></div><div class="transition-opacity duration-500 opacity-0"><div class="text-[#757575] text-[10px] leading-relaxed"><div>- Thought: 1.2s</div></div></div><div class="transition-opacity duration-500 opacity-0"><div class="text-[#757575] text-[10px] leading-relaxed"><div>- Thought: </div></div></div><div class="transition-opacity duration-500 opacity-0"><div class="text-[#757575] text-[10px] leading-relaxed"><div>- Thought: </div></div></div><div class="transition-opacity duration-500 opacity-0"><div class="text-[#757575] text-[10px] leading-relaxed"><div>- Thought: </div></div></div><div class="transition-opacity duration-500 opacity-0"><div class="flex gap-2"><span class="text-[#757575] text-xs mt-px">■</span><div class="flex-1"><div class="text-[#c0c0c0] text-[12px] leading-relaxed">Timeout from <span class="text-[#62ff94]">sk_live_51HdF8xK...</span> rate limit at 100 req/s. Raised to 250 in <span class="text-[#62ff94]">config/payment.ts</span>. Invoice <span class="text-[#62ff94]">#INV-08842</span> retried. Customer <span class="text-[#62ff94]">jane@acmecorp.com</span> notified.</div></div></div></div></div><div class="border-t border-[#1a221a] px-4 py-2 flex items-center justify-between text-[10px]"><div class="flex items-center gap-3"><span class="text-[#62ff94] font-bold">▣<!-- --> Build</span><span class="text-[#757575]">·</span><span class="text-[#8ca391]">DeepSeek V4 Pro</span><span class="text-[#757575]">·</span><span class="text-[#62ff94] font-bold">0.0s</span></div><span class="text-[#757575]">...</span></div><div class="border-t border-[#1a221a] px-4 py-1.5 flex items-center justify-between text-[10px]"><span class="text-[#62ff94] font-bold">🛡<!-- --> <span class="text-[#8ca391]">privacy: on</span></span><span class="text-[#757575]">~/acmecorp</span><span class="text-[#8ca391]">· PrivacyCode local</span></div></div><div class="border-t border-[#1a221a] px-4 py-2 flex justify-center gap-1.5"><button class="h-1 rounded-full transition-all duration-300 bg-[#62ff94] w-5"></button><button class="h-1 rounded-full transition-all duration-300 bg-[#1a221a] w-2"></button><button class="h-1 rounded-full transition-all duration-300 bg-[#1a221a] w-2"></button><button class="h-1 rounded-full transition-all duration-300 bg-[#1a221a] w-2"></button><button class="h-1 rounded-full transition-all duration-300 bg-[#1a221a] w-2"></button><button class="h-1 rounded-full transition-all duration-300 bg-[#1a221a] w-2"></button></div></div></div></div></div></div></section><section id="features" class="min-h-screen flex items-center px-6 py-24 relative border-t border-border overflow-hidden"><div class="max-w-6xl mx-auto w-full"><div class="opacity-0 translate-y-6 transition-all duration-700 ease-out"><div class="text-center mb-20"><div class="text-accent font-mono text-[10px] tracking-[0.2em] mb-4">FEATURES</div><h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-text leading-[1.1]">Everything you need.</h2></div></div><div class="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-border rounded-2xl overflow-hidden"><div class="bg-bg-card p-6 group hover:bg-bg-hover transition-all duration-300 relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-br from-accent/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div><div class="relative"><div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-accent/20 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield w-4 h-4 text-accent" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path></svg></div><h3 class="font-display text-text font-semibold mb-1 text-sm">Defender™ Privacy</h3><p class="text-text-muted text-xs leading-relaxed">18 PII patterns. Tokenized before any cloud sees your data.</p></div></div><div class="bg-bg-card p-6 group hover:bg-bg-hover transition-all duration-300 relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-br from-accent/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div><div class="relative"><div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-accent/20 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cpu w-4 h-4 text-accent" aria-hidden="true"><path d="M12 20v2"></path><path d="M12 2v2"></path><path d="M17 20v2"></path><path d="M17 2v2"></path><path d="M2 12h2"></path><path d="M2 17h2"></path><path d="M2 7h2"></path><path d="M20 12h2"></path><path d="M20 17h2"></path><path d="M20 7h2"></path><path d="M7 20v2"></path><path d="M7 2v2"></path><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="8" y="8" width="8" height="8" rx="1"></rect></svg></div><h3 class="font-display text-text font-semibold mb-1 text-sm">165+ Providers</h3><p class="text-text-muted text-xs leading-relaxed">OpenAI, Claude, Gemini, Groq, Ollama. Bring your own keys.</p></div></div><div class="bg-bg-card p-6 group hover:bg-bg-hover transition-all duration-300 relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-br from-accent/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div><div class="relative"><div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-accent/20 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor w-4 h-4 text-accent" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg></div><h3 class="font-display text-text font-semibold mb-1 text-sm">Multi-Platform</h3><p class="text-text-muted text-xs leading-relaxed">Terminal, desktop, mobile, web. Same agent everywhere.</p></div></div><div class="bg-bg-card p-6 group hover:bg-bg-hover transition-all duration-300 relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-br from-accent/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div><div class="relative"><div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-accent/20 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock w-4 h-4 text-accent" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div><h3 class="font-display text-text font-semibold mb-1 text-sm">Approval Gated</h3><p class="text-text-muted text-xs leading-relaxed">Explicit approval for mutations. Diffs shown before writes.</p></div></div><div class="bg-bg-card p-6 group hover:bg-bg-hover transition-all duration-300 relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-br from-accent/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div><div class="relative"><div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-accent/20 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap w-4 h-4 text-accent" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg></div><h3 class="font-display text-text font-semibold mb-1 text-sm">Zero Telemetry</h3><p class="text-text-muted text-xs leading-relaxed">No servers. No analytics. No crash reporting.</p></div></div><div class="bg-bg-card p-6 group hover:bg-bg-hover transition-all duration-300 relative overflow-hidden"><div class="absolute inset-0 bg-gradient-to-br from-accent/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div><div class="relative"><div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-accent/20 transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield w-4 h-4 text-accent" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path></svg></div><h3 class="font-display text-text font-semibold mb-1 text-sm">Air-Gap Ready</h3><p class="text-text-muted text-xs leading-relaxed">Works offline. Local models. Bundled registry.</p></div></div></div></div></section><section id="install" class="min-h-screen flex items-center justify-center px-6 py-24 relative border-t border-border overflow-hidden"><div class="absolute inset-0 bg-gradient-to-b from-bg-muted/30 to-transparent"></div><div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[500px] bg-accent/3 rounded-full blur-3xl"></div><div class="max-w-2xl mx-auto text-center relative"><div class="opacity-0 translate-y-6 transition-all duration-700 ease-out"><div class="text-accent font-mono text-[10px] tracking-[0.2em] mb-4">GET STARTED</div><h2 class="font-display text-4xl md:text-6xl font-bold tracking-tight text-text leading-[1.1] mb-4">One command. Privacy on.</h2><p class="text-text-muted text-lg mb-12 font-light">No signup. No credit card. Open source.</p></div><div class="opacity-0 translate-y-6 transition-all duration-700 ease-out"><div class="space-y-3 max-w-lg mx-auto"><div class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-bg-card border border-border font-mono text-sm text-text-muted overflow-hidden"><span class="text-accent shrink-0">$</span><span class="truncate flex-1 text-left text-xs sm:text-sm">curl -fsSL https://getprivacycode.com/install | sh</span></div><div class="flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-bg-card border border-border font-mono text-sm text-text-muted overflow-hidden"><span class="text-accent shrink-0">$</span><span class="truncate flex-1 text-left text-xs sm:text-sm">npm install -g privacycode</span></div></div></div><p class="text-text-dim text-xs sm:text-sm mt-8 px-4">Set your key and run <code class="text-text bg-bg-card px-2 py-1 rounded text-xs border border-border whitespace-nowrap">privacycode</code></p></div></section><footer class="py-16 px-6 border-t border-border"><div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-text-dim"><div class="flex items-center gap-3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="#62ff94" stroke-width="1.5"></rect><rect x="9" y="11" width="6" height="4" rx="1.5" stroke="#62ff94" stroke-width="1.5"></rect><circle cx="12" cy="9" r="1.5" fill="#62ff94"></circle></svg><span class="text-text-muted">PrivacyCode</span></div><div class="flex gap-8"><a href="docs.html" class="hover:text-text transition-colors">Docs</a><a href="privacy.html" class="hover:text-text transition-colors">Privacy</a><a href="enterprise.html" class="hover:text-text transition-colors">Enterprise</a><a href="cli.html" class="hover:text-text transition-colors">CLI</a><a href="https://github.com" class="hover:text-text transition-colors">GitHub</a></div></div></footer><!--$--><!--/$--><script src="_next/static/chunks/1jq4o6yq14o4c.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[39756,[\"/_next/static/chunks/158myu8e_yme3.js\"],\"default\"]\n3:I[37457,[\"/_next/static/chunks/158myu8e_yme3.js\"],\"default\"]\n4:I[65287,[\"/_next/static/chunks/158myu8e_yme3.js\",\"/_next/static/chunks/3n5aemrutu5l1.js\"],\"HomeScroll\"]\n5:I[97367,[\"/_next/static/chunks/158myu8e_yme3.js\"],\"OutletBoundary\"]\n6:\"$Sreact.suspense\"\n8:I[97367,[\"/_next/static/chunks/158myu8e_yme3.js\"],\"ViewportBoundary\"]\na:I[97367,[\"/_next/static/chunks/158myu8e_yme3.js\"],\"MetadataBoundary\"]\nc:I[68027,[\"/_next/static/chunks/158myu8e_yme3.js\"],\"default\",1]\n:HL[\"/_next/static/chunks/248sfhp5y_nap.css\",\"style\"]\n:HL[\"/_next/static/media/051742360c26797e-s.p.1bkzbscqrt8rl.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/5c285b27cdda1fe8-s.p.2_mbdogr7ni8i.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"c\":[\"\",\"\"],\"q\":\"\",\"i\":false,\"f\":[[[\"\",{\"children\":[\"__PAGE__\",{}]},\"$undefined\",\"$undefined\",16],[[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/248sfhp5y_nap.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}],[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/158myu8e_yme3.js\",\"async\":true,\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"en\",\"className\":\"dm_sans_5501b6fe-module__2pad1q__variable jetbrains_mono_4ba603de-module__Zo4tiq__variable dark scroll-smooth\",\"children\":[\"$\",\"body\",null,{\"className\":\"bg-bg text-text font-sans antialiased\",\"children\":[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}]}]]}],{\"children\":[[\"$\",\"$1\",\"c\",{\"children\":[[\"$\",\"$L4\",null,{}],[[\"$\",\"script\",\"script-0\",{\"src\":\"/_next/static/chunks/3n5aemrutu5l1.js\",\"async\":true,\"nonce\":\"$undefined\"}]],[\"$\",\"$L5\",null,{\"children\":[\"$\",\"$6\",null,{\"name\":\"Next.MetadataOutlet\",\"children\":\"$@7\"}]}]]}],{},null,false,null]},null,false,null],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$L8\",null,{\"children\":\"$L9\"}],[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$La\",null,{\"children\":[\"$\",\"$6\",null,{\"name\":\"Next.Metadata\",\"children\":\"$Lb\"}]}]}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$c\",[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/chunks/248sfhp5y_nap.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]]],\"S\":true,\"h\":null,\"s\":\"$undefined\",\"l\":\"$undefined\",\"p\":\"$undefined\",\"d\":\"$undefined\",\"b\":\"02v5luumTyVTcIPxa1lxd\"}\n"])</script><script>self.__next_f.push([1,"9:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n"])</script><script>self.__next_f.push([1,"d:I[27201,[\"/_next/static/chunks/158myu8e_yme3.js\"],\"IconMark\"]\n7:null\nb:[[\"$\",\"title\",\"0\",{\"children\":\"PrivacyCode — The privacy-first AI coding agent\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"Open-source AI coding agent that keeps your data private.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"icon\",\"href\":\"/favicon.ico\",\"sizes\":\"256x256\",\"type\":\"image/x-icon\"}],[\"$\",\"$Ld\",\"3\",{}]]\n"])</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrivacyCode — The privacy-first AI coding agent</title>
+<meta name="description" content="Open-source AI coding agent that keeps your data private. Tokenizes secrets before they leave your machine.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🔒</text></svg>">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#08090b;--surface:#0f1115;--surface-2:#14161c;--border:#1e2028;--border-2:#2a2c36;--text:#e8eaed;--text-secondary:#a0a4b8;--text-muted:#6b6f82;--accent:#00d4aa;--accent-dim:rgba(0,212,170,0.12);--accent-glow:rgba(0,212,170,0.25);--purple:#7c5cfc;--purple-dim:rgba(124,92,252,0.12);--red:#f87171;--red-bg:rgba(248,113,113,0.08);--green:#00d4aa;--green-bg:rgba(0,212,170,0.08);--radius:12px;--radius-sm:8px;--font-sans:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Noto Sans,sans-serif;--font-mono:'JetBrains Mono','Fira Code','SF Mono',ui-monospace,monospace}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--accent);text-decoration:none}
+a:hover{opacity:.8}
+img{max-width:100%;display:block}
+
+/* navigation */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,9,11,.8);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 24px;height:60px}
+.nav-logo{font-weight:700;font-size:18px;color:var(--text);display:flex;align-items:center;gap:8px}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:4px;align-items:center}
+.nav-links a{padding:6px 14px;border-radius:var(--radius-sm);font-size:14px;font-weight:500;color:var(--text-secondary);transition:all .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--accent-dim)}
+.nav-cta{padding:7px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;background:var(--accent);color:#08090b;margin-left:8px;transition:opacity .2s}
+.nav-cta:hover{opacity:.9;color:#08090b}
+.nav-mobile-btn{display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;padding:4px}
+
+/* main */
+main{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* page sections */
+.page{display:none;animation:fadeIn .3s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* hero */
+.hero{padding:160px 0 100px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(0,212,170,.06) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px 4px 10px;border-radius:100px;font-size:12px;font-weight:600;background:var(--accent-dim);border:1px solid rgba(0,212,170,.2);color:var(--accent);margin-bottom:24px}
+.hero-badge svg{width:12px;height:12px}
+.hero h1{font-size:clamp(42px,7vw,80px);font-weight:800;line-height:1.08;letter-spacing:-.03em;margin-bottom:20px;background:linear-gradient(135deg,#fff 30%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:clamp(16px,2vw,20px);color:var(--text-secondary);max-width:600px;margin:0 auto 40px;line-height:1.7}
+.hero-commands{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:48px}
+.hero-command{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 20px;font-family:var(--font-mono);font-size:14px;position:relative;transition:border-color .2s;width:auto;min-width:400px;justify-content:space-between}
+.hero-command:hover{border-color:var(--border-2)}
+.hero-command .cmd-text{color:var(--text)}
+.hero-command .cmd-prompt{color:var(--text-muted)}
+.hero-command .cmd-copy{background:none;border:none;color:var(--text-muted);cursor:pointer;padding:4px;border-radius:4px;transition:all .2s;display:flex;align-items:center}
+.hero-command .cmd-copy:hover{color:var(--accent);background:var(--accent-dim)}
+.hero-command .cmd-copy.copied{color:var(--accent)}
+.hero-sub{font-size:13px;color:var(--text-muted)}
+.hero-sub a{color:var(--text-secondary)}
+
+/* comparison */
+.comparison{padding:80px 0}
+.comparison h2{text-align:center;font-size:clamp(28px,4vw,40px);font-weight:700;margin-bottom:48px;letter-spacing:-.02em}
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:800px;margin:0 auto}
+.compare-card{border-radius:var(--radius);padding:28px;border:1px solid var(--border);position:relative}
+.compare-card.bad{background:var(--red-bg);border-color:rgba(248,113,113,.15)}
+.compare-card.good{background:var(--green-bg);border-color:rgba(0,212,170,.15)}
+.compare-card h3{font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px}
+.compare-card.bad h3{color:var(--red)}
+.compare-card.good h3{color:var(--accent)}
+.compare-label{font-size:12px;color:var(--text-muted);margin-bottom:4px;font-weight:500}
+.compare-code{font-family:var(--font-mono);font-size:13px;padding:12px 14px;border-radius:var(--radius-sm);margin-bottom:12px;line-height:1.7;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
+.compare-card.bad .compare-code{background:rgba(248,113,113,.06);color:var(--red)}
+.compare-card.good .compare-code{background:rgba(0,212,170,.06);color:var(--accent)}
+.compare-tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;margin-bottom:12px}
+.compare-card.bad .compare-tag{background:rgba(248,113,113,.12);color:var(--red)}
+.compare-card.good .compare-tag{background:rgba(0,212,170,.12);color:var(--accent)}
+.compare-divider{display:flex;align-items:center;justify-content:center;position:relative}
+.compare-divider span{background:var(--surface);border:1px solid var(--border);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--text-muted)}
+
+/* terminal demo */
+.terminal-demo{padding:60px 0 80px}
+.terminal{background:#0a0c0e;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;max-width:700px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.terminal-header{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--surface-2);border-bottom:1px solid var(--border)}
+.terminal-dot{width:10px;height:10px;border-radius:50%}
+.terminal-dot:nth-child(1){background:#f87171}
+.terminal-dot:nth-child(2){background:#fbbf24}
+.terminal-dot:nth-child(3){background:#34d399}
+.terminal-title{font-size:12px;color:var(--text-muted);margin-left:auto;font-family:var(--font-mono)}
+.terminal-body{padding:20px;font-family:var(--font-mono);font-size:13px;line-height:1.8;min-height:240px;color:#e8eaed}
+.terminal-line{opacity:0;animation:typeIn .3s forwards}
+.terminal-line .prompt{color:var(--accent)}
+.terminal-line .text-green{color:#34d399}
+.terminal-line .text-yellow{color:#fbbf24}
+.terminal-line .text-blue{color:#60a5fa}
+.terminal-line .text-muted-t{color:#6b6f82}
+.terminal-line .text-red-t{color:#f87171}
+.terminal-cursor{display:inline-block;width:8px;height:15px;background:var(--accent);animation:blink 1s infinite;margin-left:2px;vertical-align:text-bottom}
+@keyframes typeIn{to{opacity:1}}
+@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
+
+/* features */
+.features{padding:80px 0}
+.features h2{text-align:center;font-size:clamp(28px,4vw,40px);font-weight:700;margin-bottom:12px;letter-spacing:-.02em}
+.features-sub{text-align:center;color:var(--text-secondary);font-size:16px;margin-bottom:48px;max-width:500px;margin-left:auto;margin-right:auto}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:all .3s;position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
+.feature-card:hover{transform:translateY(-2px);border-color:var(--border-2)}
+.feature-card:hover::before{opacity:1}
+.feature-icon{width:40px;height:40px;border-radius:10px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px}
+.feature-card h3{font-size:16px;font-weight:600;margin-bottom:8px}
+.feature-card p{font-size:14px;color:var(--text-secondary);line-height:1.6}
+
+/* cta */
+.cta{padding:100px 0;text-align:center}
+.cta-box{background:linear-gradient(135deg,var(--surface),var(--surface-2));border:1px solid var(--border);border-radius:16px;padding:60px 40px;max-width:700px;margin:0 auto;position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;top:-100px;right:-100px;width:300px;height:300px;background:radial-gradient(circle,rgba(0,212,170,.08),transparent 70%);pointer-events:none}
+.cta h2{font-size:clamp(28px,4vw,36px);font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
+.cta p{color:var(--text-secondary);font-size:16px;margin-bottom:32px}
+.cta-buttons{display:flex;flex-direction:column;align-items:center;gap:12px}
+.cta-command{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;font-family:var(--font-mono);font-size:14px;width:100%;max-width:500px;transition:border-color .2s}
+.cta-command:hover{border-color:var(--border-2)}
+.cta-command .cmd-copy{background:none;border:none;color:var(--text-muted);cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center;transition:all .2s}
+.cta-command .cmd-copy:hover{color:var(--accent);background:var(--accent-dim)}
+.cta-alt{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.cta-alt code{font-family:var(--font-mono);background:var(--accent-dim);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--accent)}
+
+/* footer */
+footer{margin-top:80px;border-top:1px solid var(--border);padding:40px 0 60px}
+.footer-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+.footer-brand p{font-size:13px;color:var(--text-muted);margin-top:8px;max-width:280px;line-height:1.6}
+.footer-col h4{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:16px}
+.footer-col a{display:block;font-size:14px;color:var(--text-secondary);padding:4px 0;transition:color .2s}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{border-top:1px solid var(--border);margin-top:40px;padding-top:20px;max-width:1200px;margin-left:auto;margin-right:auto;padding-left:24px;padding-right:24px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-muted)}
+
+/* docs/cli/enterprise/privacy pages */
+.page-content{padding-top:100px;padding-bottom:80px;max-width:800px;margin:0 auto}
+.page-content h1{font-size:clamp(28px,4vw,40px);font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
+.page-content .page-lead{color:var(--text-secondary);font-size:16px;margin-bottom:40px}
+.page-content h2{font-size:20px;font-weight:600;margin-top:40px;margin-bottom:12px;color:var(--text)}
+.page-content h3{font-size:16px;font-weight:600;margin-top:28px;margin-bottom:8px}
+.page-content p{color:var(--text-secondary);margin-bottom:16px;line-height:1.7}
+.page-content ul{color:var(--text-secondary);margin-bottom:16px;padding-left:20px}
+.page-content ul li{margin-bottom:6px}
+.page-content code{font-family:var(--font-mono);font-size:13px;background:var(--surface-2);padding:2px 6px;border-radius:4px;color:var(--accent)}
+.page-content pre{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;overflow-x:auto;margin-bottom:20px;font-family:var(--font-mono);font-size:13px;line-height:1.7;color:var(--text)}
+.page-content pre .comment{color:var(--text-muted)}
+.page-content pre .keyword{color:var(--purple)}
+.page-content pre .string{color:var(--accent)}
+.page-content .cmd-table{width:100%;border-collapse:collapse;margin-bottom:24px;font-size:14px}
+.page-content .cmd-table th{text-align:left;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);padding:8px 12px;border-bottom:1px solid var(--border)}
+.page-content .cmd-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text-secondary)}
+.page-content .cmd-table td:first-child{font-family:var(--font-mono);font-size:13px;color:var(--text);white-space:nowrap}
+.page-content .cmd-table tr:hover td{background:var(--surface)}
+
+/* privacy policy */
+.policy-date{font-size:13px;color:var(--text-muted);margin-bottom:32px}
+.policy-section h2{margin-top:32px}
+.policy-section p{color:var(--text-secondary);margin-bottom:12px}
+.policy-section ul{color:var(--text-secondary);padding-left:20px;margin-bottom:12px}
+.policy-section ul li{margin-bottom:4px}
+
+/* enterprise page */
+.enterprise-hero{padding:140px 0 60px;text-align:center}
+.enterprise-hero h1{font-size:clamp(32px,5vw,48px);font-weight:700;margin-bottom:12px;letter-spacing:-.02em}
+.enterprise-hero p{color:var(--text-secondary);font-size:18px;max-width:550px;margin:0 auto 8px}
+.enterprise-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:60px}
+.enterprise-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:border-color .2s}
+.enterprise-card:hover{border-color:var(--border-2)}
+.enterprise-card .icon{font-size:28px;margin-bottom:12px}
+.enterprise-card h3{font-size:16px;font-weight:600;margin-bottom:6px}
+.enterprise-card p{font-size:14px;color:var(--text-secondary);line-height:1.6}
+
+/* responsive */
+@media(max-width:900px){
+  .features-grid{grid-template-columns:1fr 1fr}
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .hero-command{min-width:auto;width:100%;max-width:500px;font-size:13px}
+  .comparison-grid{grid-template-columns:1fr}
+  .comparison-divider{display:none}
+  .comparison .compare-card.bad{margin-bottom:0}
+}
+@media(max-width:640px){
+  .nav-links a.nav-hide-mobile{display:none}
+  .nav-mobile-btn{display:block}
+  .nav-links.active{display:flex;flex-direction:column;position:absolute;top:60px;left:0;right:0;background:rgba(8,9,11,.96);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:12px 24px;gap:4px}
+  .nav-links.active a{display:block;padding:10px 14px}
+  .nav-links.active .nav-cta{text-align:center}
+  .features-grid{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr}
+  .enterprise-grid{grid-template-columns:1fr}
+  .hero{padding:120px 0 60px}
+  .cta-box{padding:40px 24px}
+  .cta-command{font-size:13px;padding:12px 14px}
+  .page-content{padding-top:80px}
+  .terminal-body{font-size:12px;padding:16px;min-height:200px}
+}
+</style>
+<style id="pc-dynamic"></style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#/" data-nav>
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><rect x="2" y="2" width="28" height="28" rx="6" stroke="currentColor" stroke-width="2.5"/><path d="M10 10h12v4H10zM10 18h12v4H10z" fill="var(--accent)"/></svg>
+      Privacy<span>Code</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#/cli" data-nav>CLI</a>
+      <a href="#/docs" data-nav>Docs</a>
+      <a href="#/enterprise" data-nav>Enterprise</a>
+      <a href="#/privacy" data-nav class="nav-hide-mobile">Privacy</a>
+      <a href="#/docs" class="nav-cta">Get Started</a>
+    </div>
+    <button class="nav-mobile-btn" id="navToggle" aria-label="Menu">&#9776;</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ========== HOME ========== -->
+<section class="page active" id="page-home">
+
+<div class="hero">
+  <div class="hero-badge">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l2 4 4.5.5-3.2 3.2L12 13l-4-2.2L4 13l.7-4.3L1.5 5.5 6 5z"/></svg>
+    Privacy by default
+  </div>
+  <h1>Your AI shouldn't<br>see your secrets.</h1>
+  <p>AI coding agent with built-in privacy. Tokenizes API keys, credentials, and PII before they ever leave your machine.</p>
+  <div class="hero-commands">
+    <div class="hero-command">
+      <span><span class="cmd-prompt">$</span> <span class="cmd-text">curl -fsSL https://getprivacycode.com/install | sh</span></span>
+      <button class="cmd-copy" onclick="copyCmd(this,'curl -fsSL https://getprivacycode.com/install | sh')" aria-label="Copy command">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      </button>
+    </div>
+    <div class="hero-sub">No signup. No credit card. <a href="https://github.com/profullstack/getprivacycode" target="_blank">Open source</a>.</div>
+  </div>
+</div>
+
+<div class="comparison" id="comparison">
+  <h2>See the difference</h2>
+  <div class="comparison-grid">
+    <div class="compare-card bad">
+      <h3>Without PrivacyCode</h3>
+      <span class="compare-tag">&#9888;&#65039; Sent in plain text</span>
+      <div class="compare-label">Your prompt</div>
+      <div class="compare-code">Fix auth for jane@acme.com<br>sk-live-51HdF8xKd...</div>
+      <div class="compare-label">Sent to provider</div>
+      <div class="compare-code">jane@acme.com<br>sk-live-51HdF8xKd...</div>
+    </div>
+    <div class="compare-divider"><span>vs</span></div>
+    <div class="compare-card good">
+      <h3>With PrivacyCode</h3>
+      <span class="compare-tag">&#10003; Tokenized</span>
+      <div class="compare-label">Your prompt</div>
+      <div class="compare-code">Fix auth for [EMAI-1A2B...]<br>[KEY-E65774...]</div>
+      <div class="compare-label">Sent to provider</div>
+      <div class="compare-code">[EMAI-1A2B...]<br>[KEY-E65774...]</div>
+    </div>
+  </div>
+</div>
+
+<div class="terminal-demo">
+  <div class="terminal">
+    <div class="terminal-header">
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="terminal-title">privacycode</span>
+    </div>
+    <div class="terminal-body" id="terminalBody">
+      <div class="terminal-line" style="animation-delay:0s"><span class="prompt">~/project $</span> privacycode</div>
+      <div class="terminal-line" style="animation-delay:.3s"><span class="text-blue">┌─ PrivacyCode ──────────────────────────┐</span></div>
+      <div class="terminal-line" style="animation-delay:.6s"><span class="text-blue">│</span> Debug payment timeout for invoice <span class="text-yellow">#INV-08842</span> <span class="text-blue">│</span></div>
+      <div class="terminal-line" style="animation-delay:.9s"><span class="text-blue">│</span> Stripe key: <span class="text-red-t">sk_live_51HdF...</span> → <span class="text-green">[KEY-8F3A...]</span> <span class="text-blue">│</span></div>
+      <div class="terminal-line" style="animation-delay:1.2s"><span class="text-blue">│</span> <span class="text-yellow">●</span> Thinking<span class="text-muted-t">...</span> <span class="text-blue">│</span></div>
+      <div class="terminal-line" style="animation-delay:1.5s"><span class="text-blue">│</span> <span class="text-yellow">●</span> Analyzing Stripe rate limits<span class="text-muted-t">...</span> <span class="text-blue">│</span></div>
+      <div class="terminal-line" style="animation-delay:1.8s"><span class="text-blue">│</span> <span class="text-green">✓</span> Found: rate limit at 100 req/s <span class="text-blue">│</span></div>
+      <div class="terminal-line" style="animation-delay:2.1s"><span class="text-blue">│</span> <span class="text-green">✓</span> Raised to 250 in config/payment.ts <span class="text-blue">│</span></div>
+      <div class="terminal-line" style="animation-delay:2.4s"><span class="text-blue">│</span> <span class="text-green">✓</span> Invoice retried. Customer notified. <span class="text-blue">│</span></div>
+      <div class="terminal-line" style="animation-delay:2.7s"><span class="text-blue">└──────────────────────────────────────────┘</span></div>
+      <div class="terminal-line" style="animation-delay:3s"><span class="prompt">~/project $</span> <span class="terminal-cursor"></span></div>
+    </div>
+  </div>
+</div>
+
+<div class="features" id="features">
+  <h2>Everything you need.</h2>
+  <p class="features-sub">Privacy-first AI coding, without compromise.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">&#128274;</div>
+      <h3>Defender&trade; Privacy</h3>
+      <p>18 PII patterns detected and tokenized before any cloud provider sees your data.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#9889;</div>
+      <h3>165+ Providers</h3>
+      <p>OpenAI, Claude, Gemini, Groq, Ollama, and more. Bring your own keys.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128187;</div>
+      <h3>Multi-Platform</h3>
+      <p>Terminal, desktop, mobile, web. Same agent, synced sessions everywhere.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#9989;</div>
+      <h3>Approval Gated</h3>
+      <p>Explicit approval for every mutation. Diffs shown before any write happens.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128200;</div>
+      <h3>Zero Telemetry</h3>
+      <p>No servers. No analytics. No crash reporting. What you run stays yours.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127760;</div>
+      <h3>Air-Gap Ready</h3>
+      <p>Works fully offline. Local models, bundled registry, no internet required.</p>
+    </div>
+  </div>
+</div>
+
+<div class="cta">
+  <div class="cta-box">
+    <h2>One command. Privacy on.</h2>
+    <p>No signup. No credit card. Open source and free.</p>
+    <div class="cta-buttons">
+      <div class="cta-command">
+        <span>curl -fsSL https://getprivacycode.com/install | sh</span>
+        <button class="cmd-copy" onclick="copyCmd(this,'curl -fsSL https://getprivacycode.com/install | sh')" aria-label="Copy command">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        </button>
+      </div>
+      <div class="cta-alt">or <code>npm install -g privacycode</code> &nbsp;·&nbsp; Set your key and run <code>privacycode</code></div>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<!-- ========== CLI ========== -->
+<section class="page" id="page-cli">
+<div class="page-content">
+<h1>CLI Reference</h1>
+<p class="page-lead">PrivacyCode runs entirely in your terminal. No daemon, no background service.</p>
+
+<h2>Quick Start</h2>
+<pre><span class="comment"># Install</span>
+curl -fsSL https://getprivacycode.com/install | sh
+
+<span class="comment"># Set your key</span>
+export OPENAI_API_KEY=sk-...
+
+<span class="comment"># Run</span>
+privacycode</pre>
+
+<h2>Commands</h2>
+<table class="cmd-table">
+<tr><th>Command</th><th>Description</th></tr>
+<tr><td>privacycode</td><td>Start interactive session in current directory</td></tr>
+<tr><td>privacycode &lt;prompt&gt;</td><td>Run a single prompt and exit</td></tr>
+<tr><td>privacycode --model &lt;id&gt;</td><td>Start with a specific model</td></tr>
+<tr><td>privacycode --provider &lt;id&gt;</td><td>Start with a specific provider</td></tr>
+</table>
+
+<h2>Slash Commands</h2>
+<table class="cmd-table">
+<tr><th>Command</th><th>Description</th></tr>
+<tr><td>/privacy on|off</td><td>Toggle Defender tokenization</td></tr>
+<tr><td>/model &lt;id&gt;</td><td>Switch AI model</td></tr>
+<tr><td>/provider &lt;id&gt;</td><td>Switch AI provider</td></tr>
+<tr><td>/stats</td><td>Show token usage statistics</td></tr>
+<tr><td>/vault</td><td>Show vault statistics</td></tr>
+<tr><td>/clear</td><td>Clear conversation history</td></tr>
+<tr><td>/exit</td><td>Quit</td></tr>
+</table>
+
+<h2>File Mentions</h2>
+<p>Attach files to your prompt with <code>@path/to/file</code>:</p>
+<pre>privacycode&gt; Look at @src/auth.js and fix the null check on line 42</pre>
+
+<h2>Configuration</h2>
+<p>Config is resolved in order: CLI flags &rarr; environment variables &rarr; project config &rarr; global config.</p>
+<pre><span class="comment">// ~/.config/privacycode/config.json</span>
+{
+  "provider": "anthropic",
+  "model": "claude-sonnet-4-20250514"
+}</pre>
+<p>Project-level config (place in your repo):</p>
+<pre><span class="comment">// ./privacycode.jsonc</span>
+{
+  "provider": "openai",
+  "model": "gpt-4o"
+}</pre>
+
+<h2>Environment Variables</h2>
+<table class="cmd-table">
+<tr><th>Variable</th><th>Description</th></tr>
+<tr><td>OPENAI_API_KEY</td><td>OpenAI API key</td></tr>
+<tr><td>ANTHROPIC_API_KEY</td><td>Anthropic API key</td></tr>
+<tr><td>PRIVACYCODE_PROVIDER</td><td>Default provider name</td></tr>
+<tr><td>PRIVACYCODE_MODEL</td><td>Default model name</td></tr>
+</table>
+</div>
+</section>
+
+<!-- ========== DOCS ========== -->
+<section class="page" id="page-docs">
+<div class="page-content">
+<h1>Documentation</h1>
+<p class="page-lead">Quick start guide for PrivacyCode.</p>
+
+<h2>Installation</h2>
+<pre>curl -fsSL https://getprivacycode.com/install | sh</pre>
+<p>The install script detects your OS and architecture, downloads the latest release, and places it in <code>~/.local/bin</code>.</p>
+
+<h3>Verify Installation</h3>
+<pre>privacycode --version</pre>
+
+<h3>Manual Install</h3>
+<pre><span class="comment"># Download the latest release for your platform</span>
+curl -OL https://github.com/profullstack/getprivacycode/releases/latest/download/privacycode-\$(uname -s)-\$(uname -m).tar.gz
+tar xzf privacycode-*.tar.gz
+sudo mv privacycode /usr/local/bin/</pre>
+
+<h2>Getting Started</h2>
+<p>PrivacyCode is <strong>on by default</strong>. No extra configuration needed. Just set your API key and run:</p>
+<pre>export OPENAI_API_KEY=sk-...
+privacycode</pre>
+
+<h2>Choose a Provider</h2>
+<p>PrivacyCode supports 165+ providers. Set your preferred provider:</p>
+<pre>export PRIVACYCODE_PROVIDER=anthropic
+export ANTHROPIC_API_KEY=sk-ant-...</pre>
+<p>List all supported providers:</p>
+<pre>privacycode providers</pre>
+
+<h2>Slash Commands</h2>
+<table class="cmd-table">
+<tr><th>Command</th><th>Description</th></tr>
+<tr><td>/privacy on|off</td><td>Toggle Defender tokenization</td></tr>
+<tr><td>/model &lt;id&gt;</td><td>Switch AI model</td></tr>
+<tr><td>/provider &lt;id&gt;</td><td>Switch AI provider</td></tr>
+<tr><td>/stats</td><td>Show token usage</td></tr>
+<tr><td>/vault</td><td>Show vault statistics</td></tr>
+<tr><td>/clear</td><td>Clear conversation history</td></tr>
+<tr><td>/exit</td><td>Quit</td></tr>
+</table>
+
+<h2>File Mentions</h2>
+<p>Attach files to your prompt with <code>@path/to/file</code>:</p>
+<pre>privacycode&gt; Look at @src/auth.js and fix the null check on line 42</pre>
+
+<h2>Configuration</h2>
+<p>Config is resolved in order: CLI flags &rarr; environment variables &rarr; project config &rarr; global config.</p>
+<pre><span class="comment">// ~/.config/privacycode/config.json</span>
+{
+  "provider": "anthropic",
+  "model": "claude-sonnet-4-20250514"
+}</pre>
+<p>Project-level config (place in your repo):</p>
+<pre><span class="comment">// ./privacycode.jsonc</span>
+{
+  "provider": "openai",
+  "model": "gpt-4o"
+}</pre>
+</div>
+</section>
+
+<!-- ========== ENTERPRISE ========== -->
+<section class="page" id="page-enterprise">
+<div class="enterprise-hero">
+  <h1>PrivacyCode for&#8198;Enterprise</h1>
+  <p>Privacy-first AI coding at scale. SOC 2, SSO, audit logs, and dedicated support.</p>
+</div>
+<div class="page-content" style="max-width:900px">
+<div class="enterprise-grid">
+  <div class="enterprise-card">
+    <div class="icon">&#128274;</div>
+    <h3>Defender&trade; Privacy</h3>
+    <p>Enterprise-grade PII detection with 18+ patterns. Custom pattern definitions available.</p>
+  </div>
+  <div class="enterprise-card">
+    <div class="icon">&#128179;</div>
+    <h3>SSO &amp; SAML</h3>
+    <p>Single sign-on with any SAML 2.0 or OIDC provider. SCIM provisioning supported.</p>
+  </div>
+  <div class="enterprise-card">
+    <div class="icon">&#128214;</div>
+    <h3>Audit Logs</h3>
+    <p>Complete audit trail of all prompts, approvals, and mutations. Export to your SIEM.</p>
+  </div>
+  <div class="enterprise-card">
+    <div class="icon">&#128200;</div>
+    <h3>Usage Analytics</h3>
+    <p>Team-wide usage dashboards. Cost tracking per model, per user, per project.</p>
+  </div>
+  <div class="enterprise-card">
+    <div class="icon">&#128478;</div>
+    <h3>Dedicated Support</h3>
+    <p>Priority support with SLA. Dedicated engineer for onboarding and training.</p>
+  </div>
+  <div class="enterprise-card">
+    <div class="icon">&#127760;</div>
+    <h3>Self-Hosted</h3>
+    <p>Deploy on your infrastructure. Air-gapped, VPC, or on-premises. Fully isolated.</p>
+  </div>
+</div>
+<div style="text-align:center;padding:40px 0">
+  <h2 style="margin-bottom:12px;font-size:24px">Interested?</h2>
+  <p style="color:var(--text-secondary);margin-bottom:24px">Contact us for pricing and a demo.</p>
+  <a href="mailto:enterprise@getprivacycode.com" style="display:inline-block;padding:12px 32px;border-radius:var(--radius-sm);font-weight:600;background:var(--accent);color:#08090b;font-size:15px">Contact Sales</a>
+</div>
+</div>
+</section>
+
+<!-- ========== PRIVACY ========== -->
+<section class="page" id="page-privacy">
+<div class="page-content">
+<h1>Privacy Policy</h1>
+<p class="page-lead policy-date">Last updated: July 29, 2026</p>
+
+<div class="policy-section">
+<h2>What PrivacyCode Collects</h2>
+<p>PrivacyCode is designed with zero telemetry by default. The CLI application does not phone home, collect usage data, or send analytics. There are no background services or data collection servers.</p>
+<p>The only data that leaves your machine is what you explicitly send to your chosen AI provider through their API. This data is tokenized by Defender&trade; before transmission to remove PII, credentials, and secrets.</p>
+</div>
+
+<div class="policy-section">
+<h2>Information You Provide</h2>
+<p>When you contact us or sign up for enterprise services, we collect:</p>
+<ul>
+<li>Name and email address</li>
+<li>Company name and billing information</li>
+<li>Communications you exchange with our team</li>
+</ul>
+<p>We do not sell your personal information. We do not share it with third parties except as required to provide our services (payment processing, email delivery).</p>
+</div>
+
+<div class="policy-section">
+<h2>Cookies &amp; Tracking</h2>
+<p>This website uses no tracking cookies, no analytics scripts, and no third-party tracking. The site is statically served with no backend logging beyond standard HTTP access logs (IP address, timestamp, requested page) which are retained for 30 days and used solely for operational purposes.</p>
+</div>
+
+<div class="policy-section">
+<h2>Open Source</h2>
+<p>PrivacyCode CLI is fully open source. You can verify exactly what it does by reading the source code at <a href="https://github.com/profullstack/getprivacycode" target="_blank">github.com/profullstack/getprivacycode</a>. No obfuscation, no hidden behavior.</p>
+</div>
+
+<div class="policy-section">
+<h2>Contact</h2>
+<p>For privacy-related inquiries, contact us at <a href="mailto:privacy@getprivacycode.com">privacy@getprivacycode.com</a>.</p>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <strong style="font-size:16px">Privacy<span style="color:var(--accent)">Code</span></strong>
+      <p>AI coding agent with built-in privacy. Tokenizes secrets before they leave your machine.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="#/cli" data-nav>CLI</a>
+      <a href="#/docs" data-nav>Docs</a>
+      <a href="#/enterprise" data-nav>Enterprise</a>
+      <a href="https://github.com/profullstack/getprivacycode/releases" target="_blank">Releases</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#/privacy" data-nav>Privacy Policy</a>
+      <a href="https://github.com/profullstack/getprivacycode" target="_blank">GitHub</a>
+    </div>
+    <div class="footer-col">
+      <h4>Community</h4>
+      <a href="https://github.com/profullstack/getprivacycode/issues" target="_blank">Issues</a>
+      <a href="https://github.com/profullstack/getprivacycode/discussions" target="_blank">Discussions</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 PrivacyCode. Open source MIT.</span>
+    <span>Built with &#128154; for privacy.</span>
+  </div>
+</footer>
+
+<script>
+// SPA routing
+function navigate() {
+  const hash = location.hash || '#/'
+  const pageId = hash.replace(/^#\/?/, '') || 'home'
+  const target = document.getElementById('page-' + pageId)
+  if (!target) { location.hash = '#/'; return }
+
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+  target.classList.add('active')
+  document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.getAttribute('href') === hash))
+  window.scrollTo(0, 0)
+}
+
+window.addEventListener('hashchange', navigate)
+window.addEventListener('DOMContentLoaded', navigate)
+
+// Mobile nav
+document.getElementById('navToggle').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('active')
+})
+document.querySelectorAll('[data-nav]').forEach(a => {
+  a.addEventListener('click', () => {
+    document.getElementById('navLinks').classList.remove('active')
+  })
+})
+
+// Copy command
+function copyCmd(el, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    el.classList.add('copied')
+    el.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+    setTimeout(() => {
+      el.classList.remove('copied')
+      el.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>'
+    }, 2000)
+  })
+}
+
+// Terminal animation delay stagger
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.terminal-line').forEach((el, i) => {
+    el.style.animationDelay = (i * 0.3) + 's'
+  })
+})
+</script>
+</body>
+</html>
