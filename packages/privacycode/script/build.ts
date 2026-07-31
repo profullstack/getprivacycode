@@ -47,7 +47,16 @@ const createEmbeddedWebUIBundle = async () => {
   ].join("\n")
 }
 
-const embeddedFileMap = skipEmbedWebUi ? null : await createEmbeddedWebUIBundle()
+// The embedded web UI lives in `packages/app`, which does not exist in this
+// repository. Building it unconditionally makes every release build fail on a
+// missing directory, so treat an absent web UI the same as `--skip-embed-web-ui`
+// rather than as an error. The binary is fully functional without it.
+const webUiDir = path.join(import.meta.dirname, "../../app")
+const hasWebUi = await Bun.file(path.join(webUiDir, "package.json")).exists()
+if (!skipEmbedWebUi && !hasWebUi) {
+  console.log(`No web UI at ${webUiDir} — building without an embedded web UI`)
+}
+const embeddedFileMap = skipEmbedWebUi || !hasWebUi ? null : await createEmbeddedWebUIBundle()
 const treeSitterWorker = await Bun.file(fileURLToPath(import.meta.resolve("@opentui/core/parser.worker"))).text()
 
 const allTargets: {
