@@ -338,7 +338,10 @@ const layer = Layer.effect(
             }
             yield* ensureToolCall(value)
             const rawInput = isRecord(value.input) ? value.input : { value: value.input }
-            const input = PrivacyGuard.get().detokenizeObject(rawInput)
+            // `detokenizeObject` is typed `unknown -> unknown`, but it preserves the
+            // input's shape and `rawInput` is always a record here, so the detokenized
+            // value is a record too. `ToolState.input` requires that.
+            const input = PrivacyGuard.get().detokenizeObject(rawInput) as Record<string, any>
             yield* updateToolCall(value.id, (match) => ({
               ...match,
               tool: value.name,
