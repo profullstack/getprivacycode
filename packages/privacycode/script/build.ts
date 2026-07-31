@@ -136,6 +136,11 @@ const targets = singleFlag
 
 await $`rm -rf dist`
 
+// Take the executable name from the package's own `bin` field rather than
+// hardcoding it, so the compiled binary, the npm `bin` mapping and the
+// installer can't drift apart again.
+const binaryName = Object.keys(pkg.bin ?? {})[0] ?? pkg.name
+
 const binaries: Record<string, string> = {}
 if (!skipInstall) {
   await $`bun install --os="*" --cpu="*" @opentui/core@${pkg.dependencies["@opentui/core"]}`
@@ -175,8 +180,13 @@ for (const item of targets) {
       autoloadTsconfig: true,
       autoloadPackageJson: true,
       target: name.replace(pkg.name, "bun") as any,
-      outfile: `dist/${name}/bin/opencode`,
-      execArgv: [`--user-agent=opencode/${Script.version}`, "--use-system-ca", "--"],
+      // The archives built here are what `install` unpacks, and it moves a file
+      // named after the package (`mv "$tmp_dir/privacycode"`) — same name this
+      // package's own `bin` field declares. Emitting `opencode` here left the
+      // two ends disagreeing, so a release built from this tree could not be
+      // installed by its own installer.
+      outfile: `dist/${name}/bin/${binaryName}`,
+      execArgv: [`--user-agent=${binaryName}/${Script.version}`, "--use-system-ca", "--"],
       windows: {},
     },
     files: {
@@ -203,7 +213,7 @@ for (const item of targets) {
 
   // Smoke test: only run if binary is for current platform
   if (item.os === process.platform && item.arch === process.arch && !item.abi) {
-    const binaryPath = `dist/${name}/bin/opencode`
+    const binaryPath = `dist/${name}/bin/${binaryName}`
     console.log(`Running smoke test: ${binaryPath} --version`)
     try {
       const versionOutput = await $`${binaryPath} --version`.text()
