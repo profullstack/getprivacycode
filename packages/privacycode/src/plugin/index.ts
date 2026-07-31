@@ -70,8 +70,13 @@ function internalPlugins(flags: RuntimeFlags.Info): PluginInstance[] {
         experimentalWebSockets: experimentalWebSocketsEnabled({ enabled: flags.experimentalWebSockets }),
       }),
     CopilotAuthPlugin,
-    GitlabAuthPlugin,
-    PoeAuthPlugin,
+    // `opencode-gitlab-auth` and `opencode-poe-auth` are published against
+    // upstream's `@opencode-ai/plugin`, which is a *different copy* of the same
+    // interface than this fork's `@privacycode-ai/plugin`. The runtime shapes are
+    // identical; TypeScript treats the two `PluginInput["client"]["global"]`
+    // types as unrelated, so the assignment needs an explicit bridge.
+    GitlabAuthPlugin as unknown as PluginInstance,
+    PoeAuthPlugin as unknown as PluginInstance,
     CloudflareWorkersAuthPlugin,
     CloudflareAIGatewayAuthPlugin,
     AzureAuthPlugin,

@@ -171,11 +171,11 @@ describe("Config", () => {
           yield* Effect.promise(() =>
             Promise.all([
               fs.writeFile(
-                path.join(tmp.path, "opencode.json"),
+                path.join(tmp.path, "privacycode.json"),
                 JSON.stringify({ $schema: "base", providers: { base: provider } }),
               ),
               fs.writeFile(
-                path.join(tmp.path, "opencode.jsonc"),
+                path.join(tmp.path, "privacycode.jsonc"),
                 `{
                   // Later global files override scalar fields while retaining providers.
                   "$schema": "last",
@@ -192,11 +192,11 @@ describe("Config", () => {
             expect(documents.map((document) => document.type)).toEqual(["document", "document"])
             expect(documents.map((document) => document.info.$schema)).toEqual(["base", "last"])
             expect(documents[0]).toBeInstanceOf(Config.Document)
-            expect(documents[0]?.path).toBe(path.join(tmp.path, "opencode.json"))
+            expect(documents[0]?.path).toBe(path.join(tmp.path, "privacycode.json"))
             expect(documents[1]?.info.providers?.last).toBeInstanceOf(ConfigProvider.Info)
 
             yield* Effect.promise(() =>
-              fs.writeFile(path.join(tmp.path, "opencode.jsonc"), JSON.stringify({ $schema: "changed" })),
+              fs.writeFile(path.join(tmp.path, "privacycode.jsonc"), JSON.stringify({ $schema: "changed" })),
             )
             expect(
               (yield* config.entries())
@@ -238,7 +238,7 @@ describe("Config", () => {
     ).pipe(
       Effect.flatMap((tmp) =>
         Effect.gen(function* () {
-          const file = path.join(tmp.path, "opencode.json")
+          const file = path.join(tmp.path, "privacycode.json")
           const contents = JSON.stringify({
             shell: "/bin/zsh",
             experimental: { policies: [{ effect: "deny", action: "provider.use", resource: "openai" }] },
@@ -273,7 +273,7 @@ describe("Config", () => {
         Effect.gen(function* () {
           yield* Effect.promise(() =>
             fs.writeFile(
-              path.join(tmp.path, "opencode.json"),
+              path.join(tmp.path, "privacycode.json"),
               JSON.stringify({
                 shell: "/bin/bash",
                 model: "anthropic/claude",
@@ -461,7 +461,7 @@ describe("Config", () => {
         Effect.gen(function* () {
           yield* Effect.promise(() =>
             fs.writeFile(
-              path.join(tmp.path, "opencode.json"),
+              path.join(tmp.path, "privacycode.json"),
               JSON.stringify({
                 reference: {
                   local: { path: "../library" },
@@ -497,7 +497,7 @@ describe("Config", () => {
         Effect.gen(function* () {
           yield* Effect.promise(() =>
             fs.writeFile(
-              path.join(tmp.path, "opencode.json"),
+              path.join(tmp.path, "privacycode.json"),
               JSON.stringify({
                 shell: "/bin/zsh",
                 default_agent: "reviewer",
@@ -675,8 +675,8 @@ describe("Config", () => {
         Effect.gen(function* () {
           yield* Effect.promise(() =>
             Promise.all([
-              fs.writeFile(path.join(tmp.path, "opencode.json"), JSON.stringify({ $schema: "base" })),
-              fs.writeFile(path.join(tmp.path, "opencode.jsonc"), "{ invalid"),
+              fs.writeFile(path.join(tmp.path, "privacycode.json"), JSON.stringify({ $schema: "base" })),
+              fs.writeFile(path.join(tmp.path, "privacycode.jsonc"), "{ invalid"),
             ]),
           )
           return yield* Effect.gen(function* () {
@@ -701,13 +701,13 @@ describe("Config", () => {
           yield* Effect.promise(async () => {
             await fs.mkdir(global, { recursive: true })
             await fs.writeFile(
-              path.join(global, "opencode.json"),
+              path.join(global, "privacycode.json"),
               JSON.stringify({
                 experimental: { policies: [{ effect: "deny", action: "provider.use", resource: "openai" }] },
               }),
             )
             await fs.writeFile(
-              path.join(tmp.path, "opencode.json"),
+              path.join(tmp.path, "privacycode.json"),
               JSON.stringify({
                 experimental: { policies: [{ effect: "allow", action: "provider.use", resource: "openai" }] },
               }),
@@ -738,17 +738,17 @@ describe("Config", () => {
           yield* Effect.promise(async () => {
             await fs.mkdir(global, { recursive: true })
             await fs.mkdir(directory, { recursive: true })
-            await fs.mkdir(path.join(root, ".opencode"), { recursive: true })
-            await fs.mkdir(path.join(directory, ".opencode"), { recursive: true })
+            await fs.mkdir(path.join(root, ".privacycode"), { recursive: true })
+            await fs.mkdir(path.join(directory, ".privacycode"), { recursive: true })
             await Promise.all([
-              fs.writeFile(path.join(tmp.path, "opencode.json"), JSON.stringify({ $schema: "outside" })),
-              fs.writeFile(path.join(global, "opencode.json"), JSON.stringify({ $schema: "global" })),
-              fs.writeFile(path.join(root, "opencode.json"), JSON.stringify({ $schema: "root" })),
-              fs.writeFile(path.join(parent, "opencode.jsonc"), JSON.stringify({ $schema: "parent" })),
-              fs.writeFile(path.join(directory, "opencode.json"), JSON.stringify({ $schema: "directory" })),
-              fs.writeFile(path.join(root, ".opencode", "opencode.json"), JSON.stringify({ $schema: "root-dot" })),
+              fs.writeFile(path.join(tmp.path, "privacycode.json"), JSON.stringify({ $schema: "outside" })),
+              fs.writeFile(path.join(global, "privacycode.json"), JSON.stringify({ $schema: "global" })),
+              fs.writeFile(path.join(root, "privacycode.json"), JSON.stringify({ $schema: "root" })),
+              fs.writeFile(path.join(parent, "privacycode.jsonc"), JSON.stringify({ $schema: "parent" })),
+              fs.writeFile(path.join(directory, "privacycode.json"), JSON.stringify({ $schema: "directory" })),
+              fs.writeFile(path.join(root, ".privacycode", "privacycode.json"), JSON.stringify({ $schema: "root-dot" })),
               fs.writeFile(
-                path.join(directory, ".opencode", "opencode.jsonc"),
+                path.join(directory, ".privacycode", "privacycode.jsonc"),
                 JSON.stringify({ $schema: "directory-dot" }),
               ),
             ])
@@ -761,8 +761,8 @@ describe("Config", () => {
 
             expect(entries.filter((entry) => entry.type === "directory").map((entry) => entry.path)).toEqual([
               AbsolutePath.make(global),
-              AbsolutePath.make(path.join(root, ".opencode")),
-              AbsolutePath.make(path.join(directory, ".opencode")),
+              AbsolutePath.make(path.join(root, ".privacycode")),
+              AbsolutePath.make(path.join(directory, ".privacycode")),
             ])
             expect(documents.map((document) => document.info.$schema)).toEqual([
               "global",
@@ -779,9 +779,9 @@ describe("Config", () => {
               "parent",
               "directory",
               "root-dot",
-              AbsolutePath.make(path.join(root, ".opencode")),
+              AbsolutePath.make(path.join(root, ".privacycode")),
               "directory-dot",
-              AbsolutePath.make(path.join(directory, ".opencode")),
+              AbsolutePath.make(path.join(directory, ".privacycode")),
             ])
           }).pipe(
             Effect.provide(
