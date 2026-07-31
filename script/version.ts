@@ -6,14 +6,33 @@ import { $ } from "bun"
 const output = [`version=${Script.version}`]
 const sha = process.env.GITHUB_SHA ?? (await $`git rev-parse HEAD`.text()).trim()
 
+// `script/changelog.ts` generates release notes by shelling out to the
+// `opencode` CLI, which is neither installed nor configured with an API key in
+// this repository's CI. That is a nice-to-have, not a release blocker, so run it
+// best-effort and fall back to the commit log between the last tag and this sha.
+async function commitLog() {
+  const previous = await $`git describe --tags --abbrev=0`
+    .text()
+    .then((x) => x.trim())
+    .catch(() => "")
+  const range = previous ? `${previous}..${sha}` : sha
+  const log = await $`git log --no-merges --pretty=format:"- %s (%h)" ${range}`
+    .text()
+    .then((x) => x.trim())
+    .catch(() => "")
+  return log || "No notable changes"
+}
+
 if (!Script.preview) {
-  await $`bun script/changelog.ts --to ${sha}`.cwd(process.cwd())
+  await $`bun script/changelog.ts --to ${sha}`.cwd(process.cwd()).nothrow().quiet()
   const file = `${process.cwd()}/UPCOMING_CHANGELOG.md`
   const body = await Bun.file(file)
     .text()
-    .catch(() => "No notable changes")
+    .then((x) => x.trim())
+    .catch(() => "")
+    .then((x) => x || commitLog())
   const dir = process.env.RUNNER_TEMP ?? "/tmp"
-  const notesFile = `${dir}/opencode-release-notes.txt`
+  const notesFile = `${dir}/privacycode-release-notes.txt`
   await Bun.write(notesFile, body)
   await $`gh release create v${Script.version} -d --target ${sha} --title "v${Script.version}" --notes-file ${notesFile}`
   const release = await $`gh release view v${Script.version} --json tagName,databaseId`.json()
