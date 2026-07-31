@@ -20,6 +20,7 @@ import { Global } from "@privacycode-ai/core/global"
 import { modify, applyEdits } from "jsonc-parser"
 import { Filesystem } from "@/util/filesystem"
 import { Effect } from "effect"
+import * as ConfigPaths from "@/config/paths"
 
 function getAuthStatusIcon(status: MCP.AuthStatus): string {
   switch (status) {
@@ -392,11 +393,24 @@ export const McpLogoutCommand = effectCmd({
 })
 
 async function resolveConfigPath(baseDir: string, global = false) {
-  // Check for existing config files (prefer .jsonc over .json, check .opencode/ subdirectory too)
-  const candidates = [path.join(baseDir, "opencode.json"), path.join(baseDir, "opencode.jsonc")]
+  // Look for an existing config file first, so `mcp add` edits what the project
+  // already uses rather than creating a second file next to it. Pre-rename
+  // `opencode.*` files are still matched for that reason. When nothing exists,
+  // candidates[0] is what gets created — and that must carry this project's
+  // name, not upstream's.
+  const names = [...ConfigPaths.CONFIG_NAMES]
+  const candidates = names.flatMap((name) => [
+    path.join(baseDir, `${name}.json`),
+    path.join(baseDir, `${name}.jsonc`),
+  ])
 
   if (!global) {
-    candidates.push(path.join(baseDir, ".opencode", "opencode.json"), path.join(baseDir, ".opencode", "opencode.jsonc"))
+    for (const dir of ConfigPaths.PROJECT_DIRS) {
+      candidates.push(...names.flatMap((name) => [
+        path.join(baseDir, dir, `${name}.json`),
+        path.join(baseDir, dir, `${name}.jsonc`),
+      ]))
+    }
   }
 
   for (const candidate of candidates) {
@@ -405,7 +419,7 @@ async function resolveConfigPath(baseDir: string, global = false) {
     }
   }
 
-  // Default to opencode.json if none exist
+  // Nothing exists yet: create the first candidate, i.e. privacycode.json.
   return candidates[0]
 }
 
