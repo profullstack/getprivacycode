@@ -61,6 +61,7 @@ jobs:
 
       - name: Setup git committer
         id: committer
+        if: vars.OPENCODE_APP_ID != ''
         uses: ./.github/actions/setup-git-committer
         with:
           opencode-app-id: ${{ vars.OPENCODE_APP_ID }}
@@ -70,7 +71,7 @@ jobs:
         run: |
           ./script/version.ts
         env:
-          GH_TOKEN: ${{ steps.committer.outputs.token }}
+          GH_TOKEN: ${{ steps.committer.outputs.token || secrets.GITHUB_TOKEN }}
           PRIVACYCODE_BUMP: ${{ inputs.bump }}
           PRIVACYCODE_VERSION: ${{ inputs.version }}
           GH_REPO: ${{ github.repository }}
@@ -93,6 +94,7 @@ jobs:
 
       - name: Setup git committer
         id: committer
+        if: vars.OPENCODE_APP_ID != ''
         uses: ./.github/actions/setup-git-committer
         with:
           opencode-app-id: ${{ vars.OPENCODE_APP_ID }}
@@ -107,7 +109,7 @@ jobs:
           PRIVACYCODE_VERSION: ${{ needs.version.outputs.version }}
           PRIVACYCODE_RELEASE: ${{ needs.version.outputs.release }}
           GH_REPO: ${{ needs.version.outputs.repo }}
-          GH_TOKEN: ${{ steps.committer.outputs.token }}
+          GH_TOKEN: ${{ steps.committer.outputs.token || secrets.GITHUB_TOKEN }}
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -152,6 +154,7 @@ jobs:
 
       - name: Setup git committer
         id: committer
+        if: vars.OPENCODE_APP_ID != ''
         uses: ./.github/actions/setup-git-committer
         with:
           opencode-app-id: ${{ vars.OPENCODE_APP_ID }}
@@ -212,7 +215,7 @@ jobs:
         if: needs.version.outputs.release != ''
         shell: pwsh
         env:
-          GH_TOKEN: ${{ steps.committer.outputs.token }}
+          GH_TOKEN: ${{ steps.committer.outputs.token || secrets.GITHUB_TOKEN }}
         run: |
           gh release upload "v${{ needs.version.outputs.version }}" `
             "${{ github.workspace }}\packages\privacycode\dist\privacycode-windows-arm64.zip" `
@@ -317,6 +320,7 @@ jobs:
 
       - name: Setup git committer
         id: committer
+        if: vars.OPENCODE_APP_ID != ''
         uses: ./.github/actions/setup-git-committer
         with:
           opencode-app-id: ${{ vars.OPENCODE_APP_ID }}
@@ -354,7 +358,7 @@ jobs:
         timeout-minutes: 60
         env:
           PRIVACYCODE_CHANNEL: ${{ (github.ref_name == 'beta' && 'beta') || 'prod' }}
-          GH_TOKEN: ${{ steps.committer.outputs.token }}
+          GH_TOKEN: ${{ steps.committer.outputs.token || secrets.GITHUB_TOKEN }}
           CSC_LINK: ${{ secrets.APPLE_CERTIFICATE }}
           CSC_KEY_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           APPLE_API_KEY: ${{ runner.temp }}/apple-api-key.p8
@@ -506,6 +510,7 @@ jobs:
 
       - name: Setup git committer
         id: committer
+        if: vars.OPENCODE_APP_ID != ''
         uses: ./.github/actions/setup-git-committer
         with:
           opencode-app-id: ${{ vars.OPENCODE_APP_ID }}
@@ -533,7 +538,7 @@ jobs:
       - name: Upload desktop release assets
         if: needs.version.outputs.release && inputs.build_desktop
         env:
-          GH_TOKEN: ${{ steps.committer.outputs.token }}
+          GH_TOKEN: ${{ steps.committer.outputs.token || secrets.GITHUB_TOKEN }}
         run: |
           shopt -s nullglob
           files=(/tmp/desktop/*.{exe,blockmap,dmg,zip,AppImage,deb,rpm} /tmp/desktop/*.app.tar.gz)
@@ -548,7 +553,7 @@ jobs:
           PRIVACYCODE_VERSION: ${{ needs.version.outputs.version }}
           PRIVACYCODE_RELEASE: ${{ needs.version.outputs.release }}
           AUR_KEY: ${{ secrets.AUR_KEY }}
-          GITHUB_TOKEN: ${{ steps.committer.outputs.token }}
+          GITHUB_TOKEN: ${{ steps.committer.outputs.token || secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ needs.version.outputs.repo }}
           NPM_CONFIG_PROVENANCE: false
           LATEST_YML_DIR: /tmp/latest-yml
