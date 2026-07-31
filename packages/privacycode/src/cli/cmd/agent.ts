@@ -2,6 +2,7 @@ import { cmd } from "./cmd"
 import * as prompts from "@clack/prompts"
 import { UI } from "../ui"
 import { Global } from "@privacycode-ai/core/global"
+import * as ConfigPaths from "@/config/paths"
 import path from "path"
 import fs from "fs/promises"
 import { Filesystem } from "@/util/filesystem"
@@ -109,7 +110,10 @@ const AgentCreateCommand = effectCmd({
           if (prompts.isCancel(scopeResult)) throw new UI.CancelledError()
           scope = scopeResult
         }
-        targetPath = path.join(scope === "global" ? Global.Path.config : path.join(ctx.worktree, ".opencode"), "agents")
+        targetPath = path.join(
+          scope === "global" ? Global.Path.config : path.join(ctx.worktree, ConfigPaths.PROJECT_DIR),
+          "agents",
+        )
       }
 
       // Get description

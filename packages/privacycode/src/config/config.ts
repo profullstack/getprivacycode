@@ -406,8 +406,13 @@ const layer = Layer.effect(
         }
 
         if (!Flag.PRIVACYCODE_DISABLE_PROJECT_CONFIG) {
-          for (const file of yield* ConfigPaths.files("opencode", ctx.directory, ctx.worktree).pipe(Effect.orDie)) {
-            yield* merge(file, yield* loadFile(file, authEnv), "local")
+          // Bare project-root config. Only `opencode.*` was looked up here, so a
+          // root-level `privacycode.jsonc` was silently ignored even though the
+          // same basename is honoured inside the dot-directories below.
+          for (const name of ConfigPaths.CONFIG_NAMES) {
+            for (const file of yield* ConfigPaths.files(name, ctx.directory, ctx.worktree).pipe(Effect.orDie)) {
+              yield* merge(file, yield* loadFile(file, authEnv), "local")
+            }
           }
         }
 
