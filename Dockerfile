@@ -1,7 +1,7 @@
 # Static server for the getprivacycode.com marketing site.
 # The Next.js marketing source lives outside this repo; we vendor the built
 # export under ./site and serve it with a zero-dependency Node server.
-FROM node:22-slim
+FROM node:24-slim
 
 WORKDIR /app
 COPY serve.mjs ./serve.mjs
