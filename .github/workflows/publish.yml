@@ -135,7 +135,7 @@ jobs:
     needs:
       - build-cli
       - version
-    runs-on: windows-latest
+    runs-on: windows-2025
     if: github.repository == 'profullstack/getprivacycode' && inputs.sign_windows
     env:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -261,7 +261,7 @@ jobs:
           - host: "windows-2025"
             target: aarch64-pc-windows-msvc
             platform_flag: --win --arm64
-          - host: "windows-latest"
+          - host: "windows-2025"
             target: x86_64-pc-windows-msvc
             platform_flag: --win
           - host: "ubuntu-latest"
