@@ -71,11 +71,6 @@ describe("file HttpApi", () => {
           return body.includes("hello.txt") ? { response, body } : undefined
         }),
         "file search index was not ready",
-        // The index is built by ripgrep, which is downloaded and unpacked on
-        // first use. On a cold Windows runner that alone outlasts the 5s
-        // default and surfaces as "index was not ready" rather than as the
-        // download it actually is.
-        "60 seconds",
       ),
     )
 
