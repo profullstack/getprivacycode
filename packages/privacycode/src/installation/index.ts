@@ -172,6 +172,10 @@ const layer: Layer.Layer<Service, never, HttpClient.HttpClient | AppProcess.Serv
         }
       }),
       method: Effect.fn("Installation.method")(function* () {
+        // `install` puts the binary in `~/.privacycode/bin`; `.opencode/bin` is
+        // still matched so installs predating the rename keep reporting "curl"
+        // and therefore keep upgrading through the installer rather than npm.
+        if (process.execPath.includes(path.join(".privacycode", "bin"))) return "curl" as Method
         if (process.execPath.includes(path.join(".opencode", "bin"))) return "curl" as Method
         if (process.execPath.includes(path.join(".local", "bin"))) return "curl" as Method
         const exec = process.execPath.toLowerCase()

@@ -18,6 +18,7 @@ import { Permission } from "@/permission"
 import { mergeDeep, pipe, sortBy, values } from "remeda"
 import { Global } from "@privacycode-ai/core/global"
 import path from "path"
+import * as ConfigPaths from "@/config/paths"
 import { Plugin } from "@/plugin"
 import { Skill } from "../skill"
 import { Effect, Context, Layer, Schema } from "effect"
@@ -170,7 +171,11 @@ const layer = Layer.effect(
                 },
                 edit: {
                   "*": "deny",
-                  [path.join(".opencode", "plans", "*.md")]: "allow",
+                  // Plans are written to `.privacycode/plans`; `.opencode` stays
+                  // permitted so plans made before the rename remain editable.
+                  ...Object.fromEntries(
+                    ConfigPaths.PROJECT_DIRS.map((dir) => [path.join(dir, "plans", "*.md"), "allow" as const]),
+                  ),
                   [path.relative(ctx.worktree, path.join(Global.Path.data, path.join("plans", "*.md")))]: "allow",
                 },
               }),
