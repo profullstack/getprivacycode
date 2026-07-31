@@ -4,6 +4,7 @@ import { Slug } from "@privacycode-ai/core/util/slug"
 import { SessionV1 } from "@privacycode-ai/core/v1/session"
 import { serviceUse } from "@privacycode-ai/core/effect/service-use"
 import path from "path"
+import * as ConfigPaths from "@/config/paths"
 import { BackgroundJob } from "@/background/job"
 import { Decimal } from "decimal.js"
 import type { ProviderMetadata, Usage } from "@privacycode-ai/llm"
@@ -330,7 +331,7 @@ export const Event = {
 
 export function plan(input: { slug: string; time: { created: number } }, instance: InstanceContext) {
   const base = instance.project.vcs
-    ? path.join(instance.worktree, ".opencode", "plans")
+    ? path.join(instance.worktree, ConfigPaths.PROJECT_DIR, "plans")
     : path.join(Global.Path.data, "plans")
   return path.join(base, [input.time.created, input.slug].join("-") + ".md")
 }
