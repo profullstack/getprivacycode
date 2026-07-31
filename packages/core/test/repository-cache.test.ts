@@ -12,6 +12,9 @@ import { git, gitRemote } from "./fixture/git"
 import { tmpdir } from "./fixture/tmpdir"
 import { testEffect } from "./lib/effect"
 
+// Generous: covers a real git clone on a slow Windows runner.
+const CLONE_TIMEOUT = 120_000
+
 const it = testEffect(Layer.empty)
 
 describe("RepositoryCache", () => {
@@ -31,6 +34,10 @@ describe("RepositoryCache", () => {
         expect(yield* read(path.join(localPath, "README.md"))).toBe("one\n")
       }).pipe(Effect.provide(cacheLayer(fixture.root))),
     ),
+    // Each of these performs a real `git clone`. On a cold Windows runner that
+    // exceeds bun's 5s default and the test is killed mid-clone, surfacing as a
+    // CloneFailedError rather than a timeout.
+    CLONE_TIMEOUT,
   )
 
   it.live("serializes concurrent materialization for the same checkout", () =>
@@ -46,6 +53,10 @@ describe("RepositoryCache", () => {
         expect(results[0].localPath).toBe(results[1].localPath)
       }).pipe(Effect.provide(cacheLayer(fixture.root))),
     ),
+    // Each of these performs a real `git clone`. On a cold Windows runner that
+    // exceeds bun's 5s default and the test is killed mid-clone, surfacing as a
+    // CloneFailedError rather than a timeout.
+    CLONE_TIMEOUT,
   )
 
   it.live("replaces an existing checkout whose origin does not match", () =>
@@ -64,6 +75,10 @@ describe("RepositoryCache", () => {
         expect(yield* exists(path.join(replaced.localPath, "stale.txt"))).toBe(false)
       }).pipe(Effect.provide(cacheLayer(fixture.root))),
     ),
+    // Each of these performs a real `git clone`. On a cold Windows runner that
+    // exceeds bun's 5s default and the test is killed mid-clone, surfacing as a
+    // CloneFailedError rather than a timeout.
+    CLONE_TIMEOUT,
   )
 
   it.live("returns typed validation and clone failures", () =>
@@ -84,6 +99,10 @@ describe("RepositoryCache", () => {
         expect(cloneFailure).toBeInstanceOf(RepositoryCache.CloneFailedError)
       }).pipe(Effect.provide(cacheLayer(fixture.root))),
     ),
+    // Each of these performs a real `git clone`. On a cold Windows runner that
+    // exceeds bun's 5s default and the test is killed mid-clone, surfacing as a
+    // CloneFailedError rather than a timeout.
+    CLONE_TIMEOUT,
   )
 })
 
