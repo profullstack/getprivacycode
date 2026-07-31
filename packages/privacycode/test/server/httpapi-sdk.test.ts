@@ -393,8 +393,6 @@ describe("HttpApi SDK", () => {
             Effect.map((result) => (result.data?.data.length ? result : undefined)),
           ),
           "SDK file search index was not ready",
-          // Same cold ripgrep download as httpapi-file.test.ts.
-          "60 seconds",
         )
         const url = new URL(request!.url)
 
