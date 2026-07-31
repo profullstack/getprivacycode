@@ -193,7 +193,10 @@ describe("tool.read external_directory permission", () => {
         const { items, next } = asks()
         const target = path.join(dir, "test.txt")
         const alt = target
-          .replace(/^[A-Za-z]:/, "")
+          // Drive letter deliberately kept: a drive-relative path resolves against
+          // the *current* drive on Windows, and GitHub runners put the workspace on
+          // D: while TMP is on C:, so stripping it referenced a nonexistent file.
+          // Lowercasing and flipping separators still exercises normalisation.
           .replaceAll("\\", "/")
           .toLowerCase()
 

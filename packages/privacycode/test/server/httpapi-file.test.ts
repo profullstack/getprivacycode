@@ -52,6 +52,9 @@ describe("file HttpApi", () => {
     expect(await status.json()).toEqual([])
   })
 
+  // First test in this package to reach ripgrep, so it pays the one-time
+  // download and unpack. On Windows that is a fetch plus PowerShell
+  // Expand-Archive, well past bun's 5s default.
   test("serves search endpoints", async () => {
     await using tmp = await tmpdir({ git: true })
     await Bun.write(path.join(tmp.path, "hello.txt"), "needle")
@@ -79,5 +82,5 @@ describe("file HttpApi", () => {
 
     expect(symbols.status).toBe(200)
     expect(await symbols.json()).toEqual([])
-  })
+  }, 120_000)
 })
