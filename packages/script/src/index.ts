@@ -34,12 +34,29 @@ const IS_PREVIEW = CHANNEL !== "latest"
 const VERSION = await (async () => {
   if (env.PRIVACYCODE_VERSION) return env.PRIVACYCODE_VERSION
   if (IS_PREVIEW) return `0.0.0-${CHANNEL}-${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "")}`
-  const version = await fetch("https://registry.npmjs.org/opencode-ai/latest")
-    .then((res) => {
-      if (!res.ok) throw new Error(res.statusText)
-      return res.json()
-    })
-    .then((data: any) => data.version)
+  // Derive the next version from this repository's own latest release. This
+  // used to read `registry.npmjs.org/opencode-ai/latest`, which meant the fork
+  // numbered its releases from upstream opencode's npm package rather than from
+  // anything it had actually shipped. Fall back to the version in the root
+  // package.json when there is no release yet (first release, or a new fork).
+  const repo = process.env["GH_REPO"] || process.env["GITHUB_REPOSITORY"]
+  // The root package.json carries no `version`, so fall back to the CLI package.
+  const fallback = await Bun.file(path.resolve(import.meta.dir, "../../privacycode/package.json"))
+    .json()
+    .then((pkg: any) => pkg.version)
+    .catch(() => "0.0.0")
+  const version = await (async () => {
+    if (!repo) return fallback
+    const headers: Record<string, string> = { accept: "application/vnd.github+json" }
+    const token = process.env["GH_TOKEN"] || process.env["GITHUB_TOKEN"]
+    if (token) headers["authorization"] = `Bearer ${token}`
+    const latest = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, { headers })
+      .then((res) => (res.ok ? res.json() : null))
+      .catch(() => null)
+    const tag = (latest as any)?.tag_name
+    if (typeof tag !== "string") return fallback
+    return tag.replace(/^v/, "")
+  })()
   const [major, minor, patch] = version.split(".").map((x: string) => Number(x) || 0)
   const t = env.PRIVACYCODE_BUMP?.toLowerCase()
   if (t === "major") return `${major + 1}.0.0`
@@ -74,4 +91,4 @@ export const Script = {
     return team
   },
 }
-console.log(`opencode script`, JSON.stringify(Script, null, 2))
+console.log(`privacycode script`, JSON.stringify(Script, null, 2))
