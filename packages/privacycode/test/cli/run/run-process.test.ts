@@ -71,14 +71,20 @@ describe("opencode run (non-interactive subprocess)", () => {
     "exits nonzero promptly when the model is unknown (regression for #27371)",
     ({ opencode }) =>
       Effect.gen(function* () {
+        // The point of this bound is that an unknown model fails instead of
+        // hanging. It is not a performance assertion: this case runs
+        // concurrently with four other CLI subprocesses, and on a two-core CI
+        // runner that contention alone can cost more than the old 15s budget
+        // before the CLI has even booted. Kept well below the test timeout so a
+        // genuine hang still fails here rather than timing the whole test out.
         const result = yield* opencode.run("say hi", {
           model: "test/nonexistent-model",
-          timeoutMs: 15_000,
+          timeoutMs: 40_000,
         })
         expect(result.exitCode).not.toBe(0)
-        expect(result.durationMs).toBeLessThan(15_000)
+        expect(result.durationMs).toBeLessThan(40_000)
       }),
-    30_000,
+    60_000,
   )
 
   // The test provider's SSE error item is interpreted by the SDK as an unknown
