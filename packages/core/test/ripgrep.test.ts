@@ -8,6 +8,9 @@ import { RelativePath } from "@privacycode-ai/core/schema"
 import { tmpdir } from "./fixture/tmpdir"
 import { testEffect } from "./lib/effect"
 
+// Generous: covers a cold ripgrep download on a slow Windows runner.
+const RIPGREP_TIMEOUT = 120_000
+
 const it = testEffect(LayerNode.compile(Ripgrep.node))
 
 describe("Ripgrep", () => {
@@ -29,6 +32,11 @@ describe("Ripgrep", () => {
         }),
       (tmp) => Effect.promise(() => tmp[Symbol.asyncDispose]()),
     ),
+    // ripgrep is fetched and unpacked on first use. On Windows that means a
+    // download plus PowerShell `Expand-Archive`, which comfortably exceeds
+    // bun's 5s default and fails the whole file with
+    // "ChildProcess.exitCode (... Expand-Archive ...)".
+    RIPGREP_TIMEOUT,
   )
 
   it.live("never includes git metadata", () =>
@@ -61,5 +69,10 @@ describe("Ripgrep", () => {
         }),
       (tmp) => Effect.promise(() => tmp[Symbol.asyncDispose]()),
     ),
+    // ripgrep is fetched and unpacked on first use. On Windows that means a
+    // download plus PowerShell `Expand-Archive`, which comfortably exceeds
+    // bun's 5s default and fails the whole file with
+    // "ChildProcess.exitCode (... Expand-Archive ...)".
+    RIPGREP_TIMEOUT,
   )
 })
