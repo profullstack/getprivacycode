@@ -17,15 +17,32 @@ const PLIST_META = new Set([
   "_manualProfile",
 ])
 
-function systemManagedConfigDir(): string {
+// Admin-deployed managed config lives under a directory named after this
+// project. The pre-rename `opencode` location is still honoured when it is the
+// only one present, so existing managed deployments keep working.
+function systemManagedConfigDirs(): string[] {
   switch (process.platform) {
     case "darwin":
-      return "/Library/Application Support/opencode"
-    case "win32":
-      return path.join(process.env.ProgramData || "C:\\ProgramData", "opencode")
+      return ["/Library/Application Support/privacycode", "/Library/Application Support/opencode"]
+    case "win32": {
+      const base = process.env.ProgramData || "C:\\ProgramData"
+      return [path.join(base, "privacycode"), path.join(base, "opencode")]
+    }
     default:
-      return "/etc/opencode"
+      return ["/etc/privacycode", "/etc/opencode"]
   }
+}
+
+function systemManagedConfigDir(): string {
+  const candidates = systemManagedConfigDirs()
+  for (const dir of candidates) {
+    try {
+      if (existsSync(dir)) return dir
+    } catch {
+      // ignore and fall through to the default
+    }
+  }
+  return candidates[0]!
 }
 
 export function managedConfigDir() {
