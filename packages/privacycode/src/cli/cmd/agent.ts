@@ -8,6 +8,7 @@ import { Filesystem } from "@/util/filesystem"
 import matter from "gray-matter"
 import { EOL } from "os"
 import type { Argv } from "yargs"
+import type { PermissionV1 } from "@privacycode-ai/core/v1/permission"
 import { Effect } from "effect"
 import { effectCmd } from "../effect-cmd"
 
@@ -231,10 +232,43 @@ const AgentCreateCommand = effectCmd({
   }),
 })
 
+// A ruleset is one rule per permission *and* pattern, so the default agent alone
+// carries ~30 rules — dumping them as raw JSON buries the agent names the
+// listing exists to show. Collapse to one line per action: the permission names,
+// each tagged with how many pattern-specific rules it carries beyond a bare `*`.
+// `--json` still emits the full ruleset for anything that needs the detail.
+function summarizePermissions(ruleset: PermissionV1.Ruleset): string[] {
+  const byAction = new Map<PermissionV1.Action, Map<string, number>>()
+  for (const rule of ruleset) {
+    const permissions = byAction.get(rule.action) ?? new Map<string, number>()
+    // `*` is the catch-all every permission implicitly has; only narrower
+    // patterns are worth surfacing as a count.
+    permissions.set(rule.permission, (permissions.get(rule.permission) ?? 0) + (rule.pattern === "*" ? 0 : 1))
+    byAction.set(rule.action, permissions)
+  }
+
+  const lines: string[] = []
+  for (const action of ["allow", "ask", "deny"] as const) {
+    const permissions = byAction.get(action)
+    if (!permissions) continue
+    const names = [...permissions.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([name, patterns]) => (patterns > 0 ? `${name} (${patterns})` : name))
+    lines.push(`  ${action.padEnd(5)} ${names.join(", ")}`)
+  }
+  return lines
+}
+
 const AgentListCommand = effectCmd({
   command: "list",
   describe: "list all available agents",
-  handler: Effect.fn("Cli.agent.list")(function* () {
+  builder: (yargs: Argv) =>
+    yargs.option("json", {
+      type: "boolean",
+      default: false,
+      describe: "output the full agent list, including complete permission rulesets, as JSON",
+    }),
+  handler: Effect.fn("Cli.agent.list")(function* (args) {
     const { Agent } = yield* Effect.promise(() => import("../../agent/agent"))
     const agents = yield* Agent.Service.use((svc) => svc.list())
     const sortedAgents = agents.sort((a, b) => {
@@ -244,9 +278,16 @@ const AgentListCommand = effectCmd({
       return a.name.localeCompare(b.name)
     })
 
+    if (args.json) {
+      process.stdout.write(JSON.stringify(sortedAgents, null, 2) + EOL)
+      return
+    }
+
     for (const agent of sortedAgents) {
       process.stdout.write(`${agent.name} (${agent.mode})` + EOL)
-      process.stdout.write(`  ${JSON.stringify(agent.permission, null, 2)}` + EOL)
+      for (const line of summarizePermissions(agent.permission)) {
+        process.stdout.write(line + EOL)
+      }
     }
   }),
 })
