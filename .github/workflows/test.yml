@@ -30,7 +30,7 @@ jobs:
           - name: linux
             host: ubuntu-latest
           - name: windows
-            host: windows-latest
+            host: windows-2025
     runs-on: ${{ matrix.settings.host }}
     defaults:
       run:
