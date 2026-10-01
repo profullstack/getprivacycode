@@ -1,6 +1,7 @@
 /**
- * Minimal zero-dependency Node static server for the getprivacycode.com
- * marketing site. Serves the pre-built export in ./site with clean-URL
+ * Minimal zero-dependency static server for the getprivacycode.com
+ * marketing site. Runs under Bun in the image (`bun serve.mjs`) and under
+ * Node unchanged. Serves the pre-built export in ./site with clean-URL
  * fallback (/cli -> cli.html).
  */
 import { createServer } from "node:http"
@@ -90,6 +91,10 @@ const server = createServer(async (req, res) => {
     console.error(err)
   }
 })
+
+// The server is PID 1 in the container: without a handler, `docker stop` on
+// every deploy waits 10 s for SIGKILL.
+for (const signal of ["SIGTERM", "SIGINT"]) process.on(signal, () => process.exit(0))
 
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`getprivacycode.com static site serving ./site on :${PORT}`)
