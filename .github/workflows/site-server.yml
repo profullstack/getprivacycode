@@ -1,0 +1,68 @@
+# Boots the getprivacycode.com site server the way dev2 runs it (Bun, from the
+# Dockerfile) and checks the pages, assets, www redirect and 404 before merge.
+name: site-server
+
+on:
+  pull_request:
+    paths:
+      - Dockerfile
+      - serve.mjs
+      - site/**
+      - .github/workflows/site-server.yml
+  push:
+    branches: [master]
+    paths:
+      - Dockerfile
+      - serve.mjs
+      - site/**
+      - .github/workflows/site-server.yml
+
+permissions:
+  contents: read
+
+jobs:
+  serve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build the dev2 image
+        run: docker build -t site-server-ci .
+
+      - name: Run it and wait for healthy
+        run: |
+          docker run -d --name site -e PORT=3000 -p 127.0.0.1:3000:3000 site-server-ci
+          for i in $(seq 1 30); do
+            s=$(docker inspect -f '{{.State.Health.Status}}' site)
+            [ "$s" = healthy ] && break
+            sleep 2
+          done
+          docker inspect -f '{{.State.Health.Status}}' site | grep -qx healthy
+          docker top site -eo pid,args | tee /dev/stderr | grep -q 'bun serve.mjs'
+
+      - name: Check pages, assets, redirect and 404
+        run: |
+          check() { # expected-status path [extra curl args]
+            want=$1; path=$2; shift 2
+            got=$(curl -s -o /dev/null -w '%{http_code}' "$@" "http://127.0.0.1:3000$path")
+            echo "$got $path"; [ "$got" = "$want" ]
+          }
+          check 200 /
+          check 200 /cli
+          check 200 /docs.html
+          check 200 /enterprise
+          check 200 /privacy
+          check 200 /install
+          check 200 /favicon.ico
+          css=$(cd site && ls _next/static/chunks/*.css | head -1)
+          check 200 "/$css"
+          check 404 /no-such-page
+          check 301 /cli -H 'Host: www.getprivacycode.com'
+          curl -s http://127.0.0.1:3000/ | grep -q '<title>'
+          cmp <(curl -s http://127.0.0.1:3000/install) site/install
+
+      - name: docker stop exits promptly (SIGTERM handler)
+        run: |
+          start=$(date +%s); docker stop site; end=$(date +%s)
+          echo "stopped in $((end - start)) s"; [ $((end - start)) -lt 5 ]
