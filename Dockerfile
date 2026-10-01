@@ -6,8 +6,10 @@
 FROM oven/bun:1.4.0-slim
 
 WORKDIR /app
-COPY serve.mjs ./serve.mjs
-COPY site ./site
+# dev2's checkout is group-only (files 660, dirs 2770), and COPY keeps those
+# modes with root ownership, so the bun user could not read them. Own them.
+COPY --chown=bun:bun serve.mjs ./serve.mjs
+COPY --chown=bun:bun site ./site
 
 ENV NODE_ENV=production
 USER bun
