@@ -27,8 +27,12 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Build the dev2 image
-        run: docker build -t site-server-ci .
+      - name: Build the dev2 image from a dev2-like checkout
+        # dev2 clones with a umask that leaves files 660 and dirs 2770, so the
+        # image must not rely on "other" read bits. Strip them here too.
+        run: |
+          chmod -R o-rwx serve.mjs site
+          docker build -t site-server-ci .
 
       - name: Run it and wait for healthy
         run: |
