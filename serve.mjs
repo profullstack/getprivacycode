@@ -33,6 +33,13 @@ const MIME = {
   ".webmanifest": "application/manifest+json",
 }
 
+// The installer has no extension (`/install`), so the MIME table cannot see it.
+// `/install.sh` is the house-wide spelling of the same one-liner; both serve
+// site/install as a shell script rather than application/octet-stream.
+const ALIASES = { "/install.sh": "/install" }
+const SHELL_SCRIPTS = new Set(["/install"])
+const SHELL_TYPE = "text/x-sh; charset=utf-8"
+
 async function exists(p) {
   try {
     const s = await stat(p)
@@ -67,7 +74,8 @@ const server = createServer(async (req, res) => {
       return
     }
 
-    const { pathname } = new URL(req.url, "http://localhost")
+    const requested = new URL(req.url, "http://localhost").pathname
+    const pathname = ALIASES[requested] ?? requested
     const match = (await resolve(pathname)) ?? (await resolve("/404.html"))
     if (!match) {
       res.writeHead(404, { "content-type": "text/plain; charset=utf-8" })
@@ -76,7 +84,8 @@ const server = createServer(async (req, res) => {
     }
 
     const ext = extname(match)
-    const headers = { "content-type": MIME[ext] ?? "application/octet-stream" }
+    const type = SHELL_SCRIPTS.has(pathname) ? SHELL_TYPE : MIME[ext]
+    const headers = { "content-type": type ?? "application/octet-stream" }
     // Fingerprinted Next.js assets are safe to cache forever; HTML stays fresh.
     if (pathname.startsWith("/_next/") || ext === ".woff2" || ext === ".woff") {
       headers["cache-control"] = "public, max-age=31536000, immutable"
