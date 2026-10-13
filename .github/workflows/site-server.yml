@@ -58,6 +58,7 @@ jobs:
           check 200 /enterprise
           check 200 /privacy
           check 200 /install
+          check 200 /install.sh
           check 200 /favicon.ico
           css=$(cd site && ls _next/static/chunks/*.css | head -1)
           check 200 "/$css"
@@ -65,6 +66,8 @@ jobs:
           check 301 /cli -H 'Host: www.getprivacycode.com'
           curl -s http://127.0.0.1:3000/ | grep -q '<title>'
           cmp <(curl -s http://127.0.0.1:3000/install) site/install
+          cmp <(curl -s http://127.0.0.1:3000/install.sh) site/install
+          curl -sI http://127.0.0.1:3000/install.sh | grep -qi '^content-type: text/x-sh'
 
       - name: docker stop exits promptly (SIGTERM handler)
         run: |

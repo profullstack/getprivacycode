@@ -9,7 +9,7 @@
 **Privacy-first AI coding agent for enterprise.** Your data never leaves your machine unprotected. Defender&trade; tokenizes PII and secrets before any cloud AI sees them.
 
 ```bash
-curl -fsSL https://getprivacycode.com/install | bash
+curl -fsSL https://getprivacycode.com/install.sh | sh
 ```
 
 ## Why PrivacyCode?
@@ -30,7 +30,7 @@ AI coding tools send your code, prompts, and context to cloud providers. But you
 
 ```bash
 # Install
-curl -fsSL https://getprivacycode.com/install | bash
+curl -fsSL https://getprivacycode.com/install.sh | sh
 
 # Or via npm
 npm install -g privacycode
