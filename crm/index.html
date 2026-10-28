@@ -219,6 +219,10 @@ select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='ht
   <div class="modal" id="modalContent"></div>
 </div>
 
+<script type="module">
+import { createSealer, bytesToBase64, wipe } from '/vendor/sealed-secrets/index.js'
+window.crmSealer = { sealer: createSealer({ app: 'getprivacycode-crm', scope: 'operator_mail' }), bytesToBase64, wipe }
+</script>
 <script>
 const API = ''
 let state = { leads: [], templates: [], dashboard: null, currentPage: 'dashboard', emailConfigured: false }
@@ -283,7 +287,7 @@ async function renderPipeline() {
   const stages = ['new','emailed','replied','meeting','negotiation','closed_won','closed_lost']
   let html = `<div class="pipeline">`
   for (const s of stages) {
-    const items = leads.filter((l: any) => l.stage === s)
+    const items = leads.filter((l) => l.stage === s)
     html += `<div class="column" data-stage="${s}">
       <div class="column-header"><span>${STAGE_LABELS[s]}</span><span class="count">${items.length}</span></div>
       <div class="column-body" ondragover="e=>e.preventDefault()" ondrop="e=>dropStage(e,'${s}')">`
@@ -302,8 +306,8 @@ async function renderPipeline() {
 }
 
 let dragId = ''
-function dragStart(e: any, id: string) { dragId = id; e.dataTransfer.effectAllowed = 'move' }
-async function dropStage(e: any, stage: string) {
+function dragStart(e, id) { dragId = id; e.dataTransfer.effectAllowed = 'move' }
+async function dropStage(e, stage) {
   e.preventDefault()
   if (!dragId) return
   await api(`/api/leads/${dragId}/stage`, { method: 'PUT', body: JSON.stringify({ stage }) })
@@ -339,21 +343,21 @@ async function renderLeads() {
   qs('#content').innerHTML = html
 }
 
-async function searchLeads(q: string) {
-  const stage = (document.getElementById('stageFilter') as HTMLSelectElement)?.value || 'all'
+async function searchLeads(q) {
+  const stage = (document.getElementById('stageFilter'))?.value || 'all'
   const leads = await api(`/api/leads?stage=${stage}&search=${encodeURIComponent(q)}`)
   state.leads = leads
   renderLeadsTable(leads)
 }
 
-async function filterStage(stage: string) {
-  const q = (document.getElementById('leadSearch') as HTMLInputElement)?.value || ''
+async function filterStage(stage) {
+  const q = (document.getElementById('leadSearch'))?.value || ''
   const leads = await api(`/api/leads?stage=${stage}&search=${encodeURIComponent(q)}`)
   state.leads = leads
   renderLeadsTable(leads)
 }
 
-function renderLeadsTable(leads: any[]) {
+function renderLeadsTable(leads) {
   const tbl = qs('.leads-toolbar')?.nextElementSibling
   if (!tbl) return
   if (leads.length === 0) {
@@ -369,7 +373,7 @@ function renderLeadsTable(leads: any[]) {
   </table>`
 }
 
-async function showLead(id: string) {
+async function showLead(id) {
   const data = await api(`/api/leads/${id}`)
   const l = data
   qs('#topActions').innerHTML = `<button class="btn btn-secondary" onclick="showSendEmail('${l.id}','${escHtml(l.email)}')">Send Email</button>
@@ -411,7 +415,7 @@ async function showLead(id: string) {
   qs('#content').innerHTML = html
 }
 
-async function addNote(leadId: string) {
+async function addNote(leadId) {
   showModal(`<h3>Add Note</h3>
     <div class="field"><label>Note</label><textarea id="noteBody" rows="4" placeholder="Write a note..."></textarea></div>
     <div class="modal-actions">
@@ -419,14 +423,14 @@ async function addNote(leadId: string) {
       <button class="btn btn-primary" onclick="saveNote('${leadId}')">Save</button>
     </div>`)
 }
-async function saveNote(leadId: string) {
-  const body = (document.getElementById('noteBody') as HTMLTextAreaElement).value
+async function saveNote(leadId) {
+  const body = (document.getElementById('noteBody')).value
   if (!body) return
   await api(`/api/leads/${leadId}/activities`, { method: 'POST', body: JSON.stringify({ type: 'note', body }) })
   closeModal(); toast('Note added'); showLead(leadId)
 }
 
-async function editLead(id: string) {
+async function editLead(id) {
   const l = await api(`/api/leads/${id}`)
   showModal(`<h3>Edit Lead</h3>
     <div class="form-row"><div class="field"><label>Name</label><input id="ef_name" value="${escHtml(l.name)}"></div>
@@ -441,13 +445,13 @@ async function editLead(id: string) {
       <button class="btn btn-primary" onclick="saveEditLead('${id}')">Save</button>
     </div>`)
 }
-async function saveEditLead(id: string) {
+async function saveEditLead(id) {
   const body = { name: qs('#ef_name').value, company: qs('#ef_company').value, title: qs('#ef_title').value, email: qs('#ef_email').value, phone: qs('#ef_phone').value, linkedin: qs('#ef_linkedin').value, notes: qs('#ef_notes').value }
   await api(`/api/leads/${id}`, { method: 'PUT', body: JSON.stringify(body) })
   closeModal(); toast('Lead updated'); showLead(id)
 }
 
-async function deleteLead(id: string) {
+async function deleteLead(id) {
   if (!confirm('Delete this lead?')) return
   await api(`/api/leads/${id}`, { method: 'DELETE' })
   toast('Lead deleted'); renderLeads()
@@ -494,13 +498,13 @@ John Doe,john@acme.com,Acme Inc,CISO
     </div>`)
 }
 async function importCsv() {
-  const csv = (document.getElementById('csvContent') as HTMLTextAreaElement).value
+  const csv = (document.getElementById('csvContent')).value
   if (!csv.trim()) { toast('Paste CSV data first', 'error'); return }
   const res = await api('/api/leads/import-csv', { method: 'POST', body: JSON.stringify({ csv }) })
   closeModal(); toast(`Imported ${res.imported} leads`); renderLeads()
 }
 
-function showSendEmail(leadId: string, email: string) {
+function showSendEmail(leadId, email) {
   const templates = state.templates
   let tplOpts = '<option value="">Select a template...</option>'
   for (const t of templates) {
@@ -519,22 +523,22 @@ function showSendEmail(leadId: string, email: string) {
     </div>`)
 }
 
-function loadTemplate(id: string) {
+function loadTemplate(id) {
   if (!id) return
-  const t = state.templates.find((t: any) => t.id === id)
+  const t = state.templates.find((t) => t.id === id)
   if (!t) return
   qs('#emailSubject').value = t.subject
   qs('#emailBody').value = t.body
 }
 
-async function sendEmail(leadId: string, to: string) {
-  const subject = (document.getElementById('emailSubject') as HTMLInputElement).value
-  const body = (document.getElementById('emailBody') as HTMLTextAreaElement).value
+async function sendEmail(leadId, to) {
+  const subject = (document.getElementById('emailSubject')).value
+  const body = (document.getElementById('emailBody')).value
   if (!subject || !body) { toast('Subject and body required', 'error'); return }
   try {
     await api('/api/email/send', { method: 'POST', body: JSON.stringify({ to, subject, body, lead_id: leadId }) })
     closeModal(); toast('Email sent!'); showLead(leadId)
-  } catch (e: any) {
+  } catch (e) {
     toast(e.message, 'error')
     if (e.message.includes('not configured')) { closeModal(); navigate('settings') }
   }
@@ -576,8 +580,8 @@ function showAddTemplate() {
     </div>`)
 }
 
-function showEditTemplate(id: string) {
-  const t = state.templates.find((t: any) => t.id === id)
+function showEditTemplate(id) {
+  const t = state.templates.find((t) => t.id === id)
   if (!t) return
   showModal(`<h3>Edit Template</h3>
     <div class="field"><label>Name</label><input id="tf_name" value="${escHtml(t.name)}"></div>
@@ -596,11 +600,11 @@ function showEditTemplate(id: string) {
     </div>`)
 }
 
-async function saveTemplate(id?: string) {
-  const name = (document.getElementById('tf_name') as HTMLInputElement).value
-  const subject = (document.getElementById('tf_subject') as HTMLInputElement).value
-  const body = (document.getElementById('tf_body') as HTMLTextAreaElement).value
-  const category = (document.getElementById('tf_category') as HTMLSelectElement).value
+async function saveTemplate(id) {
+  const name = (document.getElementById('tf_name')).value
+  const subject = (document.getElementById('tf_subject')).value
+  const body = (document.getElementById('tf_body')).value
+  const category = (document.getElementById('tf_category')).value
   if (!name || !body) { toast('Name and body required', 'error'); return }
   if (id) {
     await api(`/api/templates/${id}`, { method: 'PUT', body: JSON.stringify({ name, subject, body, category }) })
@@ -612,68 +616,173 @@ async function saveTemplate(id?: string) {
   closeModal(); renderTemplates()
 }
 
-async function deleteTemplate(id: string) {
+async function deleteTemplate(id) {
   if (!confirm('Delete this template?')) return
   await api(`/api/templates/${id}`, { method: 'DELETE' })
   closeModal(); toast('Template deleted'); renderTemplates()
 }
 
 // === SETTINGS ===
+// The Gmail app password is sealed here in the browser under a passphrase you pick
+// (PBKDF2 600k + AES-256-GCM via @profullstack/sealed-secrets). The server stores only
+// ciphertext. Sending and inbox polling need an unlock: the browser derives the data key
+// and sends that (never the passphrase); the server holds it in memory until the TTL
+// ends, you press Lock, or the CRM restarts.
+const OPERATOR = 'operator'
+const TTLS = [['8h','8 hours'],['1d','1 day'],['7d','7 days']]
+
 async function renderSettings() {
   qs('#topActions').innerHTML = ''
-  const status = await api('/api/email/status')
-  const settings = await api('/api/settings')
-  const emailConfig = settings.email_config
-  const email = emailConfig?.email || ''
-  const configured = status.configured
+  const st = await api('/api/email/status')
+  const ttlSelect = `<select id="set_ttl">${TTLS.map(([v,l]) => `<option value="${v}" ${v==='7d'?'selected':''}>${l}</option>`).join('')}</select>`
+  const lockState = !st.sealed ? '' : st.unlocked
+    ? `<span style="margin-left:10px;font-size:13px;color:var(--green)">&#10003; Unlocked until ${escHtml(new Date(st.expires_at).toLocaleString())}</span>`
+    : `<span style="margin-left:10px;font-size:13px;color:var(--yellow)">${escHtml(st.state)}</span>`
 
-  let html = `<div class="settings-section">
+  let gmail
+  if (st.legacy_plaintext && !st.sealed) {
+    gmail = `<p><strong>Your app password is stored unencrypted.</strong> Pick a passphrase to seal it. Sending and reply checks stay paused until you do.</p>
+      <div class="field"><label>Gmail Address</label><input id="set_email" value="${escHtml(st.email)}"></div>
+      <div class="field"><label>New passphrase (10+ characters)</label><input id="set_phrase" type="password" autocomplete="new-password"></div>
+      <div class="field"><label>Confirm passphrase</label><input id="set_phrase2" type="password" autocomplete="new-password"></div>
+      <div class="field"><label>Stay unlocked for</label>${ttlSelect}</div>
+      <button class="btn btn-primary" onclick="migrateLegacy()">Seal it</button>`
+  } else {
+    gmail = `<div class="field"><label>Gmail Address</label><input id="set_email" value="${escHtml(st.email)}" placeholder="you@gmail.com"></div>
+      <div class="field"><label>App Password</label><input id="set_pass" type="password" autocomplete="off" placeholder="${st.sealed ? 'leave blank to keep current' : 'Required'}"></div>
+      <div class="field"><label>${st.sealed ? 'Passphrase' : 'New passphrase (10+ characters)'}</label><input id="set_phrase" type="password" autocomplete="${st.sealed ? 'current-password' : 'new-password'}"></div>
+      ${st.sealed ? '' : `<div class="field"><label>Confirm passphrase</label><input id="set_phrase2" type="password" autocomplete="new-password"></div>`}
+      <div class="field"><label>Stay unlocked for</label>${ttlSelect}</div>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">
+        Need an App Password? Enable 2FA on your Google account, then go to
+        <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">myaccount.google.com/apppasswords</a>
+        and generate one for "Mail". The password is sealed under your passphrase in this browser before it is saved.
+        If you lose the passphrase and the recovery key, it cannot be recovered: generate a new app password and connect again.
+      </p>
+      ${st.sealed ? `<button class="btn btn-primary" onclick="unlockEmail()">Unlock</button>
+        <button class="btn btn-secondary" onclick="lockEmail()">Lock</button>
+        <button class="btn btn-secondary" onclick="saveEmailConfig()">Update address / password</button>`
+      : `<button class="btn btn-primary" onclick="saveEmailConfig()">Connect</button>`}
+      ${lockState}`
+  }
+
+  qs('#content').innerHTML = `<div class="settings-section">
     <h3>Gmail Integration</h3>
     <p>Connect your Gmail account to send emails and automatically detect replies from leads.</p>
-    <div class="field"><label>Gmail Address</label><input id="set_email" value="${escHtml(email)}" placeholder="you@gmail.com"></div>
-    <div class="field"><label>App Password</label>
-      <input id="set_pass" type="password" placeholder="${configured ? '•••••••• (leave blank to keep current)' : 'Required'}" ${configured ? '' : 'required'}>
-    </div>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">
-      Need an App Password? Enable 2FA on your Google account, then go to 
-      <a href="https://myaccount.google.com/apppasswords" target="_blank">myaccount.google.com/apppasswords</a>
-      and generate one for "Mail".
-    </p>
-    <button class="btn btn-primary" onclick="saveEmailConfig()">${configured ? 'Update' : 'Connect'}</button>
-    ${configured ? `<span style="margin-left:10px;font-size:13px;color:var(--green)">&#10003; Connected</span>` : ''}
+    ${gmail}
   </div>
   <div class="settings-section">
     <h3>Check for Replies</h3>
-    <p>PrivacyCode checks your inbox for replies from leads and automatically moves them to "Replied" stage.</p>
+    <p>PrivacyCode checks your inbox every minute for replies from leads and moves them to "Replied". Paused while locked.</p>
     <button class="btn btn-secondary" onclick="checkReplies()">Check Now</button>
   </div>
   <div class="settings-section">
     <h3>About</h3>
     <p style="font-size:13px;color:var(--text-secondary)">PrivacyCode CRM v1. Local database at <code style="font-family:var(--font-mono);font-size:12px">crm/data/crm.db</code>. All data stays on your machine.</p>
   </div>`
-  qs('#content').innerHTML = html
+}
+
+function sealerReady() {
+  if (!window.crmSealer) throw new Error('Encryption module failed to load; reload the page')
+  return window.crmSealer
+}
+
+function readPhrase(confirm) {
+  const p = document.getElementById('set_phrase').value
+  if (confirm) {
+    const p2 = document.getElementById('set_phrase2').value
+    if (p !== p2) throw new Error('Passphrases do not match')
+  }
+  if (p.length < 10) throw new Error('Passphrase must be at least 10 characters')
+  return p
+}
+
+function showRecoveryKey(key) {
+  showModal(`<h2>Save your recovery key</h2>
+    <p style="font-size:13px;margin:12px 0">This is shown once. It unlocks your email if you forget the passphrase. Without either, the stored app password is gone.</p>
+    <pre style="font-family:var(--font-mono);white-space:pre-wrap;word-break:break-all;padding:12px;border:1px solid var(--border)">${escHtml(key)}</pre>
+    <button class="btn btn-primary" onclick="closeModal()">I saved it</button>`)
+}
+
+async function postSealed(email, seal, secrets, dek) {
+  const { bytesToBase64, wipe } = sealerReady()
+  try {
+    return await api('/api/email/save-config', { method: 'POST', body: JSON.stringify({
+      email, seal, secrets, data_key: bytesToBase64(dek), ttl: document.getElementById('set_ttl').value }) })
+  } finally { wipe(dek) }
 }
 
 async function saveEmailConfig() {
-  const email = (document.getElementById('set_email') as HTMLInputElement).value
-  const pass = (document.getElementById('set_pass') as HTMLInputElement).value
-  if (!email) { toast('Email required', 'error'); return }
   try {
-    await api('/api/email/save-config', { method: 'POST', body: JSON.stringify({ email, smtp_pass: pass, imap_pass: pass }) })
-    toast('Email configured!'); renderSettings()
-  } catch (e: any) { toast(e.message, 'error') }
+    const S = sealerReady()
+    const email = document.getElementById('set_email').value.trim()
+    const pass = document.getElementById('set_pass').value
+    if (!email) throw new Error('Email required')
+    const { seal: existing } = await api('/api/email/seal')
+    if (existing) {
+      const phrase = readPhrase(false)
+      if (!pass) throw new Error('Enter the app password to update it')
+      const dek = await S.sealer.unlockSeal(existing, phrase, OPERATOR)
+      const secrets = await S.sealer.sealSecrets(dek, { SMTP_PASS: pass, IMAP_PASS: pass }, OPERATOR)
+      await postSealed(email, existing, secrets, dek)
+    } else {
+      if (!pass) throw new Error('App password required')
+      const phrase = readPhrase(true)
+      const { dek, seal, recoveryKey } = await S.sealer.createSeal(phrase, OPERATOR)
+      const secrets = await S.sealer.sealSecrets(dek, { SMTP_PASS: pass, IMAP_PASS: pass }, OPERATOR)
+      await postSealed(email, seal, secrets, dek)
+      showRecoveryKey(recoveryKey)
+    }
+    toast('Email connected and sealed'); renderSettings()
+  } catch (e) { toast(e.message, 'error') }
+}
+
+async function migrateLegacy() {
+  try {
+    const S = sealerReady()
+    const email = document.getElementById('set_email').value.trim()
+    const phrase = readPhrase(true)
+    const legacy = await api('/api/email/legacy', { method: 'POST' })
+    const { dek, seal, recoveryKey } = await S.sealer.createSeal(phrase, OPERATOR)
+    const secrets = await S.sealer.sealSecrets(dek, legacy, OPERATOR)
+    await postSealed(email, seal, secrets, dek)
+    showRecoveryKey(recoveryKey)
+    toast('App password sealed'); renderSettings()
+  } catch (e) { toast(e.message, 'error') }
+}
+
+async function unlockEmail() {
+  try {
+    const S = sealerReady()
+    const phrase = document.getElementById('set_phrase').value
+    if (!phrase) throw new Error('Enter your passphrase or recovery key')
+    const { seal } = await api('/api/email/seal')
+    let dek
+    try { dek = await S.sealer.unlockSeal(seal, phrase, OPERATOR) }
+    catch { dek = await S.sealer.unlockSealWithRecovery(seal, phrase, OPERATOR).catch(() => { throw new Error('Wrong passphrase or recovery key') }) }
+    try {
+      await api('/api/email/unlock', { method: 'POST', body: JSON.stringify({ data_key: S.bytesToBase64(dek), ttl: document.getElementById('set_ttl').value }) })
+    } finally { S.wipe(dek) }
+    toast('Email unlocked'); renderSettings()
+  } catch (e) { toast(e.message, 'error') }
+}
+
+async function lockEmail() {
+  try { await api('/api/email/lock', { method: 'POST' }); toast('Email locked'); renderSettings() }
+  catch (e) { toast(e.message, 'error') }
 }
 
 async function checkReplies() {
   try {
     const res = await api('/api/email/check', { method: 'POST' })
+    if (res.state) { toast(`Email ${res.state}`, 'error'); return }
     toast(`Checked inbox. ${res.messages} new replies found.`)
     if (res.messages > 0) { setTimeout(() => navigate(state.currentPage), 1000) }
-  } catch (e: any) { toast(e.message, 'error') }
+  } catch (e) { toast(e.message, 'error') }
 }
 
 // === MODAL ===
-function showModal(html: string) {
+function showModal(html) {
   qs('#modalContent').innerHTML = html
   qs('#modalOverlay').classList.add('active')
 }
@@ -683,13 +792,13 @@ document.getElementById('modalOverlay')?.addEventListener('click', (e) => {
 })
 
 // === NAVIGATION ===
-function navigate(page: string) {
+function navigate(page) {
   state.currentPage = page
   qsa('.sidebar-nav a').forEach(a => a.classList.toggle('active', a.dataset.page === page))
-  const titles: Record<string, string> = { dashboard:'Dashboard', pipeline:'Pipeline', leads:'Leads', templates:'Templates', settings:'Settings' }
+  const titles = { dashboard:'Dashboard', pipeline:'Pipeline', leads:'Leads', templates:'Templates', settings:'Settings' }
   qs('#pageTitle').textContent = titles[page] || 'Dashboard'
   qs('#topActions').innerHTML = ''
-  const fns: Record<string, () => Promise<void>> = { dashboard: renderDashboard, pipeline: renderPipeline, leads: renderLeads, templates: renderTemplates, settings: renderSettings }
+  const fns = { dashboard: renderDashboard, pipeline: renderPipeline, leads: renderLeads, templates: renderTemplates, settings: renderSettings }
   if (fns[page]) fns[page]()
 }
 
