@@ -73,8 +73,10 @@ function internalPlugins(flags: RuntimeFlags.Info): PluginInstance[] {
       }),
     CopilotAuthPlugin,
     ModalPlugin,
-    GitlabAuthPlugin,
-    PoeAuthPlugin,
+    // These auth plugins still compile against OpenCode's SDK types. The fork
+    // keeps the same runtime plugin protocol but has a distinct SDK type identity.
+    GitlabAuthPlugin as unknown as PluginInstance,
+    PoeAuthPlugin as unknown as PluginInstance,
     CloudflareWorkersAuthPlugin,
     CloudflareAIGatewayAuthPlugin,
     AzureAuthPlugin,
