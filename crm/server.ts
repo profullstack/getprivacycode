@@ -4,6 +4,7 @@ import { randomUUID } from "crypto"
 import { mkdirSync } from "fs"
 import nodemailer from "nodemailer"
 import { ImapFlow } from "imapflow"
+import { assertEmailSenderAllowed } from "./email-policy"
 import {
   LOCKED_MESSAGE, MailVault, OPERATOR, OPERATOR_TTL_SECONDS, PROTECTED_KEYS, countLegacyRows, decodeDataKey,
   getSeal, legacyMigrationEnabled, readLegacyForMigration, saveSealedConfig, sealer, serverConfig,
@@ -485,10 +486,12 @@ app.get("/api/email/legacy-count", () => ({ unmigrated_rows: countLegacyRows(db)
 app.post("/api/email/send", async ({ body }: { body: any }) => {
   const { to, subject, body: b, lead_id } = body
   if (!to || !subject || !b) throw new Error("to, subject, body required")
+  const config = getEmailConfig()
+  const smtpConfig = serverConfig(db, "smtp_config")
+  const from = config?.email || smtpConfig?.user || "you@gmail.com"
+  assertEmailSenderAllowed(from, smtpConfig?.user)
   if (!vault.status().unlocked) throw new Error(getSeal(db) ? `Email ${LOCKED_MESSAGE}. Go to Settings to unlock.` : "Email not configured. Go to Settings to set up Gmail.")
   if (!transporter) { const ok = await initTransporter(); if (!ok) throw new Error("Email could not connect. Check the address and app password in Settings.") }
-  const config = getEmailConfig()
-  const from = config?.email || "you@gmail.com"
   const info = await transporter!.sendMail({ from: `PrivacyCode CRM <${from}>`, to, subject, text: b })
   if (lead_id) {
     db.query("INSERT INTO activities (id, lead_id, type, subject, body, direction, status, created_at) VALUES (?,?, 'email', ?, ?, 'outbound', 'sent', ?)")
