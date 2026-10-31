@@ -5,6 +5,27 @@ import { $ } from "bun"
 
 const output = [`version=${Script.version}`]
 const sha = process.env.GITHUB_SHA ?? (await $`git rev-parse HEAD`.text()).trim()
+const releaseNotesLimit = 100_000
+const releaseNotesSuffix = "\n\n_Release notes shortened to fit GitHub's release notes limit._"
+
+function limitReleaseNotes(body: string) {
+  const encoder = new TextEncoder()
+  const bytes = encoder.encode(body)
+  if (bytes.byteLength <= releaseNotesLimit) return body
+
+  const maxBodyBytes = releaseNotesLimit - encoder.encode(releaseNotesSuffix).byteLength
+  let result = ""
+  let size = 0
+  for (const character of body) {
+    const characterSize = encoder.encode(character).byteLength
+    if (size + characterSize > maxBodyBytes) break
+    result += character
+    size += characterSize
+  }
+  const lastLine = result.lastIndexOf("\n")
+  if (lastLine > 0) result = result.slice(0, lastLine)
+  return `${result.trimEnd()}${releaseNotesSuffix}`
+}
 
 // `script/changelog.ts` generates release notes by shelling out to the
 // `opencode` CLI, which is neither installed nor configured with an API key in
@@ -33,7 +54,7 @@ if (!Script.preview) {
     .then((x) => x || commitLog())
   const dir = process.env.RUNNER_TEMP ?? "/tmp"
   const notesFile = `${dir}/privacycode-release-notes.txt`
-  await Bun.write(notesFile, body)
+  await Bun.write(notesFile, limitReleaseNotes(body))
   // No --target: GitHub requires the workflows permission, which github.token can't have, when the target's
   // workflow files differ from dev. The draft attaches to the tag script/publish.ts pushes.
   await $`gh release create v${Script.version} -d --title "v${Script.version}" --notes-file ${notesFile}`
