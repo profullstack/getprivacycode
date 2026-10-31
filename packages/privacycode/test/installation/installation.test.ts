@@ -95,7 +95,7 @@ describe("installation", () => {
     }),
   )
 
-  testEffect(testLayer(() => new Response("unavailable", { status: 503 }))).effect(
+  testEffect(testLayer(() => new Response("unavailable", { status: 404 }))).effect(
     "fails when the release API is unavailable",
     () =>
       Effect.gen(function* () {
