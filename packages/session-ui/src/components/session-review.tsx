@@ -1,21 +1,22 @@
-import { Accordion } from "@privacycode-ai/ui/accordion"
-import { Button } from "@privacycode-ai/ui/button"
-import { DropdownMenu } from "@privacycode-ai/ui/dropdown-menu"
-import { RadioGroup } from "@privacycode-ai/ui/radio-group"
-import { DiffChanges } from "@privacycode-ai/ui/diff-changes"
-import { FileIcon } from "@privacycode-ai/ui/file-icon"
-import { Icon } from "@privacycode-ai/ui/icon"
-import { IconButton } from "@privacycode-ai/ui/icon-button"
-import { StickyAccordionHeader } from "@privacycode-ai/ui/sticky-accordion-header"
-import { Tooltip } from "@privacycode-ai/ui/tooltip"
-import { ScrollView } from "@privacycode-ai/ui/scroll-view"
-import { useFileComponent } from "@privacycode-ai/ui/context/file"
-import { useI18n } from "@privacycode-ai/ui/context/i18n"
-import { getDirectory, getFilename } from "@privacycode-ai/core/util/path"
-import { checksum } from "@privacycode-ai/core/util/encode"
+import { Accordion } from "@opencode-ai/ui/accordion"
+import { Button } from "@opencode-ai/ui/button"
+import { DropdownMenu } from "@opencode-ai/ui/dropdown-menu"
+import { RadioGroup } from "@opencode-ai/ui/radio-group"
+import { DiffChanges } from "@opencode-ai/ui/diff-changes"
+import { FileIcon } from "@opencode-ai/ui/file-icon"
+import { Icon } from "@opencode-ai/ui/icon"
+import { IconButton } from "@opencode-ai/ui/icon-button"
+import { StickyAccordionHeader } from "@opencode-ai/ui/sticky-accordion-header"
+import { Tooltip } from "@opencode-ai/ui/tooltip"
+import { ScrollView } from "@opencode-ai/ui/scroll-view"
+import { useFileComponent } from "@opencode-ai/ui/context/file"
+import { useI18n } from "@opencode-ai/ui/context/i18n"
+import { getDirectory, getFilename } from "@opencode-ai/core/util/path"
+import { checksum } from "@opencode-ai/core/util/encode"
 import { createEffect, createMemo, For, Match, onCleanup, Show, Switch, untrack, type JSX } from "solid-js"
 import { createStore } from "solid-js/store"
-import { type FileContent, type SnapshotFileDiff, type VcsFileDiff } from "@privacycode-ai/sdk/v2"
+import { type FileContent, type SnapshotFileDiff, type VcsFileDiff } from "@opencode-ai/sdk/v2"
+import type { FileDiffInfo } from "@opencode-ai/client/promise"
 import { PreloadMultiFileDiffResult } from "@pierre/diffs/ssr"
 import { type SelectedLineRange } from "@pierre/diffs"
 import { Dynamic } from "solid-js/web"
@@ -62,10 +63,10 @@ export type SessionReviewCommentActions = {
 
 export type SessionReviewFocus = { file: string; id: string }
 
-type RawReviewDiff = (SnapshotFileDiff | VcsFileDiff) & {
+type RawReviewDiff = (SnapshotFileDiff | FileDiffInfo | VcsFileDiff) & {
   preloaded?: PreloadMultiFileDiffResult<any>
 }
-type ReviewDiff = ((SnapshotFileDiff & { file: string }) | VcsFileDiff) & {
+type ReviewDiff = ((SnapshotFileDiff & { file: string }) | FileDiffInfo | VcsFileDiff) & {
   preloaded?: PreloadMultiFileDiffResult<any>
 }
 type Item = ViewDiff & { preloaded?: PreloadMultiFileDiffResult<any> }

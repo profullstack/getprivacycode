@@ -2,14 +2,11 @@ import { describe, expect } from "bun:test"
 import fs from "fs/promises"
 import path from "path"
 import { Effect } from "effect"
-import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
-import { Ripgrep } from "@privacycode-ai/core/ripgrep"
-import { RelativePath } from "@privacycode-ai/core/schema"
+import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { Ripgrep } from "@opencode-ai/core/ripgrep"
+import { RelativePath } from "@opencode-ai/core/schema"
 import { tmpdir } from "./fixture/tmpdir"
 import { testEffect } from "./lib/effect"
-
-// Generous: covers a cold ripgrep download on a slow Windows runner.
-const RIPGREP_TIMEOUT = 120_000
 
 const it = testEffect(LayerNode.compile(Ripgrep.node))
 
@@ -32,11 +29,6 @@ describe("Ripgrep", () => {
         }),
       (tmp) => Effect.promise(() => tmp[Symbol.asyncDispose]()),
     ),
-    // ripgrep is fetched and unpacked on first use. On Windows that means a
-    // download plus PowerShell `Expand-Archive`, which comfortably exceeds
-    // bun's 5s default and fails the whole file with
-    // "ChildProcess.exitCode (... Expand-Archive ...)".
-    RIPGREP_TIMEOUT,
   )
 
   it.live("never includes git metadata", () =>
@@ -69,10 +61,25 @@ describe("Ripgrep", () => {
         }),
       (tmp) => Effect.promise(() => tmp[Symbol.asyncDispose]()),
     ),
-    // ripgrep is fetched and unpacked on first use. On Windows that means a
-    // download plus PowerShell `Expand-Archive`, which comfortably exceeds
-    // bun's 5s default and fails the whole file with
-    // "ChildProcess.exitCode (... Expand-Archive ...)".
-    RIPGREP_TIMEOUT,
+  )
+  it.live("does not split surrogate pairs in oversized line previews", () =>
+    Effect.acquireUseRelease(
+      Effect.promise(() => tmpdir()),
+      (tmp) =>
+        Effect.gen(function* () {
+          yield* Effect.promise(() =>
+            fs.writeFile(path.join(tmp.path, "unicode.txt"), `needle${"x".repeat(1_993)}😀\n`),
+          )
+
+          const matches = yield* (yield* Ripgrep.Service).grep({
+            cwd: tmp.path,
+            pattern: "needle",
+            limit: 10,
+          })
+
+          expect(matches[0]?.text).toBe(`needle${"x".repeat(1_993)}...`)
+        }),
+      (tmp) => Effect.promise(() => tmp[Symbol.asyncDispose]()),
+    ),
   )
 })

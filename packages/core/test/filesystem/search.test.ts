@@ -2,14 +2,11 @@ import { describe, expect } from "bun:test"
 import fs from "fs/promises"
 import path from "path"
 import { Effect } from "effect"
-import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
-import { Ripgrep } from "@privacycode-ai/core/ripgrep"
-import { AbsolutePath, RelativePath } from "@privacycode-ai/core/schema"
+import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { Ripgrep } from "@opencode-ai/core/ripgrep"
+import { AbsolutePath, RelativePath } from "@opencode-ai/core/schema"
 import { tmpdir } from "../fixture/tmpdir"
 import { testEffect } from "../lib/effect"
-
-// Generous: covers a cold ripgrep download on a slow Windows runner.
-const RIPGREP_TIMEOUT = 120_000
 
 const it = testEffect(LayerNode.compile(Ripgrep.node))
 
@@ -29,9 +26,6 @@ describe("Ripgrep", () => {
         expect(result.map((item) => item.path)).toEqual([RelativePath.make("src/match.ts")])
       }),
     ),
-    // ripgrep is downloaded and unpacked on first use; on Windows that is a
-    // fetch plus PowerShell `Expand-Archive`, well past bun's 5s default.
-    RIPGREP_TIMEOUT,
   )
 
   it.live("greps files with include filtering", () =>
@@ -46,8 +40,5 @@ describe("Ripgrep", () => {
         expect(result[0]?.submatches[0]?.text).toBe("needle")
       }),
     ),
-    // ripgrep is downloaded and unpacked on first use; on Windows that is a
-    // fetch plus PowerShell `Expand-Archive`, well past bun's 5s default.
-    RIPGREP_TIMEOUT,
   )
 })

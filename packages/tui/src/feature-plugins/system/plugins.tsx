@@ -1,4 +1,4 @@
-import type { TuiPlugin, TuiPluginApi, TuiPluginStatus } from "@privacycode-ai/plugin/tui"
+import type { TuiPlugin, TuiPluginApi, TuiPluginStatus } from "@opencode-ai/plugin/tui"
 import type { BuiltinTuiPlugin } from "../builtins"
 import { useTerminalDimensions } from "@opentui/solid"
 import { fileURLToPath } from "url"
@@ -49,7 +49,7 @@ function Install(props: { api: TuiPluginApi }) {
       title="Install plugin"
       placeholder="npm package name"
       busy={busy()}
-      busyText="Installing plugin..."
+      busyText="Installing plugin…"
       description={() => (
         <box flexDirection="row" gap={1}>
           <text fg={props.api.theme.current.textMuted}>scope:</text>

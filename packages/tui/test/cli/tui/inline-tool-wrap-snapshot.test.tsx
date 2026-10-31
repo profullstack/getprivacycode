@@ -30,25 +30,25 @@ const tools: readonly ToolFixture[] = [
   {
     icon: "✱",
     label:
-      'Grep "OPENCODE.*DB|database|sqlite|drizzle|dev.*db|data.*dir|xdg|APPDATA" in packages/privacycode/src (151 matches)',
+      'Grep "OPENCODE.*DB|database|sqlite|drizzle|dev.*db|data.*dir|xdg|APPDATA" in packages/opencode/src (151 matches)',
   },
   {
     icon: "✱",
-    label: 'Glob "**/*db*" in packages/privacycode (6 matches)',
+    label: 'Glob "**/*db*" in packages/opencode (6 matches)',
   },
   {
     icon: "→",
-    label: "Read packages/privacycode/src/storage/db.ts [offset=1, limit=130]",
+    label: "Read packages/opencode/src/storage/db.ts [offset=1, limit=130]",
   },
   {
     icon: "→",
-    label: "Read packages/privacycode/src/index.ts [offset=1, limit=100]",
+    label: "Read packages/opencode/src/index.ts [offset=1, limit=100]",
     error: "No LSP server available for this file type.",
   },
   {
     icon: "✱",
     label:
-      'Grep "export const PRIVACYCODE_DB|PRIVACYCODE_DB|PRIVACYCODE_DEV|Global\\.Path\\.data|data =" in packages/privacycode/src (115 matches)',
+      'Grep "export const OPENCODE_DB|OPENCODE_DB|OPENCODE_DEV|Global\\.Path\\.data|data =" in packages/opencode/src (115 matches)',
   },
 ] as const
 
@@ -195,7 +195,7 @@ function StickyScrollFixture(props: { separated: boolean; scroll: (scroll: Scrol
 
 function FailedPendingToolFixture() {
   return (
-    <InlineToolRow icon="%" complete={false} pending="Preparing patch..." failed={true} failure="Patch failed">
+    <InlineToolRow icon="%" complete={false} pending="Preparing patch…" failed={true} failure="Patch failed">
       Patch
     </InlineToolRow>
   )
@@ -203,7 +203,7 @@ function FailedPendingToolFixture() {
 
 function FailedCompleteToolFixture() {
   return (
-    <InlineToolRow icon="→" complete={true} pending="Reading file..." failed={true} failure="Read failed">
+    <InlineToolRow icon="→" complete={true} pending="Reading file…" failed={true} failure="Read failed">
       Read src/index.ts
     </InlineToolRow>
   )

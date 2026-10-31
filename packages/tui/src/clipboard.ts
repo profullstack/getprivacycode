@@ -23,7 +23,8 @@ function command(command: string, args: string[] = [], input?: string) {
 function writeOsc52(text: string) {
   if (!process.stdout.isTTY) return
   const sequence = `\x1b]52;c;${Buffer.from(text).toString("base64")}\x07`
-  process.stdout.write(process.env.TMUX || process.env.STY ? `\x1bPtmux;\x1b${sequence}\x1b\\` : sequence)
+  const passthrough = `\x1bPtmux;\x1b${sequence}\x1b\\`
+  process.stdout.write(process.env.TMUX ? sequence + passthrough : process.env.STY ? passthrough : sequence)
 }
 
 export async function read() {
@@ -97,7 +98,7 @@ let copyMethod: Promise<(text: string) => Promise<void>> | undefined
 
 function getCopyMethod() {
   return (copyMethod ??= (async () => {
-    const { which } = await import("@privacycode-ai/core/util/which")
+    const { which } = await import("@opencode-ai/core/util/which")
     const native = copyCommand(platform(), Boolean(process.env.WAYLAND_DISPLAY), (name) => Boolean(which(name)))
     if (native?.[0] === "osascript") {
       return async (text: string) => {

@@ -1,12 +1,12 @@
 import { describe, expect } from "bun:test"
 import { Effect, Exit, Layer, Scope } from "effect"
-import { AppNodeBuilder } from "@privacycode-ai/core/effect/app-node-builder"
-import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
-import { AbsolutePath } from "@privacycode-ai/core/schema"
-import { Global } from "@privacycode-ai/core/global"
-import { Reference } from "@privacycode-ai/core/reference"
-import { Repository } from "@privacycode-ai/core/repository"
-import { RepositoryCache } from "@privacycode-ai/core/repository-cache"
+import { AppNodeBuilder } from "@opencode-ai/core/effect/app-node-builder"
+import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { AbsolutePath } from "@opencode-ai/core/schema"
+import { Global } from "@opencode-ai/core/global"
+import { Reference } from "@opencode-ai/core/reference"
+import { Repository } from "@opencode-ai/core/repository"
+import { RepositoryCache } from "@opencode-ai/core/repository-cache"
 import { it } from "./lib/effect"
 
 const cache = Layer.mock(RepositoryCache.Service, {
@@ -47,7 +47,7 @@ describe("Reference", () => {
       expect(yield* references.list()).toEqual([
         new Reference.Info({
           name: "sdk",
-          path: AbsolutePath.make(Repository.cachePath(Global.Path.repos, repository)),
+          path: AbsolutePath.make(Repository.cachePath(Global.Path.repos, repository, "main")),
           source,
         }),
       ])

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@privacycode-ai/httpapi-codegen",
+  "name": "@opencode-ai/httpapi-codegen",
   "private": true,
   "type": "module",
   "exports": {

@@ -1,5 +1,5 @@
 import { define } from "./internal"
-import type { ModelV2Info } from "@privacycode-ai/sdk/v2/types"
+import type { ModelV2Info } from "@opencode-ai/sdk/v2/types"
 import { Effect, Stream } from "effect"
 import { EventV2 } from "../event"
 import { ModelsDev } from "../models-dev"
@@ -142,9 +142,7 @@ export const ModelsDevPlugin = define({
     yield* ctx.catalog.transform(
       Effect.fn(function* (catalog) {
         const data = yield* modelsDev.get()
-        const blocked = new Set(["privacycode", "privacycode-go"])
         for (const item of Object.values(data)) {
-          if (blocked.has(item.id)) continue
           const providerID = ProviderV2.ID.make(item.id)
           catalog.provider.update(providerID, (provider) => {
             provider.name = item.name

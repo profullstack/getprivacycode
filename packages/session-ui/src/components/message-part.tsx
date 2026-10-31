@@ -30,39 +30,39 @@ import {
   Todo,
   QuestionAnswer,
   QuestionInfo,
-} from "@privacycode-ai/sdk/v2"
+} from "@opencode-ai/sdk/v2"
 import { useData } from "../context"
-import { useFileComponent } from "@privacycode-ai/ui/context/file"
-import { useDialog } from "@privacycode-ai/ui/context/dialog"
-import { type UiI18n, useI18n } from "@privacycode-ai/ui/context/i18n"
+import { useFileComponent } from "@opencode-ai/ui/context/file"
+import { useDialog } from "@opencode-ai/ui/context/dialog"
+import { type UiI18n, useI18n } from "@opencode-ai/ui/context/i18n"
 import { BasicTool, GenericTool } from "./basic-tool"
-import { Accordion } from "@privacycode-ai/ui/accordion"
-import { StickyAccordionHeader } from "@privacycode-ai/ui/sticky-accordion-header"
-import { Collapsible } from "@privacycode-ai/ui/collapsible"
-import { FileIcon } from "@privacycode-ai/ui/file-icon"
-import { Icon } from "@privacycode-ai/ui/icon"
+import { Accordion } from "@opencode-ai/ui/accordion"
+import { StickyAccordionHeader } from "@opencode-ai/ui/sticky-accordion-header"
+import { Collapsible } from "@opencode-ai/ui/collapsible"
+import { FileIcon } from "@opencode-ai/ui/file-icon"
+import { Icon } from "@opencode-ai/ui/icon"
 import { ToolErrorCard } from "./tool-error-card"
-import { Checkbox } from "@privacycode-ai/ui/checkbox"
-import { DiffChanges } from "@privacycode-ai/ui/diff-changes"
+import { Checkbox } from "@opencode-ai/ui/checkbox"
+import { DiffChanges } from "@opencode-ai/ui/diff-changes"
 import { Markdown } from "./markdown"
-import { ImagePreview } from "@privacycode-ai/ui/image-preview"
-import { getDirectory as _getDirectory, getFilename } from "@privacycode-ai/core/util/path"
+import { ImagePreview } from "@opencode-ai/ui/image-preview"
+import { getDirectory as _getDirectory, getFilename } from "@opencode-ai/core/util/path"
 import { AttachmentCardV2 } from "../v2/components/attachment-card-v2"
 import { CommentCardV2 } from "../v2/components/comment-card-v2"
-import { checksum } from "@privacycode-ai/core/util/encode"
-import { Tooltip } from "@privacycode-ai/ui/tooltip"
-import { IconButton } from "@privacycode-ai/ui/icon-button"
-import { Icon as IconV2 } from "@privacycode-ai/ui/v2/icon"
-import { IconButtonV2 } from "@privacycode-ai/ui/v2/icon-button-v2"
-import { ButtonV2 } from "@privacycode-ai/ui/v2/button-v2"
-import { TooltipV2 } from "@privacycode-ai/ui/v2/tooltip-v2"
-import { Spinner } from "@privacycode-ai/ui/spinner"
-import { TextShimmer } from "@privacycode-ai/ui/text-shimmer"
+import { checksum } from "@opencode-ai/core/util/encode"
+import { Tooltip } from "@opencode-ai/ui/tooltip"
+import { IconButton } from "@opencode-ai/ui/icon-button"
+import { Icon as IconV2 } from "@opencode-ai/ui/v2/icon"
+import { IconButtonV2 } from "@opencode-ai/ui/v2/icon-button-v2"
+import { ButtonV2 } from "@opencode-ai/ui/v2/button-v2"
+import { TooltipV2 } from "@opencode-ai/ui/v2/tooltip-v2"
+import { Spinner } from "@opencode-ai/ui/spinner"
+import { TextShimmer } from "@opencode-ai/ui/text-shimmer"
 import { AnimatedCountList } from "./tool-count-summary"
 import { ToolStatusTitle } from "./tool-status-title"
 import { patchFiles } from "./apply-patch-file"
+import { partDefaultOpen } from "./part-default-open"
 import { animate } from "motion"
-import { useLocation } from "@solidjs/router"
 import { attached, inline, kind, typeLabel } from "./message-file"
 import { readPartText } from "./message-part-text"
 import { SessionProgressIndicatorV2 } from "../v2/components/session-progress-indicator-v2"
@@ -108,7 +108,7 @@ function ShellSubmessage(props: { text: string; animate?: boolean }) {
   })
 
   return (
-    <span data-component="shell-submessage">
+    <span data-component="shell-submessage" dir="ltr">
       <span ref={widthRef} data-slot="shell-submessage-width" style={{ width: props.animate ? "0px" : undefined }}>
         <span data-slot="basic-tool-tool-subtitle">
           <span
@@ -364,7 +364,7 @@ function getDirectory(path: string | undefined) {
   return relativizeProjectPath(_getDirectory(path), data.directory)
 }
 
-import type { IconProps } from "@privacycode-ai/ui/icon"
+import type { IconProps } from "@opencode-ai/ui/icon"
 import { normalize, resolveFileDiff } from "./session-diff"
 
 export type ToolInfo = {
@@ -460,10 +460,10 @@ function newLayout() {
   return typeof document !== "undefined" && document.body.hasAttribute("data-new-layout")
 }
 
-function webSearchProviderLabel(provider: unknown) {
-  if (provider === "parallel") return "Parallel Web Search"
-  if (provider === "exa") return "Exa Web Search"
-  return "Web Search"
+function webSearchProviderLabel(provider: unknown, i18n: ReturnType<typeof useI18n>) {
+  const name = provider === "parallel" ? "Parallel" : provider === "exa" ? "Exa" : undefined
+  if (name) return i18n.t("ui.tool.websearch.provider", { provider: name })
+  return i18n.t("ui.tool.websearch")
 }
 
 export function getToolInfo(
@@ -506,7 +506,7 @@ export function getToolInfo(
     case "websearch":
       return {
         icon: "window-cursor",
-        title: webSearchProviderLabel(metadata?.provider),
+        title: webSearchProviderLabel(metadata?.provider, i18n),
         subtitle: input.query,
       }
     case "task": {
@@ -521,6 +521,7 @@ export function getToolInfo(
       }
     }
     case "bash":
+    case "shell":
       return {
         icon: "console",
         title: i18n.t("ui.tool.shell"),
@@ -538,6 +539,7 @@ export function getToolInfo(
         title: i18n.t("ui.messagePart.title.write"),
         subtitle: input.filePath ? getFilename(input.filePath) : undefined,
       }
+    case "patch":
     case "apply_patch":
       return {
         icon: "code-lines",
@@ -581,29 +583,18 @@ function urls(text: string | undefined) {
     })
 }
 
-function sessionLink(id: string | undefined, path: string, href?: (id: string) => string | undefined) {
-  if (!id) return
-
-  const direct = href?.(id)
-  if (direct) return direct
-
-  const idx = path.indexOf("/session")
-  if (idx === -1) return
-  return `${path.slice(0, idx)}/session/${id}`
-}
-
-function currentSession(path: string) {
-  return path.match(/\/session\/([^/?#]+)/)?.[1]
+function sessionLink(id: string | undefined, href?: (id: string) => string | undefined) {
+  if (!id) return undefined
+  return href?.(id)
 }
 
 function taskSession(
   input: Record<string, any>,
-  path: string,
+  parentID: string | undefined,
   sessions: Session[] | undefined,
   agents?: readonly { name: string; color?: string }[],
 ) {
-  const parentID = currentSession(path)
-  if (!parentID) return
+  if (!parentID) return undefined
   const description = typeof input.description === "string" ? input.description : ""
   const agent = taskAgent(input.subagent_type, agents).name
   return (sessions ?? [])
@@ -728,15 +719,7 @@ export function renderable(part: PartType, showReasoningSummaries = true) {
   return !!PART_MAPPING[part.type]
 }
 
-function toolDefaultOpen(tool: string, shell = false, edit = false) {
-  if (tool === "bash") return shell
-  if (tool === "edit" || tool === "write" || tool === "apply_patch") return edit
-}
-
-export function partDefaultOpen(part: PartType, shell = false, edit = false) {
-  if (part.type !== "tool") return
-  return toolDefaultOpen(part.tool, shell, edit)
-}
+export { partDefaultOpen } from "./part-default-open"
 
 export function AssistantParts(props: {
   messages: AssistantMessage[]
@@ -1107,22 +1090,16 @@ export function ContextToolGroup(props: {
               <AnimatedCountList
                 items={[
                   {
-                    key: "read",
+                    key: "ui.messagePart.context.read",
                     count: summary().read,
-                    one: i18n.t("ui.messagePart.context.read.one"),
-                    other: i18n.t("ui.messagePart.context.read.other"),
                   },
                   {
-                    key: "search",
+                    key: "ui.messagePart.context.search",
                     count: summary().search,
-                    one: i18n.t("ui.messagePart.context.search.one"),
-                    other: i18n.t("ui.messagePart.context.search.other"),
                   },
                   {
-                    key: "list",
+                    key: "ui.messagePart.context.list",
                     count: summary().list,
-                    one: i18n.t("ui.messagePart.context.list.one"),
-                    other: i18n.t("ui.messagePart.context.list.other"),
                   },
                 ]}
                 fallback=""
@@ -1150,10 +1127,10 @@ export function ContextToolGroup(props: {
                             <span data-slot="basic-tool-tool-title">
                               <TextShimmer text={trigger().title} active={running()} />
                             </span>
-                            <Show when={!running() && trigger().subtitle}>
+                            <Show when={trigger().subtitle}>
                               <span data-slot="basic-tool-tool-subtitle">{trigger().subtitle}</span>
                             </Show>
-                            <Show when={!running() && trigger().args?.length}>
+                            <Show when={trigger().args?.length}>
                               <For each={trigger().args}>
                                 {(arg) => <span data-slot="basic-tool-tool-arg">{arg}</span>}
                               </For>
@@ -1325,7 +1302,7 @@ export function UserMessageDisplay(props: {
                   clickable={!!props.actions?.openAttachment}
                   onClick={() => props.actions?.openAttachment?.(file)}
                 >
-                  {typeLabel(name, file.mime)}
+                  {typeLabel(name, file.mime, i18n.t("ui.common.file"))}
                 </AttachmentCardV2>
               </Show>
             )
@@ -1347,7 +1324,11 @@ export function UserMessageDisplay(props: {
         }
       >
         <div data-slot="user-message-body">
-          <div data-slot="user-message-text" data-comments={messageComments().length > 0 ? "true" : undefined}>
+          <div
+            data-slot="user-message-text"
+            dir="auto"
+            data-comments={messageComments().length > 0 ? "true" : undefined}
+          >
             <HighlightedText text={text()} references={inlineFiles()} agents={agents()} />
             <Show when={messageComments().length > 0}>
               <UserMessageComments comments={messageComments()} bounded />
@@ -1506,7 +1487,7 @@ export function registerTool(input: { name: string; render?: ToolComponent }) {
 }
 
 export function getTool(name: string) {
-  return state[name]?.render
+  return state[name === "apply_patch" ? "patch" : name === "bash" ? "shell" : name]?.render
 }
 
 export const ToolRegistry = {
@@ -1573,7 +1554,7 @@ PART_MAPPING["tool"] = function ToolPartDisplay(props) {
   })
   const taskHref = createMemo(() => {
     if (part().tool !== "task") return
-    return sessionLink(taskId(), useLocation().pathname, data.sessionHref)
+    return sessionLink(taskId(), data.sessionHref)
   })
   const taskSubtitle = createMemo(() => {
     if (part().tool !== "task") return undefined
@@ -1606,12 +1587,22 @@ PART_MAPPING["tool"] = function ToolPartDisplay(props) {
                 <ToolErrorCard
                   tool={part().tool}
                   error={error()}
-                  title={part().tool === "websearch" ? webSearchProviderLabel(partMetadata().provider) : undefined}
+                  title={
+                    part().tool === "websearch" ? webSearchProviderLabel(partMetadata().provider, i18n) : undefined
+                  }
                   defaultOpen={props.defaultOpen}
                   open={controlledOpen()}
                   onOpenChange={props.onToolOpenChange ? handleToolOpenChange : undefined}
                   subtitle={taskSubtitle()}
                   href={taskHref()}
+                  onSubtitleClick={(event) => {
+                    if (!data.navigateToSession) return
+                    if (event.button !== 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
+                    const id = taskId()
+                    if (!id) return
+                    event.preventDefault()
+                    data.navigateToSession(id)
+                  }}
                 />
               )
             }}
@@ -1741,9 +1732,7 @@ PART_MAPPING["text"] = function TextPartDisplay(props) {
     <Show when={text()}>
       <div data-component="text-part" data-timeline-part-id={part().id}>
         <div data-slot="text-part-body">
-          <Show when={streaming()} fallback={<Markdown text={text()} cacheKey={part().id} streaming={false} />}>
-            <PacedMarkdown text={text()} cacheKey={part().id} streaming={streaming()} />
-          </Show>
+          <PacedMarkdown text={text()} cacheKey={part().id} streaming={streaming()} />
         </div>
         <Show when={showCopy()}>
           <div data-slot="text-part-copy-wrapper" data-interrupted={interrupted() ? "" : undefined}>
@@ -1778,9 +1767,7 @@ PART_MAPPING["reasoning"] = function ReasoningPartDisplay(props) {
   return (
     <Show when={text()}>
       <div data-component="reasoning-part" data-timeline-part-id={part().id}>
-        <Show when={streaming()} fallback={<Markdown text={text()} cacheKey={part().id} streaming={false} />}>
-          <PacedMarkdown text={text()} cacheKey={part().id} streaming={streaming()} />
-        </Show>
+        <PacedMarkdown text={text()} cacheKey={part().id} streaming={streaming()} />
       </div>
     </Show>
   )
@@ -1964,12 +1951,13 @@ ToolRegistry.register({
 ToolRegistry.register({
   name: "websearch",
   render(props) {
+    const i18n = useI18n()
     const query = createMemo(() => {
       const value = props.input.query
       if (typeof value !== "string") return ""
       return value
     })
-    const title = createMemo(() => webSearchProviderLabel(props.metadata.provider))
+    const title = createMemo(() => webSearchProviderLabel(props.metadata.provider, i18n))
 
     return (
       <BasicTool
@@ -1992,11 +1980,10 @@ ToolRegistry.register({
   render(props) {
     const data = useData()
     const i18n = useI18n()
-    const location = useLocation()
     const childSessionId = createMemo(() => {
       const value = props.metadata.sessionId
       if (typeof value === "string" && value) return value
-      return taskSession(props.input, location.pathname, data.store.session, data.store.agent)
+      return taskSession(props.input, data.sessionID, data.store.session, data.store.agent)
     })
     const agent = createMemo(() => taskAgent(props.input.subagent_type, data.store.agent))
     const title = createMemo(() => agent().name ?? i18n.t("ui.tool.agent.default"))
@@ -2013,18 +2000,13 @@ ToolRegistry.register({
     })
     const running = createMemo(() => props.status === "pending" || props.status === "running")
 
-    const href = createMemo(() => sessionLink(childSessionId(), location.pathname, data.sessionHref))
+    const href = createMemo(() => sessionLink(childSessionId(), data.sessionHref))
     const clickable = createMemo(() => !!(childSessionId() && (data.navigateToSession || href())))
 
     const open = () => {
       const id = childSessionId()
       if (!id) return
-      if (data.navigateToSession) {
-        data.navigateToSession(id)
-        return
-      }
-      const value = href()
-      if (value) window.location.assign(value)
+      data.navigateToSession?.(id)
     }
 
     const navigate = (event: MouseEvent) => {
@@ -2101,7 +2083,7 @@ ToolRegistry.register({
 })
 
 ToolRegistry.register({
-  name: "bash",
+  name: "shell",
   render(props) {
     const i18n = useI18n()
     const pending = () => props.status === "pending" || props.status === "running"
@@ -2126,20 +2108,21 @@ ToolRegistry.register({
       <BasicTool
         {...props}
         icon="console"
+        allowOpenWhilePending
         trigger={(open) => (
           <div data-slot="basic-tool-tool-info-structured">
             <div data-slot="basic-tool-tool-info-main">
               <span data-slot="basic-tool-tool-title">
                 <TextShimmer text={i18n.t("ui.tool.shell")} active={pending()} />
               </span>
-              <Show when={!pending() && !open() && props.input.command}>
+              <Show when={!open() && props.input.command}>
                 <ShellSubmessage text={props.input.command} animate={sawPending} />
               </Show>
             </div>
           </div>
         )}
       >
-        <div data-component="bash-output">
+        <div data-component="bash-output" dir="ltr">
           <div data-slot="bash-copy">
             <TooltipV2 value={copied() ? i18n.t("ui.message.copied") : i18n.t("ui.message.copy")} placement="top">
               <IconButtonV2
@@ -2336,7 +2319,7 @@ ToolRegistry.register({
 })
 
 ToolRegistry.register({
-  name: "apply_patch",
+  name: "patch",
   render(props) {
     const i18n = useI18n()
     const fileComponent = useFileComponent()

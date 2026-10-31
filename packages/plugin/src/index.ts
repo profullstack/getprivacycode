@@ -9,8 +9,8 @@ import type {
   Message,
   Part,
   Config as SDKConfig,
-} from "@privacycode-ai/sdk"
-import type { Provider as ProviderV2, Model as ModelV2, Auth } from "@privacycode-ai/sdk/v2"
+} from "@opencode-ai/sdk"
+import type { Provider as ProviderV2, Model as ModelV2, Auth } from "@opencode-ai/sdk/v2"
 
 import type { BunShell } from "./shell.js"
 import { type ToolDefinition } from "./tool.js"

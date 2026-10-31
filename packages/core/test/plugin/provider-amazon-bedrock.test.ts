@@ -1,13 +1,13 @@
-import { AISDK } from "@privacycode-ai/core/aisdk"
+import { AISDK } from "@opencode-ai/core/aisdk"
 import { describe, expect } from "bun:test"
 import type { LanguageModelV3 } from "@ai-sdk/provider"
 import { Effect } from "effect"
-import { Catalog } from "@privacycode-ai/core/catalog"
-import { ModelV2 } from "@privacycode-ai/core/model"
-import { PluginV2 } from "@privacycode-ai/core/plugin"
-import { PluginHost } from "@privacycode-ai/core/plugin/host"
-import { AmazonBedrockPlugin } from "@privacycode-ai/core/plugin/provider/amazon-bedrock"
-import { ProviderV2 } from "@privacycode-ai/core/provider"
+import { Catalog } from "@opencode-ai/core/catalog"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { AmazonBedrockPlugin } from "@opencode-ai/core/plugin/provider/amazon-bedrock"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
 
@@ -528,6 +528,13 @@ describe("AmazonBedrockPlugin", () => {
         { region: "us-east-1", modelID: "amazon.nova-2-lite-v1:0", expected: "us.amazon.nova-2-lite-v1:0" },
         { region: "us-east-1", modelID: "anthropic.claude-sonnet-4-5", expected: "us.anthropic.claude-sonnet-4-5" },
         { region: "us-east-1", modelID: "deepseek.r1-v1:0", expected: "us.deepseek.r1-v1:0" },
+        { region: "us-east-1", modelID: "us.deepseek.r1-v1:0", expected: "us.deepseek.r1-v1:0" },
+        { region: "us-east-1", modelID: "deepseek.v3.2", expected: "deepseek.v3.2" },
+        {
+          region: "us-east-1",
+          modelID: "arn:aws:bedrock:us-east-1::foundation-model/deepseek.v3.2",
+          expected: "arn:aws:bedrock:us-east-1::foundation-model/deepseek.v3.2",
+        },
         { region: "us-gov-west-1", modelID: "anthropic.claude-sonnet-4-5", expected: "anthropic.claude-sonnet-4-5" },
         { region: "us-east-1", modelID: "cohere.command-r-plus-v1:0", expected: "cohere.command-r-plus-v1:0" },
         { region: "eu-west-1", modelID: "anthropic.claude-sonnet-4-5", expected: "eu.anthropic.claude-sonnet-4-5" },

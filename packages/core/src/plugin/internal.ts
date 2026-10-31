@@ -2,7 +2,7 @@ export * as PluginInternal from "./internal"
 
 import { makeLocationNode } from "../effect/app-node"
 import { httpClient } from "../effect/app-node-platform"
-import type { PluginContext } from "@privacycode-ai/plugin/v2/effect"
+import type { PluginContext } from "@opencode-ai/plugin/v2/effect"
 import { Effect, Layer, Scope } from "effect"
 import { AgentV2 } from "../agent"
 import { Catalog } from "../catalog"
@@ -30,6 +30,7 @@ import { FetchHttpClient, HttpClient } from "effect/unstable/http"
 import { AgentPlugin } from "./agent"
 import { CommandPlugin } from "./command"
 import { ModelsDevPlugin } from "./models-dev"
+import { ProviderPlugins } from "./provider"
 import { SkillPlugin } from "./skill"
 import { VariantPlugin } from "./variant"
 
@@ -114,14 +115,6 @@ const layer = Layer.effectDiscard(
         yield* add(ConfigAgentPlugin.Plugin)
         yield* add(ConfigCommandPlugin.Plugin)
         yield* add(ConfigSkillPlugin.Plugin)
-        // `./provider` imports every provider module, and each provider imports
-        // this file (via `define`). A static import therefore forms a cycle:
-        // entering the graph through a single provider module — as the provider
-        // unit tests do — evaluates `./provider` before that module has finished
-        // initialising, and its plugin list throws
-        // "Cannot access '<X>Plugin' before initialization". Loading it here
-        // breaks the cycle; the list is only needed when plugins are registered.
-        const { ProviderPlugins } = yield* Effect.promise(() => import("./provider"))
         for (const item of ProviderPlugins) yield* add(item)
         yield* add(ConfigExternalPlugin.Plugin)
         yield* add(ConfigProviderPlugin.Plugin)

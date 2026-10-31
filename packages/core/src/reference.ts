@@ -2,7 +2,7 @@ export * as Reference from "./reference"
 
 import { makeLocationNode } from "./effect/app-node"
 import { Context, Effect, Layer, Scope, Types } from "effect"
-import { Reference } from "@privacycode-ai/schema/reference"
+import { Reference } from "@opencode-ai/schema/reference"
 import { Global } from "./global"
 import { EventV2 } from "./event"
 import { Repository } from "./repository"
@@ -38,7 +38,7 @@ export interface Interface extends State.Transformable<Draft> {
   readonly list: () => Effect.Effect<Info[]>
 }
 
-export class Service extends Context.Service<Service, Interface>()("@privacycode/v2/Reference") {}
+export class Service extends Context.Service<Service, Interface>()("@opencode/v2/Reference") {}
 
 const layer = Layer.effect(
   Service,
@@ -58,7 +58,6 @@ const layer = Layer.effect(
       finalize: (draft) =>
         Effect.gen(function* () {
           materialized.clear()
-          const seen = new Map<string, string | undefined>()
           for (const [name, source] of draft.list()) {
             if (source.type === "local") {
               materialized.set(
@@ -82,14 +81,11 @@ const layer = Layer.effect(
                 continue
               }
             }
-            const target = Repository.cachePath(global.repos, repository)
-            if (seen.has(target) && seen.get(target) !== source.branch) continue
-            seen.set(target, source.branch)
             materialized.set(
               name,
               new Info({
                 name,
-                path: AbsolutePath.make(target),
+                path: AbsolutePath.make(Repository.cachePath(global.repos, repository, source.branch)),
                 ...(source.description === undefined ? {} : { description: source.description }),
                 ...(source.hidden === undefined ? {} : { hidden: source.hidden }),
                 source,

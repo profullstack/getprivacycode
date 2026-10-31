@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test"
 import path from "path"
 import { pathToFileURL } from "url"
-import { Repository } from "@privacycode-ai/core/repository"
+import { Repository } from "@opencode-ai/core/repository"
 
 describe("Repository", () => {
   test("parses github shorthand and builds an explicit-root cache path", () => {
@@ -17,6 +17,12 @@ describe("Repository", () => {
       label: "owner/repo",
     })
     expect(Repository.cachePath("/cache", reference)).toBe(path.join("/cache", "github.com", "owner", "repo"))
+    expect(Repository.cachePath("/cache", reference, "main")).toBe(
+      path.join("/cache", "github.com", "owner", "repo@main"),
+    )
+    expect(Repository.cachePath("/cache", reference, "feature/x")).toBe(
+      path.join("/cache", "github.com", "owner", "repo@feature%2Fx"),
+    )
     expect(Repository.cacheIdentity(reference)).toBe("github.com/owner/repo")
   })
 

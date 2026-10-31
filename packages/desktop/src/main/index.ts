@@ -1,152 +1,424 @@
-import { app, BrowserWindow, ipcMain, shell } from "electron"
-import { spawn, ChildProcess } from "child_process"
-import path from "path"
-import { fileURLToPath } from "url"
-import fs from "fs"
+import { randomUUID } from "node:crypto"
+import { mkdirSync, rmSync } from "node:fs"
+import * as http from "node:http"
+import { createServer } from "node:net"
+import { homedir, tmpdir } from "node:os"
+import { join } from "node:path"
+import { getCACertificates, setDefaultCACertificates } from "node:tls"
+import type { Event } from "electron"
+import { app, BrowserWindow } from "electron"
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+import { Deferred, Effect, Fiber } from "effect"
+import contextMenu from "electron-context-menu"
 
-const DATA_DIR = path.join(app.getPath("userData"), "privacycode-data")
-const STORE_PATH = path.join(DATA_DIR, "store.json")
+import type { ServerReadyData } from "../preload/types"
+import { checkAppExists, resolveAppPath } from "./apps"
+import { CHANNEL } from "./constants"
+import { registerIpcHandlers, sendDeepLinks, sendMenuCommand } from "./ipc"
+import { forwardInitializationFailure } from "./initialization"
+import { exportDebugLogs, initCrashReporter, initLogging, startNetLog, write as writeLog } from "./logging"
+import { createMenu } from "./menu"
+import {
+  finishFirstLaunchOnboarding,
+  initializeOldLayoutEligibility,
+  isFirstLaunchOnboardingPending,
+  isOldLayoutEligible,
+} from "./onboarding"
+import {
+  getDefaultServerUrl,
+  preferAppEnv,
+  setDefaultServerUrl,
+  spawnLocalServer,
+  type SidecarListener,
+} from "./server"
+import { setupAutoUpdater, showUpdaterDialog } from "./updater"
+import { safeWebContentsURL } from "./window-state"
+import {
+  getLastFocusedWindow,
+  registerRendererProtocol,
+  setRelaunchHandler,
+  setAppQuitting,
+  setBackgroundColor,
+  setDockIcon,
+  restoreMainWindows,
+} from "./windows"
+import { createWslServersController } from "./wsl/servers"
+import { registerWslIpcHandlers } from "./wsl/ipc"
+import { spawnWslSidecar } from "./wsl/sidecar"
+import { migrate } from "./migrate"
+import { cleanupStoreFiles } from "./store-cleanup"
+import { startBackgroundCli } from "./background-cli"
+import { setNativeTranslations } from "./native-translations"
 
-interface Store {
-  subscribers: string[]
+const APP_NAMES: Record<string, string> = {
+  dev: "OpenCode Dev",
+  beta: "OpenCode Beta",
+  prod: "OpenCode",
+}
+const APP_IDS: Record<string, string> = {
+  dev: "ai.opencode.desktop.dev",
+  beta: "ai.opencode.desktop.beta",
+  prod: "ai.opencode.desktop",
+}
+const TEST_ONBOARDING = process.env.OPENCODE_TEST_ONBOARDING === "1"
+const SIDECAR_VERSION = process.env.OPENCODE_SIDECAR_V2 === "1" ? "v2" : "v1"
+const jsCallStackFeature = "DocumentPolicyIncludeJSCallStacksInCrashReports"
+
+let logger: ReturnType<typeof initLogging>
+let server: SidecarListener | null = null
+
+const pendingDeepLinks: string[] = []
+
+function useEnvProxy() {
+  try {
+    // Electron 41.2 runs Node 24.14.1; latest @types/node@24 is 24.12.2.
+    ;(http as any).setGlobalProxyFromEnv()
+  } catch (error) {
+    logger.warn("failed to load proxy environment", error)
+  }
 }
 
-function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true })
+function emitDeepLinks(urls: string[]) {
+  if (urls.length === 0) return
+  pendingDeepLinks.push(...urls)
+  const win = getLastFocusedWindow()
+  if (win) sendDeepLinks(win, urls)
 }
 
-function loadStore(): Store {
-  ensureDataDir()
-  try { return JSON.parse(fs.readFileSync(STORE_PATH, "utf-8")) }
-  catch { return { subscribers: [] } }
+async function killSidecar() {
+  if (!server) return
+  const current = server
+  server = null
+  await current.stop()
 }
 
-function saveStore(store: Store) {
-  ensureDataDir()
-  fs.writeFileSync(STORE_PATH, JSON.stringify(store, null, 2))
+function ensureLoopbackNoProxy() {
+  const loopback = ["127.0.0.1", "localhost", "::1"]
+  const upsert = (key: string) => {
+    const items = (process.env[key] ?? "")
+      .split(",")
+      .map((value: string) => value.trim())
+      .filter((value: string) => Boolean(value))
+
+    for (const host of loopback) {
+      if (items.some((value: string) => value.toLowerCase() === host)) continue
+      items.push(host)
+    }
+
+    process.env[key] = items.join(",")
+  }
+
+  upsert("NO_PROXY")
+  upsert("no_proxy")
 }
 
-let mainWindow: BrowserWindow | null = null
-let serverProcess: ChildProcess | null = null
-let serverUrl = ""
+const main = Effect.gen(function* () {
+  contextMenu({ showSaveImageAs: true, showLookUpSelection: false, showSearchWithGoogle: false })
 
-const isDev = !app.isPackaged
-const VITE_DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL
-const RENDERER_DIST = path.join(__dirname, "../../dist/renderer")
+  // on macOS apps run in `/` which can cause issues with ripgrep
+  try {
+    process.chdir(homedir())
+  } catch {}
 
-function startServer(): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const port = 4096
-    const proc = spawn("privacycode", ["serve", `--hostname=127.0.0.1`, `--port=${port}`], {
-      env: { ...process.env, PRIVACYCODE_CONFIG_CONTENT: "{}" },
-      stdio: ["ignore", "pipe", "pipe"],
+  process.env.OPENCODE_DISABLE_EMBEDDED_WEB_UI = "true"
+
+  const appId = app.isPackaged ? APP_IDS[CHANNEL] : "ai.opencode.desktop.dev"
+  const onboardingTestRoot = ((): string | undefined => {
+    if (!TEST_ONBOARDING) return
+
+    const root = join(tmpdir(), `opencode-onboarding-${randomUUID()}`)
+    rmSync(root, { recursive: true, force: true })
+    ;["data", "config", "cache", "state", "desktop", "session"].forEach((dir) =>
+      mkdirSync(join(root, dir), { recursive: true }),
+    )
+    process.env.OPENCODE_DB = ":memory:"
+    process.env.XDG_DATA_HOME = join(root, "data")
+    process.env.XDG_CONFIG_HOME = join(root, "config")
+    process.env.XDG_CACHE_HOME = join(root, "cache")
+    process.env.XDG_STATE_HOME = join(root, "state")
+    return root
+  })()
+  app.setName(app.isPackaged ? APP_NAMES[CHANNEL] : "OpenCode Dev")
+  app.setAppUserModelId(appId)
+  app.setPath(
+    "userData",
+    onboardingTestRoot ? join(onboardingTestRoot, "desktop") : join(app.getPath("appData"), appId),
+  )
+  if (onboardingTestRoot) app.setPath("sessionData", join(onboardingTestRoot, "session"))
+  initializeOldLayoutEligibility(app.getPath("userData"))
+  logger = initLogging()
+  initCrashReporter()
+
+  const wslServers = createWslServersController(
+    app.getVersion(),
+    async (distro) => {
+      logger.log("spawning wsl sidecar", { distro })
+      return spawnWslSidecar(distro, {
+        onLine: (line) => logger.log("wsl sidecar", { distro, stream: line.stream, text: line.text }),
+      })
+    },
+    {
+      logger: {
+        log: (message, meta) => logger.log(message, meta),
+        error: (message, meta) => logger.error(message, meta),
+      },
+    },
+  )
+  const stopSidecars = async () => {
+    await killSidecar()
+    wslServers.stopAll()
+  }
+  const relaunch = () => {
+    setAppQuitting()
+    void stopSidecars().finally(() => {
+      app.relaunch()
+      app.quit()
     })
-    serverProcess = proc
-    const timeout = setTimeout(() => { cleanupServer(); reject(new Error("Server startup timed out")) }, 15000)
-    let output = ""
-    proc.stdout?.on("data", (chunk: Buffer) => {
-      output += chunk.toString()
-      for (const line of output.split("\n")) {
-        if (line.includes("server listening")) {
-          const match = line.match(/on\s+(https?:\/\/[^\s]+)/)
-          if (match) { clearTimeout(timeout); resolve(match[1]!); return }
-        }
-      }
-    })
-    proc.stderr?.on("data", (chunk: Buffer) => { output += chunk.toString() })
-    proc.on("exit", (code) => { clearTimeout(timeout); reject(new Error(`Server exited with code ${code}: ${output}`)) })
-    proc.on("error", (err) => { clearTimeout(timeout); reject(err) })
+  }
+
+  try {
+    setDefaultCACertificates([...new Set([...getCACertificates("default"), ...getCACertificates("system")])])
+  } catch (error) {
+    logger.warn("failed to load system certificates", error)
+  }
+
+  logger.log("app starting", {
+    version: app.getVersion(),
+    packaged: app.isPackaged,
+    onboardingTest: Boolean(onboardingTestRoot),
   })
-}
 
-function cleanupServer() {
-  if (serverProcess) { serverProcess.kill(); serverProcess = null }
-}
+  ensureLoopbackNoProxy()
+  useEnvProxy()
+  app.commandLine.appendSwitch("proxy-bypass-list", "<-loopback>")
+  const features = app.commandLine.getSwitchValue("enable-features")
+  app.commandLine.appendSwitch("enable-features", features ? `${jsCallStackFeature},${features}` : jsCallStackFeature)
+  if (!app.isPackaged) app.commandLine.appendSwitch("remote-debugging-port", "9222")
 
-function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: 1200, height: 800, minWidth: 800, minHeight: 600,
-    title: "PrivacyCode", backgroundColor: "#0d0d0d", titleBarStyle: "hiddenInset",
-    webPreferences: {
-      preload: path.join(__dirname, "../preload/index.mjs"),
-      contextIsolation: true, nodeIntegration: false, sandbox: false,
+  if (!app.requestSingleInstanceLock()) {
+    app.quit()
+    return
+  }
+
+  const shellEnv = preferAppEnv(app.getPath("userData"))
+
+  app.on("second-instance", (_event: Event, argv: string[]) => {
+    const urls = argv.filter((arg: string) => arg.startsWith("opencode://"))
+    if (urls.length) {
+      logger.log("deep link received via second-instance", { urls })
+      emitDeepLinks(urls)
+    }
+    const win = getLastFocusedWindow()
+    if (win) {
+      win.show()
+      win.focus()
+    }
+  })
+
+  app.on("open-url", (event: Event, url: string) => {
+    event.preventDefault()
+    logger.log("deep link received via open-url", { url })
+    emitDeepLinks([url])
+  })
+
+  app.on("before-quit", () => {
+    setAppQuitting()
+    void stopSidecars()
+  })
+
+  app.on("will-quit", () => {
+    setAppQuitting()
+    void stopSidecars()
+  })
+
+  app.on("child-process-gone", (_event, details) => {
+    writeLog("utility", "child process gone", { details }, "error")
+  })
+
+  app.on("render-process-gone", (_event, webContents, details) => {
+    writeLog("window", "app render process gone", { url: safeWebContentsURL(webContents), details }, "error")
+  })
+
+  setRelaunchHandler(() => {
+    relaunch()
+  })
+
+  for (const signal of ["SIGINT", "SIGTERM"] as const) {
+    process.on(signal, () => {
+      setAppQuitting()
+      void stopSidecars().finally(() => app.quit())
+    })
+  }
+
+  const serverReady = Deferred.makeUnsafe<ServerReadyData, unknown>()
+
+  yield* Effect.promise(() => app.whenReady())
+
+  if (!TEST_ONBOARDING) migrate()
+  yield* Effect.promise(() => cleanupStoreFiles(app.getPath("userData"))).pipe(
+    Effect.tap((result) =>
+      Effect.sync(() => {
+        if (result.deleted.length === 0) return
+        logger.log("cleaned scoped store files", { count: result.deleted.length, scanned: result.scanned })
+      }),
+    ),
+    Effect.catch((error) =>
+      Effect.sync(() => {
+        logger.warn("failed to clean scoped store files", error)
+      }),
+    ),
+  )
+  app.setAsDefaultProtocolClient("opencode")
+  registerRendererProtocol()
+  setDockIcon()
+  const updater = setupAutoUpdater(stopSidecars)
+  const menuDeps = {
+    trigger: (id: string) => {
+      const win = getLastFocusedWindow()
+      if (win) sendMenuCommand(win, id)
+    },
+    checkForUpdates: () => void showUpdaterDialog(updater, true),
+    relaunch,
+  }
+  registerIpcHandlers({
+    killSidecar: () => killSidecar(),
+    relaunch,
+    awaitInitialization: Effect.fnUntraced(
+      function* () {
+        logger.log("awaiting server ready")
+        const res = yield* Deferred.await(serverReady)
+        logger.log("server ready", { url: res.url })
+        return res
+      },
+      (e) => Effect.runPromise(e),
+    ),
+    consumeInitialDeepLinks: () => pendingDeepLinks.splice(0),
+    getDefaultServerUrl: () => getDefaultServerUrl(),
+    setDefaultServerUrl: (url) => setDefaultServerUrl(url),
+    isFirstLaunchOnboardingPending,
+    finishFirstLaunchOnboarding,
+    isOldLayoutEligible,
+    getDisplayBackend: async () => null,
+    setDisplayBackend: async () => undefined,
+    checkAppExists: (appName) => checkAppExists(appName),
+    resolveAppPath: async (appName) => resolveAppPath(appName),
+    updater,
+    showUpdater: () => showUpdaterDialog(updater, true),
+    setBackgroundColor: (color) => setBackgroundColor(color),
+    exportDebugLogs: () => exportDebugLogs(),
+    recordFatalRendererError: (error) => writeLog("renderer", "fatal renderer error", { ...error }, "error"),
+    setNativeTranslations: (bundle) => {
+      if (setNativeTranslations(bundle)) createMenu(menuDeps)
     },
   })
-  mainWindow.on("closed", () => { mainWindow = null })
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: "deny" }
-  })
-  if (isDev && VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(VITE_DEV_SERVER_URL)
-    mainWindow.webContents.openDevTools()
-  } else {
-    mainWindow.loadFile(path.join(RENDERER_DIST, "index.html"))
-  }
-}
+  registerWslIpcHandlers(wslServers)
+  void updater.start()
+  const updateTimer = setInterval(() => void updater.check(), 10 * 60 * 1000)
+  updateTimer.unref()
+  app.once("will-quit", () => clearInterval(updateTimer))
+  yield* Effect.promise(() => startNetLog()).pipe(
+    Effect.catch((error) =>
+      Effect.sync(() => {
+        logger.warn("failed to start net log", error)
+      }),
+    ),
+  )
 
-// ── IPC ──
-ipcMain.handle("get-server-url", () => serverUrl)
-ipcMain.handle("set-title", (_event, title: string) => { if (mainWindow) mainWindow.setTitle(title) })
+  const loadingTask = yield* Effect.gen(function* () {
+    logger.log("sidecar connection started", { version: SIDECAR_VERSION })
 
-ipcMain.handle("fetch-api", async (_event, request: { method: string; path: string; body?: unknown }) => {
-  if (!serverUrl) return { ok: false, status: 0, data: { message: "Server is not running. Run 'privacycode serve' in your terminal." } }
-  const url = `${serverUrl}${request.path}`
-  console.log(`[PrivacyCode] ${request.method} ${url}`)
-  try {
-    const opts: RequestInit = { method: request.method, headers: { "Content-Type": "application/json" } }
-    if (request.body && request.method !== "GET") opts.body = JSON.stringify(request.body)
-    const resp = await fetch(url, opts)
-    const ct = resp.headers.get("content-type") || ""
-    if (ct.includes("application/json")) return { ok: resp.ok, status: resp.status, data: await resp.json() }
-    return { ok: resp.ok, status: resp.status, data: await resp.text() }
-  } catch (err) {
-    console.error(`[PrivacyCode] fetch failed:`, err)
-    return { ok: false, status: 0, data: { message: `Cannot reach server at ${url}` } }
-  }
-})
+    ensureLoopbackNoProxy()
+    useEnvProxy()
 
-ipcMain.handle("stream-api", async (event, request: { method: string; path: string; body?: unknown }) => {
-  const url = `${serverUrl}${request.path}`
-  const opts: RequestInit = { method: request.method, headers: { "Content-Type": "application/json" } }
-  if (request.body && request.method !== "GET") opts.body = JSON.stringify(request.body)
-  const resp = await fetch(url, opts)
-  if (!resp.ok || !resp.body) return
-  const reader = resp.body.getReader()
-  const decoder = new TextDecoder()
-  const sender = event.sender
-  const streamId = Math.random().toString(36).slice(2)
-  sender.send("stream-start", streamId)
-  try {
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-      sender.send("stream-chunk", { streamId, text: decoder.decode(value, { stream: true }) })
+    if (SIDECAR_VERSION === "v2") {
+      logger.log("spawning v2 sidecar")
+      const sidecar = yield* Effect.promise(() => startBackgroundCli(logger, shellEnv?.XDG_STATE_HOME))
+      yield* Deferred.succeed(serverReady, {
+        url: sidecar.url,
+        username: sidecar.username,
+        password: sidecar.password,
+      })
+
+      if (process.platform === "win32") {
+        void wslServers.initialize().catch((error) => logger.error("wsl server initialization failed", error))
+      }
+
+      logger.log("loading task finished")
+      return
     }
-  } finally {
-    reader.releaseLock()
-    sender.send("stream-end", streamId)
-  }
+
+    const port = yield* Effect.gen(function* () {
+      const fromEnv = process.env.OPENCODE_PORT
+      if (fromEnv) {
+        const parsed = Number.parseInt(fromEnv, 10)
+        if (!Number.isNaN(parsed)) return parsed
+      }
+
+      const res = yield* Deferred.make<number, unknown>()
+      const socket = createServer()
+      socket.on("error", (e) => Deferred.failSync(res, () => e))
+      socket.listen(0, "127.0.0.1", () => {
+        const address = socket.address()
+        if (typeof address !== "object" || !address) {
+          socket.close()
+          Deferred.failSync(res, () => new Error("Failed to get port"))
+          return
+        }
+        const port = address.port
+        socket.close(() => Effect.runSync(Deferred.succeed(res, port)))
+      })
+
+      return yield* Deferred.await(res)
+    })
+    const hostname = "127.0.0.1"
+    const url = `http://${hostname}:${port}`
+    const password = randomUUID()
+
+    logger.log("spawning sidecar", { url })
+    const { listener, health } = yield* Effect.promise(() =>
+      spawnLocalServer(hostname, port, password, {
+        userDataPath: app.getPath("userData"),
+        onStdout: (message) => writeLog("server", "stdout", { message }),
+        onStderr: (message) => writeLog("server", "stderr", { message }, "warn"),
+        onExit: (code) => writeLog("utility", "sidecar exited", { code }, "warn"),
+      }),
+    )
+    server = listener
+    yield* Deferred.succeed(serverReady, {
+      url,
+      username: "opencode",
+      password,
+    })
+
+    if (process.platform === "win32") {
+      void wslServers.initialize().catch((error) => logger.error("wsl server initialization failed", error))
+    }
+
+    yield* Effect.promise(() => health.wait).pipe(
+      Effect.timeout("30 seconds"),
+      Effect.catch((e) =>
+        Effect.sync(() => {
+          logger.error("sidecar health check failed", e.toString())
+        }),
+      ),
+    )
+
+    logger.log("loading task finished")
+  }).pipe(forwardInitializationFailure(serverReady), Effect.forkChild)
+
+  yield* Fiber.await(loadingTask)
+
+  app.on("window-all-closed", () => {
+    if (process.platform === "darwin") return
+    app.quit()
+  })
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length > 0) return
+    restoreMainWindows()
+  })
+
+  const windows = restoreMainWindows()
+  if (windows.length) createMenu(menuDeps)
 })
 
-ipcMain.handle("user:subscribe", (_event, email: string) => {
-  const store = loadStore()
-  if (!store.subscribers.includes(email)) {
-    store.subscribers.push(email)
-    saveStore(store)
-    console.log(`[PrivacyCode] New subscriber: ${email}`)
-  }
-  return { success: true }
-})
-
-// ── Lifecycle ──
-app.whenReady().then(async () => {
-  try { serverUrl = await startServer() } catch (err) { console.error("Failed to start server:", err) }
-  createWindow()
-})
-
-app.on("window-all-closed", () => { cleanupServer(); app.quit() })
-app.on("before-quit", () => { cleanupServer() })
+Effect.runFork(main)

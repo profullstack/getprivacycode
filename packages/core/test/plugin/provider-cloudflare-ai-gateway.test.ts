@@ -1,11 +1,11 @@
-import { AISDK } from "@privacycode-ai/core/aisdk"
+import { AISDK } from "@opencode-ai/core/aisdk"
 import { describe, expect, mock } from "bun:test"
 import { Effect } from "effect"
-import { ModelV2 } from "@privacycode-ai/core/model"
-import { PluginV2 } from "@privacycode-ai/core/plugin"
-import { PluginHost } from "@privacycode-ai/core/plugin/host"
-import { CloudflareAIGatewayPlugin } from "@privacycode-ai/core/plugin/provider/cloudflare-ai-gateway"
-import { ProviderV2 } from "@privacycode-ai/core/provider"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { PluginV2 } from "@opencode-ai/core/plugin"
+import { PluginHost } from "@opencode-ai/core/plugin/host"
+import { CloudflareAIGatewayPlugin } from "@opencode-ai/core/plugin/provider/cloudflare-ai-gateway"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { testEffect } from "../lib/effect"
 import { PluginTestLayer } from "./fixture"
 
@@ -164,7 +164,7 @@ describe("CloudflareAIGatewayPlugin", () => {
             skipCache: true,
             collectLog: false,
             headers: {
-              "User-Agent": expect.stringContaining("privacycode/"),
+              "User-Agent": expect.stringContaining("opencode/"),
             },
           },
         })

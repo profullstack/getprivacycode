@@ -1,35 +1,35 @@
 import { expect, test } from "bun:test"
 import { Schema } from "effect"
-import { AgentV2 } from "@privacycode-ai/core/agent"
-import { ModelV2 } from "@privacycode-ai/core/model"
-import { SessionV2 } from "@privacycode-ai/core/session"
-import { Agent } from "@privacycode-ai/schema/agent"
-import { Location } from "@privacycode-ai/schema/location"
-import { Model } from "@privacycode-ai/schema/model"
-import { AgentAttachment, FileAttachment, Prompt, Source } from "@privacycode-ai/schema/prompt"
-import { Provider } from "@privacycode-ai/schema/provider"
-import { Project } from "@privacycode-ai/schema/project"
-import { ProjectDirectories } from "@privacycode-ai/schema/project-directories"
-import { PermissionV1 } from "@privacycode-ai/schema/permission-v1"
-import { Session } from "@privacycode-ai/schema/session"
-import { SessionInput } from "@privacycode-ai/schema/session-input"
-import { SessionMessage } from "@privacycode-ai/schema/session-message"
-import { Workspace } from "@privacycode-ai/schema/workspace"
-import { Command } from "@privacycode-ai/schema/command"
-import { Connection } from "@privacycode-ai/schema/connection"
-import { Credential } from "@privacycode-ai/schema/credential"
-import { FileSystem } from "@privacycode-ai/schema/filesystem"
-import { Integration } from "@privacycode-ai/schema/integration"
-import { LLM } from "@privacycode-ai/schema/llm"
-import { Permission } from "@privacycode-ai/schema/permission"
-import { Plugin } from "@privacycode-ai/schema/plugin"
-import { Pty } from "@privacycode-ai/schema/pty"
-import { Reference } from "@privacycode-ai/schema/reference"
-import { SessionTodo } from "@privacycode-ai/schema/session-todo"
-import { Skill } from "@privacycode-ai/schema/skill"
-import { AbsolutePath, DateTimeUtcFromMillis, optional, statics } from "@privacycode-ai/schema/schema"
-import { ProviderV2 } from "@privacycode-ai/core/provider"
-import { PluginV2 } from "@privacycode-ai/core/plugin"
+import { AgentV2 } from "@opencode-ai/core/agent"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { SessionV2 } from "@opencode-ai/core/session"
+import { Agent } from "@opencode-ai/schema/agent"
+import { Location } from "@opencode-ai/schema/location"
+import { Model } from "@opencode-ai/schema/model"
+import { AgentAttachment, FileAttachment, Prompt, Source } from "@opencode-ai/schema/prompt"
+import { Provider } from "@opencode-ai/schema/provider"
+import { Project } from "@opencode-ai/schema/project"
+import { ProjectDirectories } from "@opencode-ai/schema/project-directories"
+import { PermissionV1 } from "@opencode-ai/schema/permission-v1"
+import { Session } from "@opencode-ai/schema/session"
+import { SessionInput } from "@opencode-ai/schema/session-input"
+import { SessionMessage } from "@opencode-ai/schema/session-message"
+import { Workspace } from "@opencode-ai/schema/workspace"
+import { Command } from "@opencode-ai/schema/command"
+import { Connection } from "@opencode-ai/schema/connection"
+import { Credential } from "@opencode-ai/schema/credential"
+import { FileSystem } from "@opencode-ai/schema/filesystem"
+import { Integration } from "@opencode-ai/schema/integration"
+import { LLM } from "@opencode-ai/schema/llm"
+import { Permission } from "@opencode-ai/schema/permission"
+import { Plugin } from "@opencode-ai/schema/plugin"
+import { Pty } from "@opencode-ai/schema/pty"
+import { Reference } from "@opencode-ai/schema/reference"
+import { SessionTodo } from "@opencode-ai/schema/session-todo"
+import { Skill } from "@opencode-ai/schema/skill"
+import { AbsolutePath, DateTimeUtcFromMillis, optional, statics } from "@opencode-ai/schema/schema"
+import { ProviderV2 } from "@opencode-ai/core/provider"
+import { PluginV2 } from "@opencode-ai/core/plugin"
 
 test("Core reuses the canonical shared schemas", async () => {
   const [
@@ -55,27 +55,27 @@ test("Core reuses the canonical shared schemas", async () => {
     coreSchema,
     coreWorkspace,
   ] = await Promise.all([
-    import("@privacycode-ai/core/command"),
-    import("@privacycode-ai/core/integration/connection"),
-    import("@privacycode-ai/core/credential"),
-    import("@privacycode-ai/core/filesystem"),
-    import("@privacycode-ai/core/integration"),
-    import("@privacycode-ai/core/location"),
-    import("@privacycode-ai/llm"),
-    import("@privacycode-ai/core/permission"),
-    import("@privacycode-ai/core/v1/permission"),
-    import("@privacycode-ai/core/project/copy"),
-    import("@privacycode-ai/core/pty"),
-    import("@privacycode-ai/core/project/schema"),
-    import("@privacycode-ai/core/reference"),
-    import("@privacycode-ai/core/session/input"),
-    import("@privacycode-ai/core/session/message"),
-    import("@privacycode-ai/core/session/todo"),
-    import("@privacycode-ai/core/session/prompt"),
-    import("@privacycode-ai/core/skill"),
-    import("@privacycode-ai/core/v2-schema"),
-    import("@privacycode-ai/core/schema"),
-    import("@privacycode-ai/core/workspace"),
+    import("@opencode-ai/core/command"),
+    import("@opencode-ai/core/integration/connection"),
+    import("@opencode-ai/core/credential"),
+    import("@opencode-ai/core/filesystem"),
+    import("@opencode-ai/core/integration"),
+    import("@opencode-ai/core/location"),
+    import("@opencode-ai/llm"),
+    import("@opencode-ai/core/permission"),
+    import("@opencode-ai/core/v1/permission"),
+    import("@opencode-ai/core/project/copy"),
+    import("@opencode-ai/core/pty"),
+    import("@opencode-ai/core/project/schema"),
+    import("@opencode-ai/core/reference"),
+    import("@opencode-ai/core/session/input"),
+    import("@opencode-ai/core/session/message"),
+    import("@opencode-ai/core/session/todo"),
+    import("@opencode-ai/core/session/prompt"),
+    import("@opencode-ai/core/skill"),
+    import("@opencode-ai/core/v2-schema"),
+    import("@opencode-ai/core/schema"),
+    import("@opencode-ai/core/workspace"),
   ])
 
   const schemas = [

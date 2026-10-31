@@ -3,27 +3,28 @@ import {
   type SnapshotFileDiff,
   Message as MessageType,
   Part as PartType,
-} from "@privacycode-ai/sdk/v2/client"
-import type { SessionStatus } from "@privacycode-ai/sdk/v2"
+} from "@opencode-ai/sdk/v2/client"
+import type { FileDiffInfo } from "@opencode-ai/client/promise"
+import type { SessionStatus } from "@opencode-ai/sdk/v2"
 import { useData } from "../context"
-import { useFileComponent } from "@privacycode-ai/ui/context/file"
+import { useFileComponent } from "@opencode-ai/ui/context/file"
 
-import { Binary } from "@privacycode-ai/core/util/binary"
-import { getDirectory, getFilename } from "@privacycode-ai/core/util/path"
+import { Binary } from "@opencode-ai/core/util/binary"
+import { getDirectory, getFilename } from "@opencode-ai/core/util/path"
 import { createEffect, createMemo, createSignal, For, on, ParentProps, Show } from "solid-js"
 import { createStore } from "solid-js/store"
 import { Dynamic } from "solid-js/web"
 import { AssistantParts, Message, MessageDivider, PART_MAPPING, type UserActions } from "./message-part"
-import { Card } from "@privacycode-ai/ui/card"
-import { Accordion } from "@privacycode-ai/ui/accordion"
-import { StickyAccordionHeader } from "@privacycode-ai/ui/sticky-accordion-header"
-import { DiffChanges } from "@privacycode-ai/ui/diff-changes"
-import { Icon } from "@privacycode-ai/ui/icon"
-import { TextShimmer } from "@privacycode-ai/ui/text-shimmer"
+import { Card } from "@opencode-ai/ui/card"
+import { Accordion } from "@opencode-ai/ui/accordion"
+import { StickyAccordionHeader } from "@opencode-ai/ui/sticky-accordion-header"
+import { DiffChanges } from "@opencode-ai/ui/diff-changes"
+import { Icon } from "@opencode-ai/ui/icon"
+import { TextShimmer } from "@opencode-ai/ui/text-shimmer"
 import { SessionRetry } from "./session-retry"
-import { TextReveal } from "@privacycode-ai/ui/text-reveal"
-import { createAutoScroll } from "@privacycode-ai/ui/hooks"
-import { useI18n } from "@privacycode-ai/ui/context/i18n"
+import { TextReveal } from "@opencode-ai/ui/text-reveal"
+import { createAutoScroll } from "@opencode-ai/ui/hooks"
+import { useI18n } from "@opencode-ai/ui/context/i18n"
 import { normalize } from "./session-diff"
 
 function record(value: unknown): value is Record<string, unknown> {
@@ -90,7 +91,7 @@ function list<T>(value: T[] | undefined | null, fallback: T[]) {
   return fallback
 }
 
-type SummaryDiff = SnapshotFileDiff & { file: string }
+type SummaryDiff = (SnapshotFileDiff & { file: string }) | FileDiffInfo
 
 function summaryDiff(value: SnapshotFileDiff): value is SummaryDiff {
   return typeof value.file === "string"
@@ -440,10 +441,7 @@ export function SessionTurn(
                 >
                   <div data-slot="session-turn-diffs-header">
                     <span data-slot="session-turn-diffs-label">
-                      {i18n.t(
-                        edited() === 1 ? "ui.sessionTurn.diffs.changed.one" : "ui.sessionTurn.diffs.changed.other",
-                        { count: String(edited()) },
-                      )}
+                      {i18n.plural("ui.sessionTurn.diffs.changed", edited())}
                     </span>
                     <DiffChanges changes={diffs()} />
                     <Show when={overflow() > 0}>

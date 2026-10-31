@@ -1,7 +1,10 @@
-import type { PrivacyCodeAPI } from "./lib/types"
+import type { ElectronAPI } from "../preload/types"
 
 declare global {
   interface Window {
-    privacycode: PrivacyCodeAPI
+    api: ElectronAPI
+    __OPENCODE__?: {
+      deepLinks?: string[]
+    }
   }
 }

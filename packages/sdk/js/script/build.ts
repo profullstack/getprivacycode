@@ -9,11 +9,9 @@ import path from "path"
 
 import { createClient } from "@hey-api/openapi-ts"
 
-// The CLI package is `privacycode` here, not `opencode`; the old path does not
-// exist, so `bun run build` failed with ENOENT before generating anything.
-const cli = path.resolve(dir, "../../privacycode")
+const opencode = path.resolve(dir, "../../opencode")
 
-await $`bun dev generate > ${dir}/openapi.json`.cwd(cli)
+await $`bun dev generate > ${dir}/openapi.json`.cwd(opencode)
 
 const document = (await Bun.file("./openapi.json").json()) as {
   components?: { schemas?: Record<string, unknown> }

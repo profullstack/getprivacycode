@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@privacycode-ai/cli",
-  "version": "1.18.3",
+  "name": "@opencode-ai/cli",
+  "version": "1.19.5",
   "type": "module",
   "license": "MIT",
   "bin": {
@@ -17,10 +17,10 @@
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",
-    "@privacycode-ai/core": "workspace:*",
-    "@privacycode-ai/sdk": "workspace:*",
-    "@privacycode-ai/server": "workspace:*",
-    "@privacycode-ai/tui": "workspace:*",
+    "@opencode-ai/core": "workspace:*",
+    "@opencode-ai/sdk": "workspace:*",
+    "@opencode-ai/server": "workspace:*",
+    "@opencode-ai/tui": "workspace:*",
     "@opentui/core": "catalog:",
     "@opentui/solid": "catalog:",
     "@parcel/watcher": "2.5.1",
@@ -28,7 +28,7 @@
     "solid-js": "catalog:"
   },
   "devDependencies": {
-    "@privacycode-ai/script": "workspace:*",
+    "@opencode-ai/script": "workspace:*",
     "@tsconfig/bun": "catalog:",
     "@types/bun": "catalog:",
     "@typescript/native-preview": "catalog:"

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test"
 import { formatAssistantHeader, formatMessage, formatPart, formatTranscript } from "../../src/util/transcript"
-import type { AssistantMessage, Part, Provider, UserMessage } from "@privacycode-ai/sdk/v2"
+import type { AssistantMessage, Part, Provider, UserMessage } from "@opencode-ai/sdk/v2"
 
 const providers: Provider[] = [
   {
@@ -347,6 +347,34 @@ describe("transcript", () => {
       expect(result).toContain("## Assistant (Build · Claude Sonnet 4 · 0.5s)")
       expect(result).toContain("Hi!")
       expect(result).toContain("---")
+    })
+
+    test("orders messages by creation time and preserves part order", () => {
+      const message = (id: string, created: number, parts: string[]) => ({
+        info: {
+          id,
+          sessionID: "ses_abc123",
+          role: "user" as const,
+          agent: "build",
+          model: { providerID: "anthropic", modelID: "claude" },
+          time: { created },
+        },
+        parts: parts.map((text, index) => ({
+          id: `part_${parts.length - index}`,
+          sessionID: "ses_abc123",
+          messageID: id,
+          type: "text" as const,
+          text,
+        })),
+      })
+      const result = formatTranscript(
+        { id: "ses_abc123", title: "Order", time: { created: 1, updated: 2 } },
+        [message("msg_a", 30, ["third"]), message("msg_z", 10, ["first", "second"])],
+        { thinking: false, toolDetails: false, assistantMetadata: false },
+      )
+
+      expect(result.indexOf("first")).toBeLessThan(result.indexOf("second"))
+      expect(result.indexOf("second")).toBeLessThan(result.indexOf("third"))
     })
 
     test("falls back to raw model id when provider data is missing", () => {

@@ -11,9 +11,6 @@ import { Hash } from "./util/hash"
 import { ProjectDirectories } from "./project/directories"
 import { ProjectSchema } from "./project/schema"
 
-const PROJECT_ID_FILE = "privacycode"
-const LEGACY_PROJECT_ID_FILE = "opencode"
-
 export const ID = ProjectSchema.ID
 export type ID = ProjectSchema.ID
 
@@ -52,7 +49,7 @@ export interface Interface {
   readonly commit: (input: { store: AbsolutePath; id: ID }) => Effect.Effect<void>
 }
 
-export class Service extends Context.Service<Service, Interface>()("@privacycode/ProjectV2") {}
+export class Service extends Context.Service<Service, Interface>()("@opencode/ProjectV2") {}
 
 const layer = Layer.effect(
   Service,
@@ -65,19 +62,12 @@ const layer = Layer.effect(
       return yield* projectDirectories.list(input.projectID)
     })
 
-    // The project ID is cached in a file inside the VCS store. It is named after
-    // this project; `opencode` is still read so projects created before the
-    // rename keep their existing ID instead of silently becoming new projects.
     const cached = Effect.fnUntraced(function* (dir: string) {
-      const read = (name: string) =>
-        fs.readFileString(path.join(dir, name)).pipe(
-          Effect.map((value) => value.trim()),
-          Effect.map((value) => (value ? ID.make(value) : undefined)),
-          Effect.catch(() => Effect.succeed(undefined)),
-        )
-      const current = yield* read(PROJECT_ID_FILE)
-      if (current) return current
-      return yield* read(LEGACY_PROJECT_ID_FILE)
+      return yield* fs.readFileString(path.join(dir, "opencode")).pipe(
+        Effect.map((value) => value.trim()),
+        Effect.map((value) => (value ? ID.make(value) : undefined)),
+        Effect.catch(() => Effect.succeed(undefined)),
+      )
     })
 
     const remote = Effect.fnUntraced(function* (repo: Git.Repository) {
@@ -132,7 +122,7 @@ const layer = Layer.effect(
     })
 
     const commit = Effect.fn("Project.commit")(function* (input: { store: AbsolutePath; id: ID }) {
-      yield* fs.writeFileString(path.join(input.store, PROJECT_ID_FILE), input.id).pipe(Effect.ignore)
+      yield* fs.writeFileString(path.join(input.store, "opencode"), input.id).pipe(Effect.ignore)
     })
 
     return Service.of({ directories, resolve, commit })

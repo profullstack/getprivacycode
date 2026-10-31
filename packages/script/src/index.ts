@@ -18,47 +18,30 @@ if (!semver.satisfies(process.versions.bun, expectedBunVersionRange)) {
 }
 
 const env = {
-  PRIVACYCODE_CHANNEL: process.env["PRIVACYCODE_CHANNEL"],
-  PRIVACYCODE_BUMP: process.env["PRIVACYCODE_BUMP"],
-  PRIVACYCODE_VERSION: process.env["PRIVACYCODE_VERSION"],
-  PRIVACYCODE_RELEASE: process.env["PRIVACYCODE_RELEASE"],
+  OPENCODE_CHANNEL: process.env["OPENCODE_CHANNEL"],
+  OPENCODE_BUMP: process.env["OPENCODE_BUMP"],
+  OPENCODE_VERSION: process.env["OPENCODE_VERSION"],
+  OPENCODE_RELEASE: process.env["OPENCODE_RELEASE"],
 }
 const CHANNEL = await (async () => {
-  if (env.PRIVACYCODE_CHANNEL) return env.PRIVACYCODE_CHANNEL
-  if (env.PRIVACYCODE_BUMP) return "latest"
-  if (env.PRIVACYCODE_VERSION && !env.PRIVACYCODE_VERSION.startsWith("0.0.0-")) return "latest"
+  if (env.OPENCODE_CHANNEL) return env.OPENCODE_CHANNEL
+  if (env.OPENCODE_BUMP) return "latest"
+  if (env.OPENCODE_VERSION && !env.OPENCODE_VERSION.startsWith("0.0.0-")) return "latest"
   return await $`git branch --show-current`.text().then((x) => x.trim())
 })()
 const IS_PREVIEW = CHANNEL !== "latest"
 
 const VERSION = await (async () => {
-  if (env.PRIVACYCODE_VERSION) return env.PRIVACYCODE_VERSION
+  if (env.OPENCODE_VERSION) return env.OPENCODE_VERSION
   if (IS_PREVIEW) return `0.0.0-${CHANNEL}-${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "")}`
-  // Derive the next version from this repository's own latest release. This
-  // used to read `registry.npmjs.org/opencode-ai/latest`, which meant the fork
-  // numbered its releases from upstream opencode's npm package rather than from
-  // anything it had actually shipped. Fall back to the version in the root
-  // package.json when there is no release yet (first release, or a new fork).
-  const repo = process.env["GH_REPO"] || process.env["GITHUB_REPOSITORY"]
-  // The root package.json carries no `version`, so fall back to the CLI package.
-  const fallback = await Bun.file(path.resolve(import.meta.dir, "../../privacycode/package.json"))
-    .json()
-    .then((pkg: any) => pkg.version)
-    .catch(() => "0.0.0")
-  const version = await (async () => {
-    if (!repo) return fallback
-    const headers: Record<string, string> = { accept: "application/vnd.github+json" }
-    const token = process.env["GH_TOKEN"] || process.env["GITHUB_TOKEN"]
-    if (token) headers["authorization"] = `Bearer ${token}`
-    const latest = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, { headers })
-      .then((res) => (res.ok ? res.json() : null))
-      .catch(() => null)
-    const tag = (latest as any)?.tag_name
-    if (typeof tag !== "string") return fallback
-    return tag.replace(/^v/, "")
-  })()
+  const version = await fetch("https://registry.npmjs.org/opencode-ai/latest")
+    .then((res) => {
+      if (!res.ok) throw new Error(res.statusText)
+      return res.json()
+    })
+    .then((data: any) => data.version)
   const [major, minor, patch] = version.split(".").map((x: string) => Number(x) || 0)
-  const t = env.PRIVACYCODE_BUMP?.toLowerCase()
+  const t = env.OPENCODE_BUMP?.toLowerCase()
   if (t === "major") return `${major + 1}.0.0`
   if (t === "minor") return `${major}.${minor + 1}.0`
   return `${major}.${minor}.${patch + 1}`
@@ -85,10 +68,10 @@ export const Script = {
     return IS_PREVIEW
   },
   get release(): boolean {
-    return !!env.PRIVACYCODE_RELEASE
+    return !!env.OPENCODE_RELEASE
   },
   get team() {
     return team
   },
 }
-console.log(`privacycode script`, JSON.stringify(Script, null, 2))
+console.log(`opencode script`, JSON.stringify(Script, null, 2))

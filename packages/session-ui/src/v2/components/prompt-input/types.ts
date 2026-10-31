@@ -1,4 +1,4 @@
-import type { FilePartSource } from "@privacycode-ai/sdk/v2/client"
+import type { FilePartSource } from "@opencode-ai/sdk/v2/client"
 
 type PromptInputV2PartBase = {
   content: string
@@ -31,7 +31,7 @@ export type PromptInputV2Attachment = {
   filename: string
   sourcePath?: string
   mime: string
-  dataUrl: string
+  blob: { id: string; url: string }
 }
 
 export type PromptInputV2Prompt = (

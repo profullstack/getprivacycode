@@ -7,6 +7,7 @@ import { RETIRED_STAT_PROVIDERS } from "./model-normalization"
 import {
   chunks,
   collapseRows,
+  DATA_SITE_TIERS,
   inserted,
   isMissingUniqueUsersColumn,
   omitUniqueUsers,
@@ -45,7 +46,7 @@ export declare namespace ProviderStatRepo {
 }
 
 export class ProviderStatRepo extends Context.Service<ProviderStatRepo, ProviderStatRepo.Service>()(
-  "@privacycode/stats/ProviderStatRepo",
+  "@opencode/stats/ProviderStatRepo",
 ) {
   static readonly layer: Layer.Layer<ProviderStatRepo, never, DrizzleClient> = Layer.effect(
     ProviderStatRepo,
@@ -69,7 +70,7 @@ export class ProviderStatRepo extends Context.Service<ProviderStatRepo, Provider
                   eq(providerStat.grain, "day"),
                   eq(providerStat.client, "all"),
                   eq(providerStat.source, "all"),
-                  inArray(providerStat.tier, ["Go", "go"]),
+                  inArray(providerStat.tier, DATA_SITE_TIERS),
                 ),
               )
               .orderBy(asc(providerStat.period_key)),

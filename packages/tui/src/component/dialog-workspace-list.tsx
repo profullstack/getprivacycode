@@ -1,4 +1,4 @@
-import type { Workspace } from "@privacycode-ai/sdk/v2"
+import type { Workspace } from "@opencode-ai/sdk/v2"
 import { useDialog } from "../ui/dialog"
 import { DialogSelect, type DialogSelectOption } from "../ui/dialog-select"
 import { useProject } from "../context/project"
@@ -39,7 +39,7 @@ export function DialogWorkspaceList() {
         return {
           title:
             removing() === workspace.id
-              ? "Deleting..."
+              ? "Deleting…"
               : deleting() === workspace.id
                 ? `Delete ${workspace.name}? Press delete again`
                 : workspace.name,

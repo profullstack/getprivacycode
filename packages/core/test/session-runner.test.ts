@@ -8,53 +8,53 @@ import {
   InvalidRequestReason,
   type LLMClientShape,
   type LLMRequest,
-} from "@privacycode-ai/llm"
-import * as OpenAIChat from "@privacycode-ai/llm/protocols/openai-chat"
-import { Database } from "@privacycode-ai/core/database/database"
-import { makeLocationNode } from "@privacycode-ai/core/effect/app-node"
-import { AppNodeBuilder } from "@privacycode-ai/core/effect/app-node-builder"
-import { LayerNodePlatform } from "@privacycode-ai/core/effect/app-node-platform"
-import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
-import { EventV2 } from "@privacycode-ai/core/event"
-import { PermissionV2 } from "@privacycode-ai/core/permission"
-import { EventTable } from "@privacycode-ai/core/event/sql"
-import { Project } from "@privacycode-ai/core/project"
-import { ProjectTable } from "@privacycode-ai/core/project/sql"
-import { QuestionV2 } from "@privacycode-ai/core/question"
-import { AbsolutePath } from "@privacycode-ai/core/schema"
-import { SessionV2 } from "@privacycode-ai/core/session"
-import { Snapshot } from "@privacycode-ai/core/snapshot"
-import { ContextSnapshotDecodeError } from "@privacycode-ai/core/session/error"
-import { SessionEvent } from "@privacycode-ai/core/session/event"
-import { SessionInput } from "@privacycode-ai/core/session/input"
-import { SessionMessage } from "@privacycode-ai/core/session/message"
-import { Prompt } from "@privacycode-ai/core/session/prompt"
-import { SessionProjector } from "@privacycode-ai/core/session/projector"
-import { SessionExecution } from "@privacycode-ai/core/session/execution"
-import { SessionRunCoordinator } from "@privacycode-ai/core/session/run-coordinator"
-import { SessionRunner } from "@privacycode-ai/core/session/runner"
-import * as SessionRunnerLLM from "@privacycode-ai/core/session/runner/llm"
-import { SessionRunnerModel } from "@privacycode-ai/core/session/runner/model"
-import { ToolRegistry } from "@privacycode-ai/core/tool/registry"
-import { ApplicationTools } from "@privacycode-ai/core/tool/application-tools"
-import { AgentV2 } from "@privacycode-ai/core/agent"
-import { Config } from "@privacycode-ai/core/config"
-import { ConfigCompaction } from "@privacycode-ai/core/config/compaction"
-import { Tool } from "@privacycode-ai/core/tool/tool"
+} from "@opencode-ai/llm"
+import * as OpenAIChat from "@opencode-ai/llm/protocols/openai-chat"
+import { Database } from "@opencode-ai/core/database/database"
+import { makeLocationNode } from "@opencode-ai/core/effect/app-node"
+import { AppNodeBuilder } from "@opencode-ai/core/effect/app-node-builder"
+import { LayerNodePlatform } from "@opencode-ai/core/effect/app-node-platform"
+import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { EventV2 } from "@opencode-ai/core/event"
+import { PermissionV2 } from "@opencode-ai/core/permission"
+import { EventTable } from "@opencode-ai/core/event/sql"
+import { Project } from "@opencode-ai/core/project"
+import { ProjectTable } from "@opencode-ai/core/project/sql"
+import { QuestionV2 } from "@opencode-ai/core/question"
+import { AbsolutePath } from "@opencode-ai/core/schema"
+import { SessionV2 } from "@opencode-ai/core/session"
+import { Snapshot } from "@opencode-ai/core/snapshot"
+import { ContextSnapshotDecodeError } from "@opencode-ai/core/session/error"
+import { SessionEvent } from "@opencode-ai/core/session/event"
+import { SessionInput } from "@opencode-ai/core/session/input"
+import { SessionMessage } from "@opencode-ai/core/session/message"
+import { Prompt } from "@opencode-ai/core/session/prompt"
+import { SessionProjector } from "@opencode-ai/core/session/projector"
+import { SessionExecution } from "@opencode-ai/core/session/execution"
+import { SessionRunCoordinator } from "@opencode-ai/core/session/run-coordinator"
+import { SessionRunner } from "@opencode-ai/core/session/runner"
+import * as SessionRunnerLLM from "@opencode-ai/core/session/runner/llm"
+import { SessionRunnerModel } from "@opencode-ai/core/session/runner/model"
+import { ToolRegistry } from "@opencode-ai/core/tool/registry"
+import { ApplicationTools } from "@opencode-ai/core/tool/application-tools"
+import { AgentV2 } from "@opencode-ai/core/agent"
+import { Config } from "@opencode-ai/core/config"
+import { ConfigCompaction } from "@opencode-ai/core/config/compaction"
+import { Tool } from "@opencode-ai/core/tool/tool"
 import {
   SessionContextEpochTable,
   SessionInputTable,
   SessionMessageTable,
   SessionTable,
-} from "@privacycode-ai/core/session/sql"
-import { SessionStore } from "@privacycode-ai/core/session/store"
-import { SystemContext } from "@privacycode-ai/core/system-context"
-import { SystemContextRegistry } from "@privacycode-ai/core/system-context/registry"
-import { SkillGuidance } from "@privacycode-ai/core/skill/guidance"
-import { ReferenceGuidance } from "@privacycode-ai/core/reference/guidance"
-import { ModelV2 } from "@privacycode-ai/core/model"
-import { Location } from "@privacycode-ai/core/location"
-import { ProviderV2 } from "@privacycode-ai/core/provider"
+} from "@opencode-ai/core/session/sql"
+import { SessionStore } from "@opencode-ai/core/session/store"
+import { SystemContext } from "@opencode-ai/core/system-context"
+import { SystemContextRegistry } from "@opencode-ai/core/system-context/registry"
+import { SkillGuidance } from "@opencode-ai/core/skill/guidance"
+import { ReferenceGuidance } from "@opencode-ai/core/reference/guidance"
+import { ModelV2 } from "@opencode-ai/core/model"
+import { Location } from "@opencode-ai/core/location"
+import { ProviderV2 } from "@opencode-ai/core/provider"
 import { Cause, DateTime, Deferred, Effect, Exit, Fiber, Layer, Schema, Stream } from "effect"
 import { asc, eq } from "drizzle-orm"
 import { testEffect } from "./lib/effect"
@@ -703,13 +703,6 @@ describe("SessionRunnerLLM", () => {
         timestamp: DateTime.makeUnsafe(1),
         location: Location.Ref.make({ directory: AbsolutePath.make("/moved") }),
       })
-      expect(
-        yield* db
-          .select()
-          .from(SessionContextEpochTable)
-          .where(eq(SessionContextEpochTable.session_id, sessionID))
-          .get(),
-      ).toBeUndefined()
 
       yield* session.prompt({ sessionID, prompt: Prompt.make({ text: "Second" }), resume: false })
       const exit = yield* session.resume(sessionID).pipe(Effect.exit)
@@ -1108,6 +1101,18 @@ describe("SessionRunnerLLM", () => {
       yield* session.resume(sessionID)
 
       expect(requests).toHaveLength(2)
+      expect(requests.map((request) => request.http?.headers)).toEqual([
+        {
+          "x-opencode-session-id": sessionID,
+          "x-session-affinity": sessionID,
+          "X-Session-Id": sessionID,
+        },
+        {
+          "x-opencode-session-id": sessionID,
+          "x-session-affinity": sessionID,
+          "X-Session-Id": sessionID,
+        },
+      ])
       expect(userTexts(requests[0])[0]).toContain("## Objective")
       expect(userTexts(requests[1])).toHaveLength(1)
       expect(userTexts(requests[1])[0]).toContain("<summary>\n## Objective\n- Preserve the task\n</summary>")
@@ -1135,13 +1140,74 @@ describe("SessionRunnerLLM", () => {
 
       expect(requests).toHaveLength(2)
       expect(userTexts(requests[0])[0]).toContain(
-        "<previous-summary>\n## Objective\n- Preserve the task\n</previous-summary>",
+        "<prior-summary>\n## Objective\n- Preserve the task\n</prior-summary>",
       )
       expect(userTexts(requests[0])[0]).toContain("Recent exact request")
       expect((yield* (yield* SessionStore.Service).context(sessionID))[0]).toMatchObject({
         type: "compaction",
         summary: "## Objective\n- Preserve the updated task",
       })
+    }),
+  )
+
+  it.effect("retains only complete serialized messages during compaction", () =>
+    Effect.gen(function* () {
+      yield* setup
+      const session = yield* SessionV2.Service
+      const earlier = `EARLIER_BOUNDARY ${"a".repeat(3_000)} EARLIER_END`
+      const recent = `RECENT_BOUNDARY ${"b".repeat(3_000)} RECENT_END`
+      response = fragmentFixture("text", "text-earlier", ["Earlier answer"]).completeEvents
+      yield* session.prompt({ sessionID, prompt: Prompt.make({ text: earlier }), resume: false })
+      yield* session.resume(sessionID)
+
+      currentModel = compactModel
+      requests.length = 0
+      responses = [
+        fragmentFixture("text", "text-summary", ["## Objective\n- Preserve the task"]).completeEvents,
+        fragmentFixture("text", "text-final", ["Continued"]).completeEvents,
+      ]
+      yield* session.prompt({ sessionID, prompt: Prompt.make({ text: recent }), resume: false })
+      yield* session.resume(sessionID)
+
+      expect(requests).toHaveLength(2)
+      const summary = userTexts(requests[0])[0]
+      const continuation = userTexts(requests[1])[0]
+      expect(summary.match(/EARLIER_BOUNDARY/g)).toHaveLength(1)
+      expect(summary).toContain(`EARLIER_BOUNDARY ${"a".repeat(3_000)} EARLIER_END`)
+      expect(summary).not.toContain("RECENT_BOUNDARY")
+      expect(continuation).not.toContain("EARLIER_BOUNDARY")
+      expect(continuation).not.toContain("EARLIER_END")
+      expect(continuation).toContain("<recent-context>\n[Assistant]: Earlier answer")
+      expect(continuation).toContain(`RECENT_BOUNDARY ${"b".repeat(3_000)} RECENT_END`)
+    }),
+  )
+
+  it.effect("summarizes an oversized newest message without retaining a fragment", () =>
+    Effect.gen(function* () {
+      yield* setup
+      const session = yield* SessionV2.Service
+      response = fragmentFixture("text", "text-earlier", ["Earlier answer"]).completeEvents
+      yield* session.prompt({ sessionID, prompt: Prompt.make({ text: "Earlier question" }), resume: false })
+      yield* session.resume(sessionID)
+
+      const oversized = `OVERSIZED_BOUNDARY ${"x".repeat(4_500)} OVERSIZED_END`
+      currentModel = compactModel
+      requests.length = 0
+      responses = [
+        fragmentFixture("text", "text-summary", ["## Objective\n- Preserve the task"]).completeEvents,
+        fragmentFixture("text", "text-final", ["Continued"]).completeEvents,
+      ]
+      yield* session.prompt({ sessionID, prompt: Prompt.make({ text: oversized }), resume: false })
+      yield* session.resume(sessionID)
+
+      expect(requests).toHaveLength(2)
+      const summary = userTexts(requests[0])[0]
+      const continuation = userTexts(requests[1])[0]
+      expect(summary.match(/OVERSIZED_BOUNDARY/g)).toHaveLength(1)
+      expect(summary).toContain(oversized)
+      expect(continuation).not.toContain("OVERSIZED_BOUNDARY")
+      expect(continuation).not.toContain("OVERSIZED_END")
+      expect(continuation).toContain("<recent-context>\n\n</recent-context>")
     }),
   )
 
@@ -2451,6 +2517,50 @@ describe("SessionRunnerLLM", () => {
       yield* Fiber.join(second)
       streamGate = undefined
       streamStarted = undefined
+    }),
+  )
+
+  it.effect("adds session correlation headers to model requests", () =>
+    Effect.gen(function* () {
+      yield* setup
+      const session = yield* SessionV2.Service
+      yield* session.prompt({ sessionID, prompt: Prompt.make({ text: "Run correlated request" }), resume: false })
+
+      requests.length = 0
+      yield* session.resume(sessionID)
+
+      expect(requests[0]?.http?.headers).toEqual({
+        "x-opencode-session-id": sessionID,
+        "x-session-affinity": sessionID,
+        "X-Session-Id": sessionID,
+      })
+    }),
+  )
+
+  it.effect("adds the parent session header to child model requests", () =>
+    Effect.gen(function* () {
+      yield* setup
+      const session = yield* SessionV2.Service
+      const parentID = SessionV2.ID.make("ses_runner_parent")
+      const { db } = yield* Database.Service
+      yield* db
+        .update(SessionTable)
+        .set({ parent_id: parentID })
+        .where(eq(SessionTable.id, sessionID))
+        .run()
+        .pipe(Effect.orDie)
+      yield* session.prompt({ sessionID, prompt: Prompt.make({ text: "Run child request" }), resume: false })
+
+      requests.length = 0
+      yield* session.resume(sessionID)
+
+      expect(requests[0]?.http?.headers).toEqual({
+        "x-opencode-session-id": sessionID,
+        "x-opencode-parent-session-id": parentID,
+        "x-session-affinity": sessionID,
+        "X-Session-Id": sessionID,
+        "x-parent-session-id": parentID,
+      })
     }),
   )
 
