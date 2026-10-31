@@ -18,11 +18,11 @@ AI coding tools send your code, prompts, and context to cloud providers. But you
 
 ### Defender&trade; — the privacy layer
 
-| Scenario | Without PrivacyCode | With PrivacyCode |
-|----------|-------------------|-------------------|
+| Scenario                                                         | Without PrivacyCode                          | With PrivacyCode                           |
+| ---------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------ |
 | You type: `Fix auth for jane@acme.com with key sk-live-51HdF...` | Provider sees your real email and Stripe key | Provider sees `[EMAI-...]` and `[KEY-...]` |
-| Agent reads `config.ts` containing `DATABASE_URL=postgres://...` | Provider sees your DB credentials | Provider sees `[URLP-...]` |
-| Agent runs `git log` and output contains commit emails | Provider sees every contributor email | Provider sees anonymized tokens |
+| Agent reads `config.ts` containing `DATABASE_URL=postgres://...` | Provider sees your DB credentials            | Provider sees `[URLP-...]`                 |
+| Agent runs `git log` and output contains commit emails           | Provider sees every contributor email        | Provider sees anonymized tokens            |
 
 **18 detection patterns** by default: emails, phones, SSNs, credit cards, IPs, IBANs, API keys, JWT tokens, AWS keys, GitHub tokens, OpenAI keys, passwords in URLs, passport numbers, and more. Add custom regex patterns for your organization.
 
@@ -31,9 +31,6 @@ AI coding tools send your code, prompts, and context to cloud providers. But you
 ```bash
 # Install
 curl -fsSL https://getprivacycode.com/install.sh | sh
-
-# Or via npm
-npm install -g privacycode
 
 # Set your API key
 export OPENAI_API_KEY=sk-...
@@ -74,25 +71,25 @@ privacycode models anthropic
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `privacycode` | Launch interactive TUI (default) |
-| `privacycode run "<task>"` | One-shot non-interactive task |
-| `privacycode providers` | List all supported providers |
-| `privacycode models [id]` | List models for a provider |
+| Command                      | Description                       |
+| ---------------------------- | --------------------------------- |
+| `privacycode`                | Launch interactive TUI (default)  |
+| `privacycode run "<task>"`   | One-shot non-interactive task     |
+| `privacycode providers`      | List all supported providers      |
+| `privacycode models [id]`    | List models for a provider        |
 | `privacycode analyze <text>` | Show what Defender would tokenize |
 
 ## Slash Commands (in TUI)
 
-| Command | Action |
-|---------|--------|
+| Command            | Action                       |
+| ------------------ | ---------------------------- |
 | `/privacy on\|off` | Toggle Defender tokenization |
-| `/model <id>` | Switch AI model |
-| `/provider <id>` | Switch AI provider |
-| `/vault` | Show vault statistics |
-| `/stats` | Show token usage |
-| `/clear` | Clear conversation history |
-| `/exit` | Quit |
+| `/model <id>`      | Switch AI model              |
+| `/provider <id>`   | Switch AI provider           |
+| `/vault`           | Show vault statistics        |
+| `/stats`           | Show token usage             |
+| `/clear`           | Clear conversation history   |
+| `/exit`            | Quit                         |
 
 ## Configuration
 
@@ -102,7 +99,7 @@ Resolved in order: CLI flags → environment variables → project config → gl
 // ~/.config/privacycode/config.json
 {
   "provider": "anthropic",
-  "model": "claude-sonnet-4-20250514"
+  "model": "claude-sonnet-4-20250514",
 }
 ```
 
@@ -110,7 +107,7 @@ Resolved in order: CLI flags → environment variables → project config → gl
 // ./privacycode.jsonc (project-level)
 {
   "provider": "openai",
-  "model": "gpt-4o"
+  "model": "gpt-4o",
 }
 ```
 

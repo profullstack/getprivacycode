@@ -17,8 +17,7 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "@privacycode-ai/app#test": {
-      "dependsOn": ["^build"],
+    "@privacycode-ai/function#test": {
       "outputs": []
     },
     "@privacycode-ai/ui#test": {

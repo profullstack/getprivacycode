@@ -107,7 +107,10 @@ describe("HttpApi authorization middleware", () => {
   itKitSecret.live("respects configured basic auth username", () =>
     Effect.gen(function* () {
       const [defaultUser, configuredUser] = yield* Effect.all(
-        [getProbe({ authorization: basic("privacycode", "secret") }), getProbe({ authorization: basic("kit", "secret") })],
+        [
+          getProbe({ authorization: basic("privacycode", "secret") }),
+          getProbe({ authorization: basic("kit", "secret") }),
+        ],
         { concurrency: "unbounded" },
       )
 
@@ -147,7 +150,9 @@ describe("HttpApi authorization middleware", () => {
 
   itSecret.live("preserves handler errors when auth token query succeeds", () =>
     Effect.gen(function* () {
-      const response = yield* HttpClient.get(`/missing?auth_token=${encodeURIComponent(token("privacycode", "secret"))}`)
+      const response = yield* HttpClient.get(
+        `/missing?auth_token=${encodeURIComponent(token("privacycode", "secret"))}`,
+      )
 
       expect(response.status).toBe(404)
     }),

@@ -6,8 +6,19 @@ import nodemailer from "nodemailer"
 import { ImapFlow } from "imapflow"
 import { assertEmailSenderAllowed } from "./email-policy"
 import {
-  LOCKED_MESSAGE, MailVault, OPERATOR, OPERATOR_TTL_SECONDS, PROTECTED_KEYS, countLegacyRows, decodeDataKey,
-  getSeal, legacyMigrationEnabled, readLegacyForMigration, saveSealedConfig, sealer, serverConfig,
+  LOCKED_MESSAGE,
+  MailVault,
+  OPERATOR,
+  OPERATOR_TTL_SECONDS,
+  PROTECTED_KEYS,
+  countLegacyRows,
+  decodeDataKey,
+  getSeal,
+  legacyMigrationEnabled,
+  readLegacyForMigration,
+  saveSealedConfig,
+  sealer,
+  serverConfig,
 } from "./mail-secrets"
 import { parseTtl } from "@profullstack/sealed-secrets"
 
@@ -76,8 +87,12 @@ db.exec(`
 
 const STAGES = ["new", "emailed", "replied", "meeting", "negotiation", "closed_won", "closed_lost"]
 
-function now() { return new Date().toISOString() }
-function newId() { return randomUUID() }
+function now() {
+  return new Date().toISOString()
+}
+function newId() {
+  return randomUUID()
+}
 
 // --- Email (password sealed; see mail-secrets.ts) ---
 const vault = new MailVault(db)
@@ -87,37 +102,59 @@ let imapClient: ImapFlow | null = null
 function getEmailConfig() {
   const row = db.query("SELECT value FROM settings WHERE key=?").get("email_config") as { value: string } | null
   if (!row) return null
-  try { return JSON.parse(row.value) } catch { return null }
+  try {
+    return JSON.parse(row.value)
+  } catch {
+    return null
+  }
 }
 
 // Lock, expiry or restart: drop every live connection that holds the password.
 vault.store.onChange((_user, unlocked) => {
   if (unlocked) return
-  try { transporter?.close() } catch {}
+  try {
+    transporter?.close()
+  } catch {}
   transporter = null
-  if (imapClient) { try { imapClient.close() } catch {} }
+  if (imapClient) {
+    try {
+      imapClient.close()
+    } catch {}
+  }
   imapClient = null
 })
 
 async function initTransporter() {
   const config = serverConfig(db, "smtp_config")
   const secrets = await vault.secrets()
-  if (!config || !secrets) { transporter = null; return null }
+  if (!config || !secrets) {
+    transporter = null
+    return null
+  }
   transporter = nodemailer.createTransport({
     host: config.host || "smtp.gmail.com",
     port: config.port || 587,
     secure: config.secure || false,
     auth: { user: config.user, pass: secrets.SMTP_PASS },
   })
-  try { await transporter.verify(); return transporter }
-  catch { transporter = null; return null }
+  try {
+    await transporter.verify()
+    return transporter
+  } catch {
+    transporter = null
+    return null
+  }
 }
 
 async function initImap() {
   const config = serverConfig(db, "imap_config")
   const secrets = await vault.secrets()
   if (!config || !secrets) return false
-  if (imapClient) { try { imapClient.close() } catch {} }
+  if (imapClient) {
+    try {
+      imapClient.close()
+    } catch {}
+  }
   imapClient = new ImapFlow({
     host: config.host || "imap.gmail.com",
     port: config.port || 993,
@@ -125,13 +162,24 @@ async function initImap() {
     auth: { user: config.user || "", pass: secrets.IMAP_PASS },
     logger: false,
   })
-  try { await imapClient.connect(); return true }
-  catch { imapClient = null; return false }
+  try {
+    await imapClient.connect()
+    return true
+  } catch {
+    imapClient = null
+    return false
+  }
 }
 
 async function checkEmail() {
-  if (!vault.status().unlocked) { if (getSeal(db)) vault.announceLocked(); return [] }
-  if (!imapClient) { const ok = await initImap(); if (!ok) return [] }
+  if (!vault.status().unlocked) {
+    if (getSeal(db)) vault.announceLocked()
+    return []
+  }
+  if (!imapClient) {
+    const ok = await initImap()
+    if (!ok) return []
+  }
   if (!imapClient) return []
   try {
     const lock = await imapClient.getMailboxLock("INBOX")
@@ -152,24 +200,34 @@ async function checkEmail() {
         const date = env.date ? new Date(env.date).toISOString() : now()
 
         for (const lead of existingLeads) {
-          db.query(`INSERT INTO activities (id, lead_id, type, subject, body, direction, status, created_at)
-            VALUES (?,?, 'email', ?, ?, 'inbound', 'replied', ?)`)
-            .run(newId(), lead.id, subject, text, date)
-          db.query("UPDATE leads SET stage=? WHERE id=? AND stage NOT IN ('closed_won','closed_lost')")
-            .run("replied", lead.id)
+          db.query(
+            `INSERT INTO activities (id, lead_id, type, subject, body, direction, status, created_at)
+            VALUES (?,?, 'email', ?, ?, 'inbound', 'replied', ?)`,
+          ).run(newId(), lead.id, subject, text, date)
+          db.query("UPDATE leads SET stage=? WHERE id=? AND stage NOT IN ('closed_won','closed_lost')").run(
+            "replied",
+            lead.id,
+          )
         }
         messages.push({ id: uid.toString(), from: fromEmail, subject, text, date })
       }
       return messages
-    } finally { lock.release() }
-  } catch { return [] }
+    } finally {
+      lock.release()
+    }
+  } catch {
+    return []
+  }
 }
 
 // Seed templates if empty
 const tplCount = (db.query("SELECT COUNT(*) as c FROM templates").get() as { c: number }).c
 if (tplCount === 0) {
   const seed = [
-    ["Cold Outreach - CISO", "AI coding at {company}?", `Hi {first_name},
+    [
+      "Cold Outreach - CISO",
+      "AI coding at {company}?",
+      `Hi {first_name},
 
 Quick one — do your devs use AI coding tools (Claude, ChatGPT, Copilot)?
 
@@ -184,9 +242,14 @@ I built PrivacyCode — an open-source CLI that tokenizes sensitive data before 
 Worth 30 min to see a live demo?
 
 Best,
-[Your name]`, "cold"],
+[Your name]`,
+      "cold",
+    ],
 
-    ["Cold Outreach - VP Eng", "AI coding at {company}?", `Hi {first_name},
+    [
+      "Cold Outreach - VP Eng",
+      "AI coding at {company}?",
+      `Hi {first_name},
 
 Your devs want AI coding tools. Compliance is blocking it.
 
@@ -197,9 +260,14 @@ No proxy. No cloud. No change to how your devs work. Deployed at HIPAA orgs in 2
 Want to see a 2-min demo?
 
 Best,
-[Your name]`, "cold"],
+[Your name]`,
+      "cold",
+    ],
 
-    ["Follow Up - Case Study", "How a HIPAA org deployed AI tools in 2 days", `Hi {first_name},
+    [
+      "Follow Up - Case Study",
+      "How a HIPAA org deployed AI tools in 2 days",
+      `Hi {first_name},
 
 Following up on my last email.
 
@@ -212,9 +280,14 @@ I put together a one-page summary. Happy to share it.
 Is this relevant to what you're working on?
 
 Best,
-[Your name]`, "followup"],
+[Your name]`,
+      "followup",
+    ],
 
-    ["Meeting Request", "Quick chat about AI compliance", `Hi {first_name},
+    [
+      "Meeting Request",
+      "Quick chat about AI compliance",
+      `Hi {first_name},
 
 Would you have 20 minutes this week to hop on a quick call?
 
@@ -223,9 +296,14 @@ I'd love to understand your team's AI coding situation and share how other SOC 2
 No pitch — just a conversation.
 
 Best,
-[Your name]`, "meeting"],
+[Your name]`,
+      "meeting",
+    ],
 
-    ["Closing - Proposal", "PrivacyCode deployment for {company}", `Hi {first_name},
+    [
+      "Closing - Proposal",
+      "PrivacyCode deployment for {company}",
+      `Hi {first_name},
 
 Based on our conversation, here's what I'd recommend for {company}:
 
@@ -242,9 +320,13 @@ Pricing: [your pricing]
 Ready to move forward? I can start the setup this week.
 
 Best,
-[Your name]`, "close"],
+[Your name]`,
+      "close",
+    ],
   ]
-  const ins = db.prepare("INSERT INTO templates (id, name, subject, body, category, created_at, updated_at) VALUES (?,?,?,?,?,?,?)")
+  const ins = db.prepare(
+    "INSERT INTO templates (id, name, subject, body, category, created_at, updated_at) VALUES (?,?,?,?,?,?,?)",
+  )
   for (const [name, subject, body, cat] of seed) {
     const t = now()
     ins.run(newId(), name, subject, body, cat, t, t)
@@ -261,29 +343,47 @@ const app = new Elysia()
   .get("/", () => new Response(INDEX, { headers: { "content-type": "text/html; charset=utf-8" } }))
   .get("/index.html", () => new Response(INDEX, { headers: { "content-type": "text/html; charset=utf-8" } }))
   .get("/vendor/sealed-secrets/:file", ({ params: { file }, set }) => {
-    if (!VENDOR.has(file)) { set.status = 404; return { error: "not found" } }
-    return new Response(Bun.file(SEALED_SECRETS_DIR + file), { headers: { "content-type": "text/javascript; charset=utf-8" } })
+    if (!VENDOR.has(file)) {
+      set.status = 404
+      return { error: "not found" }
+    }
+    return new Response(Bun.file(SEALED_SECRETS_DIR + file), {
+      headers: { "content-type": "text/javascript; charset=utf-8" },
+    })
   })
   .onError(({ code, error, set }) => {
     if (code === "VALIDATION") return { error: error.message }
-    if (code === "NOT_FOUND") { set.status = 404; return { error: "not found" } }
+    if (code === "NOT_FOUND") {
+      set.status = 404
+      return { error: "not found" }
+    }
     // Route handlers throw plain Errors with user-facing messages ("Email ... locked: unlock to resume").
-    if (code === "UNKNOWN" && error instanceof Error) { set.status = 400; return { error: error.message } }
+    if (code === "UNKNOWN" && error instanceof Error) {
+      set.status = 400
+      return { error: error.message }
+    }
     console.error(error)
     return { error: "Internal error" }
   })
 
 // --- Dashboard ---
 app.get("/api/dashboard", () => {
-  const pipeline = db.query("SELECT stage, COUNT(*) as count FROM leads GROUP BY stage").all() as Array<{ stage: string; count: number }>
+  const pipeline = db.query("SELECT stage, COUNT(*) as count FROM leads GROUP BY stage").all() as Array<{
+    stage: string
+    count: number
+  }>
   const counts: Record<string, number> = {}
   for (const s of STAGES) counts[s] = 0
   for (const r of pipeline) counts[r.stage] = r.count
   const total = Object.values(counts).reduce((a, b) => a + b, 0)
-  const recent = db.query(`SELECT l.id, l.name, l.company, l.stage, l.email,
+  const recent = db
+    .query(
+      `SELECT l.id, l.name, l.company, l.stage, l.email,
     (SELECT a.type FROM activities a WHERE a.lead_id=l.id ORDER BY a.created_at DESC LIMIT 1) as last_activity_type,
     (SELECT a.created_at FROM activities a WHERE a.lead_id=l.id ORDER BY a.created_at DESC LIMIT 1) as last_contact
-    FROM leads l ORDER BY last_contact DESC LIMIT 10`).all()
+    FROM leads l ORDER BY last_contact DESC LIMIT 10`,
+    )
+    .all()
   return { pipeline: counts, total, recent }
 })
 
@@ -292,8 +392,15 @@ app.get("/api/leads", ({ query }) => {
   const { stage, search } = query
   let sql = "SELECT * FROM leads WHERE 1=1"
   const params: Array<string> = []
-  if (stage && stage !== "all") { sql += " AND stage=?"; params.push(stage as string) }
-  if (search) { sql += " AND (name LIKE ? OR company LIKE ? OR email LIKE ?)"; const s = `%${search}%`; params.push(s, s, s) }
+  if (stage && stage !== "all") {
+    sql += " AND stage=?"
+    params.push(stage as string)
+  }
+  if (search) {
+    sql += " AND (name LIKE ? OR company LIKE ? OR email LIKE ?)"
+    const s = `%${search}%`
+    params.push(s, s, s)
+  }
   sql += " ORDER BY updated_at DESC"
   return db.query(sql).all(...params)
 })
@@ -301,8 +408,24 @@ app.get("/api/leads", ({ query }) => {
 app.post("/api/leads", ({ body }: { body: any }) => {
   const { name, company, title, email, phone, linkedin, source, notes, tags, stage } = body
   if (!name) throw new Error("Name is required")
-  const lead = { id: newId(), name, company: company || "", title: title || "", email: email || "", phone: phone || "", linkedin: linkedin || "", stage: stage || "new", source: source || "manual", notes: notes || "", tags: tags || "", created_at: now(), updated_at: now() }
-  db.query(`INSERT INTO leads (id, name, company, title, email, phone, linkedin, stage, source, notes, tags, created_at, updated_at) VALUES ($id, $name, $company, $title, $email, $phone, $linkedin, $stage, $source, $notes, $tags, $created_at, $updated_at)`).run(lead)
+  const lead = {
+    id: newId(),
+    name,
+    company: company || "",
+    title: title || "",
+    email: email || "",
+    phone: phone || "",
+    linkedin: linkedin || "",
+    stage: stage || "new",
+    source: source || "manual",
+    notes: notes || "",
+    tags: tags || "",
+    created_at: now(),
+    updated_at: now(),
+  }
+  db.query(
+    `INSERT INTO leads (id, name, company, title, email, phone, linkedin, stage, source, notes, tags, created_at, updated_at) VALUES ($id, $name, $company, $title, $email, $phone, $linkedin, $stage, $source, $notes, $tags, $created_at, $updated_at)`,
+  ).run(lead)
   return lead
 })
 
@@ -317,9 +440,13 @@ app.put("/api/leads/:id", ({ params: { id }, body }: { params: { id: string }; b
   const existing = db.query("SELECT * FROM leads WHERE id=?").get(id) as any
   if (!existing) throw new Error("Lead not found")
   const fields = ["name", "company", "title", "email", "phone", "linkedin", "stage", "source", "notes", "tags"]
-  const updates: Array<string> = []; const params: Array<any> = []
+  const updates: Array<string> = []
+  const params: Array<any> = []
   for (const f of fields) {
-    if (body[f] !== undefined) { updates.push(`${f}=?`); params.push(body[f]) }
+    if (body[f] !== undefined) {
+      updates.push(`${f}=?`)
+      params.push(body[f])
+    }
   }
   if (updates.length === 0) return existing
   updates.push("updated_at=?")
@@ -334,8 +461,9 @@ app.put("/api/leads/:id/stage", ({ params: { id }, body }: { params: { id: strin
   const existing = db.query("SELECT * FROM leads WHERE id=?").get(id) as any
   if (!existing) throw new Error("Lead not found")
   db.query("UPDATE leads SET stage=?, updated_at=? WHERE id=?").run(stage, now(), id)
-  db.query("INSERT INTO activities (id, lead_id, type, subject, body, direction, status, created_at) VALUES (?,?, 'system', ?, ?, 'outbound', 'completed', ?)")
-    .run(newId(), id, `Moved to ${stage.replace("_", " ")}`, `Stage changed from ${existing.stage} to ${stage}`, now())
+  db.query(
+    "INSERT INTO activities (id, lead_id, type, subject, body, direction, status, created_at) VALUES (?,?, 'system', ?, ?, 'outbound', 'completed', ?)",
+  ).run(newId(), id, `Moved to ${stage.replace("_", " ")}`, `Stage changed from ${existing.stage} to ${stage}`, now())
   return db.query("SELECT * FROM leads WHERE id=?").get(id)
 })
 
@@ -349,11 +477,21 @@ app.post("/api/leads/import-csv", ({ body }: { body: any }) => {
   if (!csv) throw new Error("CSV content required")
   const lines = csv.split("\n").filter((l: string) => l.trim())
   if (lines.length < 2) throw new Error("CSV must have header + data rows")
-  const headers = lines[0].split(",").map((h: string) => h.trim().toLowerCase().replace(/^["']|["']$/g, ""))
-  const nameIdx = headers.indexOf("name"); const emailIdx = headers.indexOf("email")
-  const companyIdx = headers.indexOf("company"); const titleIdx = headers.indexOf("title")
-  const stage = "new"; const imported: Array<any> = []
-  const ins = db.prepare(`INSERT INTO leads (id, name, company, title, email, stage, source, notes, tags, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
+  const headers = lines[0].split(",").map((h: string) =>
+    h
+      .trim()
+      .toLowerCase()
+      .replace(/^["']|["']$/g, ""),
+  )
+  const nameIdx = headers.indexOf("name")
+  const emailIdx = headers.indexOf("email")
+  const companyIdx = headers.indexOf("company")
+  const titleIdx = headers.indexOf("title")
+  const stage = "new"
+  const imported: Array<any> = []
+  const ins = db.prepare(
+    `INSERT INTO leads (id, name, company, title, email, stage, source, notes, tags, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+  )
   for (let i = 1; i < lines.length; i++) {
     const vals = lines[i].split(",").map((v: string) => v.trim().replace(/^["']|["']$/g, ""))
     const name = nameIdx >= 0 ? vals[nameIdx] : ""
@@ -376,15 +514,31 @@ app.get("/api/leads/:id/activities", ({ params: { id } }) => {
 app.post("/api/leads/:id/activities", ({ params: { id }, body }: { params: { id: string }; body: any }) => {
   const { type, subject, body: b, direction, status, scheduled_at } = body
   if (!type) throw new Error("Type is required")
-  const a = { id: newId(), lead_id: id, type, subject: subject || "", body: b || "", direction: direction || "outbound", status: status || "completed", scheduled_at: scheduled_at || null, created_at: now() }
-  db.query("INSERT INTO activities (id, lead_id, type, subject, body, direction, status, scheduled_at, created_at) VALUES (?,?,?,?,?,?,?,?,?)").run(a.id, a.lead_id, a.type, a.subject, a.body, a.direction, a.status, a.scheduled_at, a.created_at)
+  const a = {
+    id: newId(),
+    lead_id: id,
+    type,
+    subject: subject || "",
+    body: b || "",
+    direction: direction || "outbound",
+    status: status || "completed",
+    scheduled_at: scheduled_at || null,
+    created_at: now(),
+  }
+  db.query(
+    "INSERT INTO activities (id, lead_id, type, subject, body, direction, status, scheduled_at, created_at) VALUES (?,?,?,?,?,?,?,?,?)",
+  ).run(a.id, a.lead_id, a.type, a.subject, a.body, a.direction, a.status, a.scheduled_at, a.created_at)
   return a
 })
 
 app.get("/api/activities", ({ query }) => {
   const { limit } = query
   const n = Math.min(parseInt(limit as string) || 50, 200)
-  return db.query(`SELECT a.*, l.name as lead_name, l.company as lead_company FROM activities a JOIN leads l ON a.lead_id=l.id ORDER BY a.created_at DESC LIMIT ?`).all(n)
+  return db
+    .query(
+      `SELECT a.*, l.name as lead_name, l.company as lead_company FROM activities a JOIN leads l ON a.lead_id=l.id ORDER BY a.created_at DESC LIMIT ?`,
+    )
+    .all(n)
 })
 
 // --- Templates ---
@@ -396,16 +550,30 @@ app.post("/api/templates", ({ body }: { body: any }) => {
   const { name, subject, body: b, category } = body
   if (!name || !b) throw new Error("Name and body are required")
   const t = now()
-  const tmpl = { id: newId(), name, subject: subject || "", body: b, category: category || "general", created_at: t, updated_at: t }
-  db.query("INSERT INTO templates (id, name, subject, body, category, created_at, updated_at) VALUES (?,?,?,?,?,?,?)").run(tmpl.id, tmpl.name, tmpl.subject, tmpl.body, tmpl.category, tmpl.created_at, tmpl.updated_at)
+  const tmpl = {
+    id: newId(),
+    name,
+    subject: subject || "",
+    body: b,
+    category: category || "general",
+    created_at: t,
+    updated_at: t,
+  }
+  db.query(
+    "INSERT INTO templates (id, name, subject, body, category, created_at, updated_at) VALUES (?,?,?,?,?,?,?)",
+  ).run(tmpl.id, tmpl.name, tmpl.subject, tmpl.body, tmpl.category, tmpl.created_at, tmpl.updated_at)
   return tmpl
 })
 
 app.put("/api/templates/:id", ({ params: { id }, body }: { params: { id: string }; body: any }) => {
   const fields = ["name", "subject", "body", "category"]
-  const updates: Array<string> = []; const params: Array<any> = []
+  const updates: Array<string> = []
+  const params: Array<any> = []
   for (const f of fields) {
-    if (body[f] !== undefined) { updates.push(`${f}=?`); params.push(body[f]) }
+    if (body[f] !== undefined) {
+      updates.push(`${f}=?`)
+      params.push(body[f])
+    }
   }
   if (updates.length === 0) return { ok: true }
   updates.push("updated_at=?")
@@ -429,7 +597,8 @@ app.get("/api/email/status", () => {
   const v = vault.status()
   return {
     configured: !!smtp && !!imap && v.sealed,
-    smtp: !!smtp, imap: !!imap,
+    smtp: !!smtp,
+    imap: !!imap,
     email: getEmailConfig()?.email || "",
     ...v,
     legacy_migration: legacyMigrationEnabled(),
@@ -447,7 +616,11 @@ app.post("/api/email/save-config", async ({ body, set }: { body: any; set: any }
     return { error: "Plaintext passwords are not accepted. Seal them in the browser or with cli.ts." }
   }
   const key = decodeDataKey(data_key)
-  if (!(await sealer.verifyDataKey(key, seal, OPERATOR))) { key.fill(0); set.status = 400; return { error: "Seal does not match the data key" } }
+  if (!(await sealer.verifyDataKey(key, seal, OPERATOR))) {
+    key.fill(0)
+    set.status = 400
+    return { error: "Seal does not match the data key" }
+  }
   const existing = getSeal(db)
   if (existing && JSON.stringify(existing) !== JSON.stringify(seal) && vault.status().unlocked) {
     // Replacing a seal while unlocked under the old one: lock first so the old key is dropped.
@@ -471,13 +644,19 @@ app.post("/api/email/unlock", async ({ body, set }: { body: any; set: any }) => 
   }
 })
 
-app.post("/api/email/lock", () => { vault.lock(); return { ok: true, ...vault.status() } })
+app.post("/api/email/lock", () => {
+  vault.lock()
+  return { ok: true, ...vault.status() }
+})
 
 // One-shot legacy migration: hands the pre-seal plaintext to the operator's browser so it
 // can be sealed; save-config then strips it. LEGACY_KEY_MIGRATION=off closes this path.
 app.post("/api/email/legacy", ({ set }: { set: any }) => {
   const legacy = readLegacyForMigration(db)
-  if (!legacy) { set.status = 404; return { error: "No legacy plaintext to migrate" } }
+  if (!legacy) {
+    set.status = 404
+    return { error: "No legacy plaintext to migrate" }
+  }
   return legacy
 })
 
@@ -490,13 +669,26 @@ app.post("/api/email/send", async ({ body }: { body: any }) => {
   const smtpConfig = serverConfig(db, "smtp_config")
   const from = config?.email || smtpConfig?.user || "you@gmail.com"
   assertEmailSenderAllowed(from, smtpConfig?.user)
-  if (!vault.status().unlocked) throw new Error(getSeal(db) ? `Email ${LOCKED_MESSAGE}. Go to Settings to unlock.` : "Email not configured. Go to Settings to set up Gmail.")
-  if (!transporter) { const ok = await initTransporter(); if (!ok) throw new Error("Email could not connect. Check the address and app password in Settings.") }
+  if (!vault.status().unlocked)
+    throw new Error(
+      getSeal(db)
+        ? `Email ${LOCKED_MESSAGE}. Go to Settings to unlock.`
+        : "Email not configured. Go to Settings to set up Gmail.",
+    )
+  if (!transporter) {
+    const ok = await initTransporter()
+    if (!ok) throw new Error("Email could not connect. Check the address and app password in Settings.")
+  }
   const info = await transporter!.sendMail({ from: `PrivacyCode CRM <${from}>`, to, subject, text: b })
   if (lead_id) {
-    db.query("INSERT INTO activities (id, lead_id, type, subject, body, direction, status, created_at) VALUES (?,?, 'email', ?, ?, 'outbound', 'sent', ?)")
-      .run(newId(), lead_id, subject, b, now())
-    db.query("UPDATE leads SET stage=?, updated_at=? WHERE id=? AND stage IN ('new', '')").run("emailed", now(), lead_id)
+    db.query(
+      "INSERT INTO activities (id, lead_id, type, subject, body, direction, status, created_at) VALUES (?,?, 'email', ?, ?, 'outbound', 'sent', ?)",
+    ).run(newId(), lead_id, subject, b, now())
+    db.query("UPDATE leads SET stage=?, updated_at=? WHERE id=? AND stage IN ('new', '')").run(
+      "emailed",
+      now(),
+      lead_id,
+    )
   }
   return { messageId: info.messageId, accepted: info.accepted }
 })
@@ -513,7 +705,11 @@ app.get("/api/settings", () => {
   const settings: Record<string, any> = {}
   for (const r of rows) {
     if (r.key === "mail_seal" || r.key === "mail_secrets") continue
-    try { settings[r.key] = JSON.parse(r.value) } catch { settings[r.key] = r.value }
+    try {
+      settings[r.key] = JSON.parse(r.value)
+    } catch {
+      settings[r.key] = r.value
+    }
     if (settings[r.key] && typeof settings[r.key] === "object") delete settings[r.key].pass
   }
   return settings
@@ -534,5 +730,7 @@ if (countLegacyRows(db) > 0) console.warn(`  email: legacy plaintext password on
 
 // Background email checking every 60s; pauses while locked.
 setInterval(async () => {
-  try { await checkEmail() } catch {}
+  try {
+    await checkEmail()
+  } catch {}
 }, 60000)

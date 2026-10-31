@@ -746,7 +746,10 @@ describe("Config", () => {
               fs.writeFile(path.join(root, "privacycode.json"), JSON.stringify({ $schema: "root" })),
               fs.writeFile(path.join(parent, "privacycode.jsonc"), JSON.stringify({ $schema: "parent" })),
               fs.writeFile(path.join(directory, "privacycode.json"), JSON.stringify({ $schema: "directory" })),
-              fs.writeFile(path.join(root, ".privacycode", "privacycode.json"), JSON.stringify({ $schema: "root-dot" })),
+              fs.writeFile(
+                path.join(root, ".privacycode", "privacycode.json"),
+                JSON.stringify({ $schema: "root-dot" }),
+              ),
               fs.writeFile(
                 path.join(directory, ".privacycode", "privacycode.jsonc"),
                 JSON.stringify({ $schema: "directory-dot" }),

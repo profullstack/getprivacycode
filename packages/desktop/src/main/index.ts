@@ -20,8 +20,11 @@ function ensureDataDir() {
 
 function loadStore(): Store {
   ensureDataDir()
-  try { return JSON.parse(fs.readFileSync(STORE_PATH, "utf-8")) }
-  catch { return { subscribers: [] } }
+  try {
+    return JSON.parse(fs.readFileSync(STORE_PATH, "utf-8"))
+  } catch {
+    return { subscribers: [] }
+  }
 }
 
 function saveStore(store: Store) {
@@ -45,37 +48,64 @@ function startServer(): Promise<string> {
       stdio: ["ignore", "pipe", "pipe"],
     })
     serverProcess = proc
-    const timeout = setTimeout(() => { cleanupServer(); reject(new Error("Server startup timed out")) }, 15000)
+    const timeout = setTimeout(() => {
+      cleanupServer()
+      reject(new Error("Server startup timed out"))
+    }, 15000)
     let output = ""
     proc.stdout?.on("data", (chunk: Buffer) => {
       output += chunk.toString()
       for (const line of output.split("\n")) {
         if (line.includes("server listening")) {
           const match = line.match(/on\s+(https?:\/\/[^\s]+)/)
-          if (match) { clearTimeout(timeout); resolve(match[1]!); return }
+          if (match) {
+            clearTimeout(timeout)
+            resolve(match[1]!)
+            return
+          }
         }
       }
     })
-    proc.stderr?.on("data", (chunk: Buffer) => { output += chunk.toString() })
-    proc.on("exit", (code) => { clearTimeout(timeout); reject(new Error(`Server exited with code ${code}: ${output}`)) })
-    proc.on("error", (err) => { clearTimeout(timeout); reject(err) })
+    proc.stderr?.on("data", (chunk: Buffer) => {
+      output += chunk.toString()
+    })
+    proc.on("exit", (code) => {
+      clearTimeout(timeout)
+      reject(new Error(`Server exited with code ${code}: ${output}`))
+    })
+    proc.on("error", (err) => {
+      clearTimeout(timeout)
+      reject(err)
+    })
   })
 }
 
 function cleanupServer() {
-  if (serverProcess) { serverProcess.kill(); serverProcess = null }
+  if (serverProcess) {
+    serverProcess.kill()
+    serverProcess = null
+  }
 }
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1200, height: 800, minWidth: 800, minHeight: 600,
-    title: "PrivacyCode", backgroundColor: "#0d0d0d", titleBarStyle: "hiddenInset",
+    width: 1200,
+    height: 800,
+    minWidth: 800,
+    minHeight: 600,
+    title: "PrivacyCode",
+    backgroundColor: "#0d0d0d",
+    titleBarStyle: "hiddenInset",
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.mjs"),
-      contextIsolation: true, nodeIntegration: false, sandbox: false,
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: false,
     },
   })
-  mainWindow.on("closed", () => { mainWindow = null })
+  mainWindow.on("closed", () => {
+    mainWindow = null
+  })
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: "deny" }
@@ -90,10 +120,17 @@ function createWindow() {
 
 // ── IPC ──
 ipcMain.handle("get-server-url", () => serverUrl)
-ipcMain.handle("set-title", (_event, title: string) => { if (mainWindow) mainWindow.setTitle(title) })
+ipcMain.handle("set-title", (_event, title: string) => {
+  if (mainWindow) mainWindow.setTitle(title)
+})
 
 ipcMain.handle("fetch-api", async (_event, request: { method: string; path: string; body?: unknown }) => {
-  if (!serverUrl) return { ok: false, status: 0, data: { message: "Server is not running. Run 'privacycode serve' in your terminal." } }
+  if (!serverUrl)
+    return {
+      ok: false,
+      status: 0,
+      data: { message: "Server is not running. Run 'privacycode serve' in your terminal." },
+    }
   const url = `${serverUrl}${request.path}`
   console.log(`[PrivacyCode] ${request.method} ${url}`)
   try {
@@ -144,9 +181,18 @@ ipcMain.handle("user:subscribe", (_event, email: string) => {
 
 // ── Lifecycle ──
 app.whenReady().then(async () => {
-  try { serverUrl = await startServer() } catch (err) { console.error("Failed to start server:", err) }
+  try {
+    serverUrl = await startServer()
+  } catch (err) {
+    console.error("Failed to start server:", err)
+  }
   createWindow()
 })
 
-app.on("window-all-closed", () => { cleanupServer(); app.quit() })
-app.on("before-quit", () => { cleanupServer() })
+app.on("window-all-closed", () => {
+  cleanupServer()
+  app.quit()
+})
+app.on("before-quit", () => {
+  cleanupServer()
+})

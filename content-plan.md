@@ -1,24 +1,26 @@
 # 30-Day Content Plan — PrivacyCode Enterprise
 
 ## Target Audience
+
 - **Primary**: CISO, VP Eng, CTO, Compliance Officer at SOC 2 / HIPAA companies (20-500 eng)
 - **Secondary**: Engineering leads who want AI tools but are blocked by security
 - **Platform tone**: LinkedIn = professional/authority, X = technical/hot takes, Reddit = helpful/community
 
 ## Messaging Pillars
 
-| Pillar | Angle | Hook |
-|--------|-------|------|
-| **The Problem** | Devs already use AI tools on personal accounts. You just don't know about it. Data leaks. | "Your SOC 2 auditor is about to ask about AI." |
-| **The Solution** | Tokenization before data leaves the machine. No BAA needed. Open source. | "PHI never reaches OpenAI." |
-| **Compliance** | AI coding that passes compliance audits. | "We deployed AI coding tools at a HIPAA org in 2 days." |
-| **Founder** | Building in public. Open source. Selling to enterprises as a solo founder. | "I'm a solo founder selling to CISOs. Here's what I've learned." |
+| Pillar           | Angle                                                                                     | Hook                                                             |
+| ---------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| **The Problem**  | Devs already use AI tools on personal accounts. You just don't know about it. Data leaks. | "Your SOC 2 auditor is about to ask about AI."                   |
+| **The Solution** | Tokenization before data leaves the machine. No BAA needed. Open source.                  | "PHI never reaches OpenAI."                                      |
+| **Compliance**   | AI coding that passes compliance audits.                                                  | "We deployed AI coding tools at a HIPAA org in 2 days."          |
+| **Founder**      | Building in public. Open source. Selling to enterprises as a solo founder.                | "I'm a solo founder selling to CISOs. Here's what I've learned." |
 
 ---
 
 ## Week 1 — The Problem (Awareness)
 
 ### Monday — LinkedIn Post
+
 ```
 Your devs are already using AI coding tools.
 
@@ -37,16 +39,17 @@ It's "how do we let our devs use them without leaking data?"
 
 That's what I'm building with PrivacyCode.
 
-Tokenization before data leaves the machine. 
+Tokenization before data leaves the machine.
 Zero telemetry. Open source.
 
-If your team is asking for AI tools and compliance is saying no — 
+If your team is asking for AI tools and compliance is saying no —
 there's a path forward.
 
 More on that tomorrow.
 ```
 
 ### Monday — X/Twitter
+
 ```
 hot take: your devs are already using AI coding tools on personal accounts
 
@@ -56,6 +59,7 @@ the real risk isn't "should we allow AI" — it's "we already allow it, we just 
 ```
 
 ### Tuesday — LinkedIn Post (thread starter)
+
 ```
 "Can our devs use Claude/GPT without failing SOC 2?"
 
@@ -65,7 +69,7 @@ Short answer: yes, if you tokenize before sending.
 
 Long answer: the tool I built (PrivacyCode) does exactly this.
 
-It intercepts prompts on-device, replaces PII/PHI/credentials with tokens, 
+It intercepts prompts on-device, replaces PII/PHI/credentials with tokens,
 then sends the safe version to the AI provider.
 
 The dev gets full AI assistance. The provider never sees real data.
@@ -78,6 +82,7 @@ Or just DM me. Happy to walk through it.
 ```
 
 ### Tuesday — X/Twitter
+
 ```
 The #1 objection I hear from CISOs about AI coding tools:
 
@@ -93,6 +98,7 @@ Open source. Self-hostable.
 ```
 
 ### Wednesday — LinkedIn Post
+
 ```
 One sentence that changed how I think about enterprise sales:
 
@@ -110,6 +116,7 @@ The code is the same. The messaging changed everything.
 ```
 
 ### Wednesday — X/Twitter
+
 ```
 compliance buyers don't care about your features
 
@@ -122,6 +129,7 @@ sell evidence, not features
 ```
 
 ### Thursday — LinkedIn Post (casual/behind the scenes)
+
 ```
 Building an open-source AI privacy tool as a solo founder.
 
@@ -143,6 +151,7 @@ Learning every day.
 ```
 
 ### Thursday — X/Twitter
+
 ```
 deployed PrivacyCode at a HIPAA org in 2 days
 
@@ -166,6 +175,7 @@ Most engineering teams I talk to already do, whether IT knows about it or not. T
 I built PrivacyCode — an open-source CLI that tokenizes sensitive data before it reaches the AI provider. PHI, credentials, PII — all replaced with tokens on-device before anything is sent.
 
 For SOC 2 and HIPAA orgs, this means:
+
 - Devs can use any AI tool
 - Provider never sees real data
 - No BAA required
@@ -179,12 +189,13 @@ Best,
 [Your name]
 
 ### Friday — X/Twitter
+
 ```
 week 1 of building in public for PrivacyCode
 
 what I learned:
 - compliance buyers don't care about tech, they care about audit evidence
-- "no BAA needed" > "18 PII patterns" 
+- "no BAA needed" > "18 PII patterns"
 - the best cold emails are short and ask about a problem they already have
 
 next week: how tokenization actually works under the hood
@@ -193,6 +204,7 @@ next week: how tokenization actually works under the hood
 ### Reddit — Week 1 (r/cybersecurity or r/SOC2)
 
 Post in r/cybersecurity:
+
 ```
 Title: How are you handling AI coding tools and data leakage?
 
@@ -210,6 +222,7 @@ Curious what approaches others are taking? Are you using any tooling for this? A
 ## Week 2 — The Solution (Education)
 
 ### Monday — LinkedIn Post
+
 ```
 How PrivacyCode tokenizes your data before it reaches AI.
 
@@ -240,6 +253,7 @@ No magic. No "trust us." Just code.
 ```
 
 ### Monday — X/Twitter
+
 ```
 the architecture is simple:
 
@@ -255,6 +269,7 @@ open source → github.com/profullstack/getprivacycode
 ```
 
 ### Tuesday — LinkedIn Post
+
 ```
 5 types of data PrivacyCode catches that your devs are accidentally exposing:
 
@@ -274,6 +289,7 @@ If you want to test it on your team's actual prompts (safely, locally), the tool
 ```
 
 ### Tuesday — X/Twitter
+
 ```
 most "AI governance" tools are a proxy that sits between your devs and the AI provider
 
@@ -287,6 +303,7 @@ this is the only architecture that makes sense for HIPAA
 ```
 
 ### Wednesday — LinkedIn Post
+
 ```
 The difference between "AI governance" and actual privacy:
 
@@ -301,13 +318,14 @@ PrivacyCode does:
 → Open source (you can verify)
 → Free (pay for deployment, not per seat)
 
-I'm not building a SaaS empire. 
+I'm not building a SaaS empire.
 I'm building a tool that lets devs use AI without compliance risk.
 
 If that resonates, the code is here → github.com/profullstack/getprivacycode
 ```
 
 ### Wednesday — X/Twitter
+
 ```
 AI governance vendors: route all prompts through our cloud proxy so we can log and scan them
 
@@ -319,6 +337,7 @@ the other is a MITM proxy that becomes a new compliance risk
 ```
 
 ### Thursday — LinkedIn Post
+
 ```
 Open source is a compliance feature.
 
@@ -334,6 +353,7 @@ For enterprise buyers who've been burned by "trust us" vendors — that matters.
 ```
 
 ### Thursday — X/Twitter
+
 ```
 "trust us" doesn't work on compliance buyers
 
@@ -370,6 +390,7 @@ Best,
 [Your name]
 
 ### Friday — X/Twitter
+
 ```
 week 2 of building PrivacyCode in public
 
@@ -385,6 +406,7 @@ I've closed deals faster by saying "it's MIT, build it yourself" than by sending
 ### Reddit — Week 2 (r/opensource or r/devops)
 
 Post in r/devops:
+
 ```
 Title: Built an open-source CLI that tokenizes secrets before they reach AI coding tools
 
@@ -405,6 +427,7 @@ Looking for feedback from anyone who's dealt with this problem — either as a d
 ## Week 3 — Social Proof & Use Cases
 
 ### Monday — LinkedIn Post
+
 ```
 Case study: How a 50-person healthcare dev team went from "no AI" to "full AI" in 2 days.
 
@@ -432,6 +455,7 @@ This is repeatable for any SOC 2 or HIPAA org.
 ```
 
 ### Monday — X/Twitter
+
 ```
 case study:
 - HIPAA org
@@ -446,6 +470,7 @@ this is the blueprint
 ```
 
 ### Tuesday — LinkedIn Post
+
 ```
 "Show me the audit log."
 
@@ -465,6 +490,7 @@ That evidence is worth more than any feature I could build.
 ```
 
 ### Tuesday — X/Twitter
+
 ```
 compliance isn't about being secure
 
@@ -476,6 +502,7 @@ that's the feature CISOs actually buy
 ```
 
 ### Wednesday — LinkedIn Post
+
 ```
 3 types of companies that keep showing up for PrivacyCode:
 
@@ -498,6 +525,7 @@ If your devs touch sensitive data and want AI tools — PrivacyCode works.
 ```
 
 ### Wednesday — X/Twitter
+
 ```
 3 verticals buying PrivacyCode right now:
 
@@ -509,6 +537,7 @@ the problem is universal: devs want AI, compliance needs guarantees
 ```
 
 ### Thursday — LinkedIn Post
+
 ```
 "What happens if PrivacyCode misses something?"
 
@@ -529,6 +558,7 @@ The alternative isn't perfect security. The alternative is no visibility at all.
 ```
 
 ### Thursday — X/Twitter
+
 ```
 "what happens if PrivacyCode misses something"
 
@@ -561,6 +591,7 @@ Best,
 [Your name]
 
 ### Friday — X/Twitter
+
 ```
 week 3
 
@@ -580,6 +611,7 @@ the product found the market. not the other way around.
 ### Reddit — Week 3 (r/HIPAA or r/healthIT)
 
 Post in r/healthIT:
+
 ```
 Title: How healthcare dev teams are using AI coding tools without exposing PHI
 
@@ -597,6 +629,7 @@ Curious if anyone here has dealt with this problem and what solutions you've fou
 ## Week 4 — Founder Journey & Close
 
 ### Monday — LinkedIn Post
+
 ```
 One month ago I started selling PrivacyCode to enterprises.
 
@@ -623,6 +656,7 @@ Month 2 goal: 5 more enterprise deployments.
 ```
 
 ### Monday — X/Twitter
+
 ```
 one month of selling PrivacyCode to enterprises
 
@@ -637,6 +671,7 @@ pipeline building. let's see what month 2 brings.
 ```
 
 ### Tuesday — LinkedIn Post (final post of the month)
+
 ```
 AI coding for regulated companies is inevitable.
 
@@ -658,6 +693,7 @@ github.com/profullstack/getprivacycode
 ```
 
 ### Tuesday — X/Twitter
+
 ```
 final thought for the month:
 
@@ -675,6 +711,7 @@ month 2 starts tomorrow
 ```
 
 ### Wednesday — LinkedIn Post
+
 ```
 I'm offering something:
 
@@ -697,6 +734,7 @@ First 10 spots available this month.
 ```
 
 ### Wednesday — X/Twitter
+
 ```
 offering free AI coding compliance assessments
 
@@ -710,6 +748,7 @@ first 10 spots. DM me.
 ```
 
 ### Thursday — LinkedIn Post
+
 ```
 What I actually do (plain English):
 
@@ -729,6 +768,7 @@ If that's useful to you, you know where to find me.
 ```
 
 ### Thursday — X/Twitter
+
 ```
 what I actually do:
 
@@ -757,6 +797,7 @@ Best,
 [Your name]
 
 ### Friday — X/Twitter
+
 ```
 month 1 of selling PrivacyCode → done
 
@@ -777,6 +818,7 @@ if you need AI coding that passes SOC 2 or HIPAA → github.com/profullstack/get
 ### Reddit — Week 4 (r/SaaS or r/Entrepreneur)
 
 Post in r/SaaS:
+
 ```
 Title: I'm a solo founder selling open-source privacy software to enterprises. Month 1 update.
 
@@ -809,12 +851,12 @@ Happy to answer questions about cold email, selling to compliance buyers, or bui
 
 ## Weekly Cold Email Targets by Role
 
-| Week | Role | Subject Line Angle |
-|------|------|--------------------|
-| 1 | CISO | "AI coding at {company}?" — short, direct, problem-focused |
-| 2 | VP Eng | "Quick question about AI and {company}'s SOC 2" — compliance angle |
-| 3 | CTO | "What {company} can learn from our HIPAA deployment" — case study |
-| 4 | CISO/VP Eng | "Quick question about AI compliance" — soft close, offer value |
+| Week | Role        | Subject Line Angle                                                 |
+| ---- | ----------- | ------------------------------------------------------------------ |
+| 1    | CISO        | "AI coding at {company}?" — short, direct, problem-focused         |
+| 2    | VP Eng      | "Quick question about AI and {company}'s SOC 2" — compliance angle |
+| 3    | CTO         | "What {company} can learn from our HIPAA deployment" — case study  |
+| 4    | CISO/VP Eng | "Quick question about AI compliance" — soft close, offer value     |
 
 ## Hashtags for LinkedIn / X
 

@@ -76,7 +76,8 @@ export const defaultConfigLayer = Layer.sync(ConfigService, () =>
       process.env.PRIVACYCODE_WEBSEARCH_PROVIDER === "exa" || process.env.PRIVACYCODE_WEBSEARCH_PROVIDER === "parallel"
         ? process.env.PRIVACYCODE_WEBSEARCH_PROVIDER
         : undefined,
-    enableExa: truthy("PRIVACYCODE_EXPERIMENTAL") || truthy("PRIVACYCODE_ENABLE_EXA") || truthy("PRIVACYCODE_EXPERIMENTAL_EXA"),
+    enableExa:
+      truthy("PRIVACYCODE_EXPERIMENTAL") || truthy("PRIVACYCODE_ENABLE_EXA") || truthy("PRIVACYCODE_EXPERIMENTAL_EXA"),
     enableParallel: truthy("PRIVACYCODE_ENABLE_PARALLEL") || truthy("PRIVACYCODE_EXPERIMENTAL_PARALLEL"),
     exaApiKey: process.env.EXA_API_KEY,
     parallelApiKey: process.env.PARALLEL_API_KEY,

@@ -1,19 +1,23 @@
-import { describe, expect } from "bun:test"
+import { describe, expect, test } from "bun:test"
 import { makeGlobalNode } from "@privacycode-ai/core/effect/app-node"
 import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
 import { httpClient } from "@privacycode-ai/core/effect/app-node-platform"
-import { Effect, Layer, Stream } from "effect"
+import { Effect, Exit, Layer, Stream } from "effect"
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/unstable/http"
 import { ChildProcess, ChildProcessSpawner } from "effect/unstable/process"
 import { Installation } from "../../src/installation"
-import { InstallationChannel } from "@privacycode-ai/core/installation/version"
 import { CrossSpawnSpawner } from "@privacycode-ai/core/cross-spawn-spawner"
 import { testEffect } from "../lib/effect"
 
 const encoder = new TextEncoder()
+const latestUrl = "https://api.github.com/repos/profullstack/getprivacycode/releases/latest"
+const installerUrl = "https://getprivacycode.com/install.sh"
 
-function mockHttpClient(handler: (request: HttpClientRequest.HttpClientRequest) => Response) {
-  const client = HttpClient.make((request) => Effect.succeed(HttpClientResponse.fromWeb(request, handler(request))))
+function mockHttpClient(handler: (request: HttpClientRequest.HttpClientRequest) => Response | undefined) {
+  const client = HttpClient.make((request) => {
+    const response = handler(request)
+    return response ? Effect.succeed(HttpClientResponse.fromWeb(request, response)) : Effect.never
+  })
   return Layer.succeed(HttpClient.HttpClient, client)
 }
 
@@ -52,7 +56,7 @@ function jsonResponse(body: unknown) {
 }
 
 function testLayer(
-  httpHandler: (request: HttpClientRequest.HttpClientRequest) => Response,
+  httpHandler: (request: HttpClientRequest.HttpClientRequest) => Response | undefined,
   spawnHandler?: (cmd: string, args: readonly string[]) => string | { code: number; stdout?: string; stderr?: string },
 ) {
   const spawnerNode = makeGlobalNode({
@@ -67,174 +71,90 @@ function testLayer(
 }
 
 describe("installation", () => {
-  describe("latest", () => {
-    testEffect(testLayer(() => jsonResponse({ tag_name: "v1.2.3" }))).effect(
-      "reads release version from GitHub releases",
-      () =>
-        Effect.gen(function* () {
-          const result = yield* Installation.use.latest("unknown")
-          expect(result).toBe("1.2.3")
-        }),
-    )
-
-    testEffect(testLayer(() => jsonResponse({ tag_name: "v4.0.0-beta.1" }))).effect(
-      "strips v prefix from GitHub release tag",
-      () =>
-        Effect.gen(function* () {
-          const result = yield* Installation.use.latest("curl")
-          expect(result).toBe("4.0.0-beta.1")
-        }),
-    )
-
-    const npmCalls: string[] = []
-    testEffect(
-      testLayer((request) => {
-        npmCalls.push(request.url)
-        return jsonResponse({ version: "1.5.0" })
-      }),
-    ).effect("reads npm versions via registry", () =>
-      Effect.gen(function* () {
-        const result = yield* Installation.use.latest("npm")
-        expect(result).toBe("1.5.0")
-        expect(npmCalls).toContain(`https://registry.npmjs.org/opencode-ai/${InstallationChannel}`)
-      }),
-    )
-
-    const bunCalls: string[] = []
-    testEffect(
-      testLayer((request) => {
-        bunCalls.push(request.url)
-        return jsonResponse({ version: "1.6.0" })
-      }),
-    ).effect("reads bun versions via registry", () =>
-      Effect.gen(function* () {
-        const result = yield* Installation.use.latest("bun")
-        expect(result).toBe("1.6.0")
-        expect(bunCalls).toContain(`https://registry.npmjs.org/opencode-ai/${InstallationChannel}`)
-      }),
-    )
-
-    const pnpmCalls: string[] = []
-    testEffect(
-      testLayer((request) => {
-        pnpmCalls.push(request.url)
-        return jsonResponse({ version: "1.7.0" })
-      }),
-    ).effect("reads pnpm versions via registry", () =>
-      Effect.gen(function* () {
-        const result = yield* Installation.use.latest("pnpm")
-        expect(result).toBe("1.7.0")
-        expect(pnpmCalls).toContain(`https://registry.npmjs.org/opencode-ai/${InstallationChannel}`)
-      }),
-    )
-
-    testEffect(testLayer(() => jsonResponse({ version: "2.3.4" }))).effect("reads scoop manifest versions", () =>
-      Effect.gen(function* () {
-        const result = yield* Installation.use.latest("scoop")
-        expect(result).toBe("2.3.4")
-      }),
-    )
-
-    testEffect(testLayer(() => jsonResponse({ d: { results: [{ Version: "3.4.5" }] } }))).effect(
-      "reads chocolatey feed versions",
-      () =>
-        Effect.gen(function* () {
-          const result = yield* Installation.use.latest("choco")
-          expect(result).toBe("3.4.5")
-        }),
-    )
-
-    testEffect(
-      testLayer(
-        () => jsonResponse({ versions: { stable: "2.0.0" } }),
-        (cmd, args) => {
-          // getBrewFormula: return core formula (no tap)
-          if (cmd === "brew" && args.includes("--formula") && args.includes("anomalyco/tap/opencode")) return ""
-          if (cmd === "brew" && args.includes("--formula") && args.includes("opencode")) return "opencode"
-          return ""
-        },
-      ),
-    ).effect("reads brew formulae API versions", () =>
-      Effect.gen(function* () {
-        const result = yield* Installation.use.latest("brew")
-        expect(result).toBe("2.0.0")
-      }),
-    )
-
-    const brewInfoJson = JSON.stringify({
-      formulae: [{ versions: { stable: "2.1.0" } }],
-    })
-    testEffect(
-      testLayer(
-        () => jsonResponse({}), // HTTP not used for tap formula
-        (cmd, args) => {
-          if (cmd === "brew" && args.includes("anomalyco/tap/opencode") && args.includes("--formula")) return "opencode"
-          if (cmd === "brew" && args.includes("--json=v2")) return brewInfoJson
-          return ""
-        },
-      ),
-    ).effect("reads brew tap info JSON via CLI", () =>
-      Effect.gen(function* () {
-        const result = yield* Installation.use.latest("brew")
-        expect(result).toBe("2.1.0")
-      }),
-    )
+  test("only treats newer releases in the installed major as regular updates", () => {
+    expect(Installation.isUpdate("1.19.0", "1.19.1")).toBe(true)
+    expect(Installation.isUpdate("1.19.0", "1.20.0")).toBe(true)
+    expect(Installation.isUpdate("1.19.0", "1.19.0")).toBe(false)
+    expect(Installation.isUpdate("1.19.0", "1.18.35")).toBe(false)
+    expect(Installation.isUpdate("1.19.0", "2.0.0")).toBe(false)
+    expect(Installation.isUpdate("local", "1.19.0")).toBe(true)
+    expect(Installation.isUpdate("1.19.0", "not-a-version")).toBe(false)
   })
 
-  describe("upgrade", () => {
-    testEffect(
-      testLayer(
-        () => jsonResponse({}),
-        (cmd) => {
-          if (cmd === "npm") return { code: 1, stderr: "token=secret command output" }
-          return ""
-        },
-      ),
-    ).effect("returns sanitized typed errors for failed package upgrades", () =>
-      Effect.gen(function* () {
-        const error = yield* Effect.flip(Installation.use.upgrade("npm", "9.9.9"))
-        expect(error).toBeInstanceOf(Installation.UpgradeFailedError)
-        expect(error.stderr).toBe("Upgrade failed for npm (exit code 1).")
-        expect(error.message).toBe(error.stderr)
-        expect(error.stderr).not.toContain("secret")
-        expect(error.stderr).not.toContain("command output")
-      }),
-    )
-
-    testEffect(
-      testLayer(
-        () => new Response("install script with token=secret", { status: 200 }),
-        (cmd, args) => {
-          if (cmd === "bash" && args[0] === "--version") return "GNU bash"
-          if (cmd === "bash" || cmd === "sh") return { code: 1, stderr: "script output with token=secret" }
-          return ""
-        },
-      ),
-    ).effect("returns sanitized typed errors when the curl install script fails", () =>
-      Effect.gen(function* () {
-        const error = yield* Effect.flip(Installation.use.upgrade("curl", "9.9.9"))
-        expect(error).toBeInstanceOf(Installation.UpgradeFailedError)
-        expect(error.stderr).toBe("Upgrade failed for curl (exit code 1).")
-        expect(error.message).toBe(error.stderr)
-        expect(error.stderr).not.toContain("secret")
-        expect(error.stderr).not.toContain("script output")
-      }),
-    )
-
-    testEffect(
-      testLayer(
-        () => new Response("install script", { status: 200 }),
-        (cmd, args) => {
-          if (cmd === "bash" && args[0] === "--version") return { code: 1, stderr: "missing" }
-          if (cmd === "bash") return { code: 1, stderr: "should not execute installer with bash" }
-          if (cmd === "sh") return "ok"
-          return ""
-        },
-      ),
-    ).effect("falls back to sh when bash is unavailable during curl upgrade", () =>
-      Effect.gen(function* () {
-        yield* Installation.use.upgrade("curl", "9.9.9")
-      }),
-    )
+  test("classifies release bumps", () => {
+    expect(Installation.getReleaseType("1.19.0", "1.19.1")).toBe("patch")
+    expect(Installation.getReleaseType("1.19.0", "1.20.0")).toBe("minor")
+    expect(Installation.getReleaseType("1.19.0", "2.0.0")).toBe("major")
   })
+
+  testEffect(
+    testLayer((request) => (request.url === latestUrl ? jsonResponse({ tag_name: "v1.19.5" }) : undefined)),
+  ).effect("checks PrivacyCode's latest GitHub release", () =>
+    Effect.gen(function* () {
+      expect(yield* Installation.use.latest("curl")).toBe("1.19.5")
+    }),
+  )
+
+  testEffect(testLayer(() => new Response("unavailable", { status: 404 }))).effect(
+    "fails when the release API is unavailable",
+    () =>
+      Effect.gen(function* () {
+        expect(Exit.isFailure(yield* Installation.use.latest("curl").pipe(Effect.exit))).toBe(true)
+      }),
+  )
+
+  testEffect(
+    testLayer(
+      (request) => (request.url === installerUrl ? new Response("installer", { status: 200 }) : undefined),
+      (cmd, args) => {
+        if (cmd === "bash" && args[0] === "--version") return "GNU bash"
+        if (cmd === "bash") return "installed"
+        return ""
+      },
+    ),
+  ).effect("upgrades through the PrivacyCode installer", () =>
+    Effect.gen(function* () {
+      yield* Installation.use.upgrade("curl", "1.19.5")
+    }),
+  )
+
+  testEffect(
+    testLayer(
+      (request) => (request.url === installerUrl ? new Response("installer", { status: 200 }) : undefined),
+      (cmd, args) => {
+        if (cmd === "bash" && args[0] === "--version") return "GNU bash"
+        if (cmd === "bash") return { code: 1, stderr: "script output with token=secret" }
+        return ""
+      },
+    ),
+  ).effect("sanitizes installer failures", () =>
+    Effect.gen(function* () {
+      const error = yield* Effect.flip(Installation.use.upgrade("curl", "1.19.5"))
+      expect(error).toBeInstanceOf(Installation.UpgradeFailedError)
+      expect(error.stderr).toBe("Upgrade failed (exit code 1).")
+      expect(error.stderr).not.toContain("secret")
+    }),
+  )
+
+  testEffect(testLayer(() => undefined)).effect("does not try upstream package managers", () =>
+    Effect.gen(function* () {
+      const error = yield* Effect.flip(Installation.use.upgrade("npm", "1.19.5"))
+      expect(error.stderr).toContain(installerUrl)
+    }),
+  )
+
+  testEffect(
+    testLayer(
+      (request) => {
+        if (request.url === latestUrl) return jsonResponse({ tag_name: "v2.0.0" })
+        if (request.url === installerUrl) return new Response("installer", { status: 200 })
+        return undefined
+      },
+      (cmd, args) => (cmd === "bash" && args[0] === "--version" ? "GNU bash" : ""),
+    ),
+  ).effect("installs a PrivacyCode major release with the same installer", () =>
+    Effect.gen(function* () {
+      yield* Installation.use.upgradeMajor("curl")
+    }),
+  )
 })

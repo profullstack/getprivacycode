@@ -1,8 +1,16 @@
 import { describe, expect, test } from "bun:test"
 import { Database } from "bun:sqlite"
 import {
-  LOCKED_MESSAGE, MailVault, OPERATOR, countLegacyRows, getSeal, hasLegacyPlaintext,
-  readLegacyForMigration, saveSealedConfig, sealer, serverConfig,
+  LOCKED_MESSAGE,
+  MailVault,
+  OPERATOR,
+  countLegacyRows,
+  getSeal,
+  hasLegacyPlaintext,
+  readLegacyForMigration,
+  saveSealedConfig,
+  sealer,
+  serverConfig,
 } from "./mail-secrets"
 
 const PHRASE = "correct horse battery"
@@ -21,7 +29,8 @@ function freshDb() {
 
 function raw(db: Database) {
   return (db.query("SELECT key, value FROM settings").all() as Array<{ key: string; value: string }>)
-    .map((r) => r.value).join("\n")
+    .map((r) => r.value)
+    .join("\n")
 }
 
 describe("sealed mail password", () => {
@@ -30,7 +39,12 @@ describe("sealed mail password", () => {
     const db = freshDb()
     saveSealedConfig(db, "me@example.com", f.seal, f.secrets)
     expect(raw(db)).not.toContain("app-pass-1")
-    expect(serverConfig(db, "smtp_config")).toEqual({ host: "smtp.gmail.com", port: 587, secure: false, user: "me@example.com" })
+    expect(serverConfig(db, "smtp_config")).toEqual({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      user: "me@example.com",
+    })
     expect(getSeal(db)).not.toBeNull()
   }, 30_000)
 
@@ -80,7 +94,8 @@ describe("sealed mail password", () => {
   test("legacy plaintext migrates once and is stripped", async () => {
     const f = await fixture
     const db = freshDb()
-    const put = (k: string, v: unknown) => db.query("INSERT INTO settings (key, value) VALUES (?, ?)").run(k, JSON.stringify(v))
+    const put = (k: string, v: unknown) =>
+      db.query("INSERT INTO settings (key, value) VALUES (?, ?)").run(k, JSON.stringify(v))
     put("smtp_config", { host: "smtp.gmail.com", port: 587, secure: false, user: "me@example.com", pass: "legacy-pw" })
     put("imap_config", { host: "imap.gmail.com", port: 993, secure: true, user: "me@example.com", pass: "legacy-pw" })
     expect(hasLegacyPlaintext(db)).toBe(true)

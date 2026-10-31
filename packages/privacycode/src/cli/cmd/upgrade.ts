@@ -17,7 +17,7 @@ export const UpgradeCommand = {
         alias: "m",
         describe: "installation method to use",
         type: "string",
-        choices: ["curl", "npm", "pnpm", "bun", "brew", "choco", "scoop"],
+        choices: ["curl"],
       })
   },
   handler: async (args: { target?: string; method?: string }) => {
@@ -26,9 +26,9 @@ export const UpgradeCommand = {
     UI.empty()
     prompts.intro("Upgrade")
     const detectedMethod = await Installation.method()
-    const method = (args.method as Installation.Method) ?? detectedMethod
+    let method = (args.method as Installation.Method) ?? detectedMethod
     if (method === "unknown") {
-      prompts.log.error(`opencode is installed to ${process.execPath} and may be managed by a package manager`)
+      prompts.log.error(`privacycode is installed to ${process.execPath} and its update method is unknown`)
       const install = await prompts.select({
         message: "Install anyways?",
         options: [
@@ -41,12 +41,21 @@ export const UpgradeCommand = {
         prompts.outro("Done")
         return
       }
+      method = "curl"
     }
     prompts.log.info("Using method: " + method)
-    const target = args.target ? args.target.replace(/^v/, "") : await Installation.latest()
+
+    const target = args.target
+      ? args.target.replace(/^v/, "")
+      : await Installation.latest(method).catch(() => undefined)
+    if (!target) {
+      prompts.log.error("Couldn't check for updates")
+      prompts.outro("Done")
+      return
+    }
 
     if (InstallationVersion === target) {
-      prompts.log.warn(`opencode upgrade skipped: ${target} is already installed`)
+      prompts.log.warn(`privacycode upgrade skipped: ${target} is already installed`)
       prompts.outro("Done")
       return
     }

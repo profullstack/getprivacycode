@@ -145,7 +145,9 @@ export function PermissionPrompt(props: { request: PermissionRequest; directory?
               </Match>
               <Match when={true}>
                 <box paddingLeft={1} gap={1}>
-                  <text fg={theme.textMuted}>This will allow the following patterns until PrivacyCode is restarted</text>
+                  <text fg={theme.textMuted}>
+                    This will allow the following patterns until PrivacyCode is restarted
+                  </text>
                   <box>
                     <For each={props.request.always}>
                       {(pattern) => (
@@ -507,6 +509,7 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
           textColor={theme.text}
           focusedTextColor={theme.text}
           cursorColor={theme.primary}
+          cursorStyle={tuiConfig.cursor}
         />
         <box flexDirection="row" gap={2} flexShrink={0}>
           <text fg={theme.text}>

@@ -35,7 +35,11 @@ export function legacyMigrationEnabled(env: Record<string, string | undefined> =
 function readJson(db: Database, key: string): any {
   const row = db.query("SELECT value FROM settings WHERE key=?").get(key) as { value: string } | null
   if (!row) return null
-  try { return JSON.parse(row.value) } catch { return null }
+  try {
+    return JSON.parse(row.value)
+  } catch {
+    return null
+  }
 }
 
 function writeJson(db: Database, key: string, value: unknown) {
@@ -128,7 +132,10 @@ export class MailVault {
   readonly store = new UnlockStore()
   #lockedAnnounced = false
 
-  constructor(private db: Database, private log: (msg: string) => void = (m) => console.warn(m)) {
+  constructor(
+    private db: Database,
+    private log: (msg: string) => void = (m) => console.warn(m),
+  ) {
     this.store.onChange((_user, unlocked) => {
       if (unlocked) this.#lockedAnnounced = false
       else this.announceLocked()
@@ -153,7 +160,9 @@ export class MailVault {
     }
   }
 
-  lock() { this.store.lock(OPERATOR) }
+  lock() {
+    this.store.lock(OPERATOR)
+  }
 
   status() {
     const sealed = !!getSeal(this.db)

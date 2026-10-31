@@ -1,7 +1,6 @@
 import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
 import { Config } from "@/config/config"
 import { SessionV1 } from "@privacycode-ai/core/v1/session"
-import type { MessageV2 } from "@/session/message-v2"
 import photonWasm from "@silvia-odwyer/photon-node/photon_rs_bg.wasm" with { type: "file" }
 import { Context, Effect, Layer, Schema } from "effect"
 import path from "node:path"
@@ -63,8 +62,11 @@ const layer = Layer.effect(
     const loadPhoton = yield* Effect.cached(
       Effect.sync(() => {
         // Patched photon-node reads this during module init so Bun compiled binaries use the embedded wasm path.
-        ;(globalThis as typeof globalThis & { __PRIVACYCODE_PHOTON_WASM_PATH?: string }).__PRIVACYCODE_PHOTON_WASM_PATH =
-          path.isAbsolute(photonWasm) ? photonWasm : fileURLToPath(new URL(photonWasm, import.meta.url))
+        ;(
+          globalThis as typeof globalThis & { __PRIVACYCODE_PHOTON_WASM_PATH?: string }
+        ).__PRIVACYCODE_PHOTON_WASM_PATH = path.isAbsolute(photonWasm)
+          ? photonWasm
+          : fileURLToPath(new URL(photonWasm, import.meta.url))
       }).pipe(
         Effect.andThen(() => Effect.tryPromise(() => import("@silvia-odwyer/photon-node"))),
         Effect.tapError((error) => Effect.logWarning("failed to load photon", { error })),

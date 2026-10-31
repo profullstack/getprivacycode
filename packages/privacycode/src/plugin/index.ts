@@ -13,12 +13,14 @@ import { CodexAuthPlugin } from "./openai/codex"
 import { Session } from "@/session/session"
 import { NamedError } from "@privacycode-ai/core/util/error"
 import { CopilotAuthPlugin } from "./github-copilot/copilot"
+import { ModalPlugin } from "./modal/modal"
 import { gitlabAuthPlugin as GitlabAuthPlugin } from "opencode-gitlab-auth"
 import { PoeAuthPlugin } from "opencode-poe-auth"
 import { CloudflareAIGatewayAuthPlugin, CloudflareWorkersAuthPlugin } from "./cloudflare"
 import { AzureAuthPlugin } from "./azure"
 import { DigitalOceanAuthPlugin } from "./digitalocean"
 import { XaiAuthPlugin } from "./xai"
+import { CerebrasPlugin } from "./cerebras"
 import { SnowflakeCortexAuthPlugin } from "./snowflake-cortex"
 import { Effect, Layer, Context } from "effect"
 import { EffectBridge } from "@/effect/bridge"
@@ -70,11 +72,9 @@ function internalPlugins(flags: RuntimeFlags.Info): PluginInstance[] {
         experimentalWebSockets: experimentalWebSocketsEnabled({ enabled: flags.experimentalWebSockets }),
       }),
     CopilotAuthPlugin,
-    // `opencode-gitlab-auth` and `opencode-poe-auth` are published against
-    // upstream's `@opencode-ai/plugin`, which is a *different copy* of the same
-    // interface than this fork's `@privacycode-ai/plugin`. The runtime shapes are
-    // identical; TypeScript treats the two `PluginInput["client"]["global"]`
-    // types as unrelated, so the assignment needs an explicit bridge.
+    ModalPlugin,
+    // These auth plugins still compile against OpenCode's SDK types. The fork
+    // keeps the same runtime plugin protocol but has a distinct SDK type identity.
     GitlabAuthPlugin as unknown as PluginInstance,
     PoeAuthPlugin as unknown as PluginInstance,
     CloudflareWorkersAuthPlugin,
@@ -83,6 +83,7 @@ function internalPlugins(flags: RuntimeFlags.Info): PluginInstance[] {
     DigitalOceanAuthPlugin,
     SnowflakeCortexAuthPlugin,
     XaiAuthPlugin,
+    CerebrasPlugin,
   ]
 }
 

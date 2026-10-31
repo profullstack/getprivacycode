@@ -3,6 +3,7 @@
 ## Sequence A: CISO / Security Leader
 
 ### Email 1 (Day 0) — The Problem
+
 ```
 Subject: AI coding at {company}?
 
@@ -27,6 +28,7 @@ Best,
 ```
 
 ### Email 2 (Day 4) — Case Study
+
 ```
 Subject: How a HIPAA org deployed AI tools in 2 days
 
@@ -47,6 +49,7 @@ Best,
 ```
 
 ### Email 3 (Day 10) — Direct Ask
+
 ```
 Subject: AI compliance at {company}
 
@@ -71,6 +74,7 @@ Best,
 ## Sequence B: VP Engineering / CTO
 
 ### Email 1 (Day 0) — Speed/Dev Focus
+
 ```
 Subject: AI coding at {company}?
 
@@ -91,6 +95,7 @@ Best,
 ```
 
 ### Email 2 (Day 4) — Technical
+
 ```
 Subject: How tokenization works (no proxy, no cloud)
 
@@ -111,6 +116,7 @@ Best,
 ```
 
 ### Email 3 (Day 10) — Close
+
 ```
 Subject: Re: AI coding at {company}
 
@@ -153,6 +159,7 @@ No pressure. Happy to reconnect in a few months.
 PrivacyCode itself is free and open source.
 
 For deployment and compliance readiness, I offer:
+
 - Starter: $299/mo (up to 10 devs, remote setup, training)
 - Compliance: $1,500/mo (SOC 2/HIPAA, audit logs, SSO, custom patterns)
 - Enterprise: Custom (self-hosted, air-gapped, unlimited)

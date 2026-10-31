@@ -1,13 +1,10 @@
 function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
+  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 }
 
 function renderInline(text: string): string {
   return escapeHtml(text)
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
     .replace(/\*([^*]+)\*/g, "<em>$1</em>")
     .replace(/~~([^~]+)~~/g, "<del>$1</del>")
@@ -64,9 +61,7 @@ export function renderMarkdown(text: string): string {
     }
 
     const langLabel = block.lang ? `<span class="code-lang">${escapeHtml(block.lang)}</span>` : ""
-    parts.push(
-      `<div class="code-block">${langLabel}<pre><code>${escapeHtml(block.code)}</code></pre></div>`,
-    )
+    parts.push(`<div class="code-block">${langLabel}<pre><code>${escapeHtml(block.code)}</code></pre></div>`)
     lastEnd = block.end
   }
 

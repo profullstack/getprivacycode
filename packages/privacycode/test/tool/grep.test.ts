@@ -6,7 +6,7 @@ import path from "path"
 import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
 import { Effect, Layer } from "effect"
 import { GrepTool } from "../../src/tool/grep"
-import { provideInstance, testInstanceStoreLayer, TestInstance, tmpdirScoped } from "../fixture/fixture"
+import { provideInstance, testInstanceStoreLayer, TestInstance } from "../fixture/fixture"
 import { SessionID, MessageID } from "../../src/session/schema"
 import { CrossSpawnSpawner } from "@privacycode-ai/core/cross-spawn-spawner"
 import { Global } from "@privacycode-ai/core/global"
@@ -215,6 +215,8 @@ describe("tool.grep", () => {
       )
 
       expect(result.metadata.matches).toBe(1)
+      expect(result.output).toContain(path.join(alias, "test.txt"))
+      expect(result.output).not.toContain(path.join(real, "test.txt"))
       expect(requests.find((req) => req.permission === "external_directory")).toBeUndefined()
     }),
   )
