@@ -301,8 +301,7 @@ async function cleanShellConfig(file: string) {
       // uninstall also cleans up PATH entries left by pre-rename installs.
       (trimmed.startsWith("export PATH=") &&
         (trimmed.includes(".privacycode/bin") || trimmed.includes(".opencode/bin"))) ||
-      (trimmed.startsWith("fish_add_path") &&
-        (trimmed.includes(".privacycode") || trimmed.includes(".opencode")))
+      (trimmed.startsWith("fish_add_path") && (trimmed.includes(".privacycode") || trimmed.includes(".opencode")))
     ) {
       continue
     }

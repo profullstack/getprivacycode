@@ -87,12 +87,12 @@ describe("installation", () => {
     expect(Installation.getReleaseType("1.19.0", "2.0.0")).toBe("major")
   })
 
-  testEffect(testLayer((request) => (request.url === latestUrl ? jsonResponse({ tag_name: "v1.19.5" }) : undefined))).effect(
-    "checks PrivacyCode's latest GitHub release",
-    () =>
-      Effect.gen(function* () {
-        expect(yield* Installation.use.latest("curl")).toBe("1.19.5")
-      }),
+  testEffect(
+    testLayer((request) => (request.url === latestUrl ? jsonResponse({ tag_name: "v1.19.5" }) : undefined)),
+  ).effect("checks PrivacyCode's latest GitHub release", () =>
+    Effect.gen(function* () {
+      expect(yield* Installation.use.latest("curl")).toBe("1.19.5")
+    }),
   )
 
   testEffect(testLayer(() => new Response("unavailable", { status: 503 }))).effect(
@@ -144,11 +144,14 @@ describe("installation", () => {
   )
 
   testEffect(
-    testLayer((request) => {
-      if (request.url === latestUrl) return jsonResponse({ tag_name: "v2.0.0" })
-      if (request.url === installerUrl) return new Response("installer", { status: 200 })
-      return undefined
-    }, (cmd, args) => (cmd === "bash" && args[0] === "--version" ? "GNU bash" : "")),
+    testLayer(
+      (request) => {
+        if (request.url === latestUrl) return jsonResponse({ tag_name: "v2.0.0" })
+        if (request.url === installerUrl) return new Response("installer", { status: 200 })
+        return undefined
+      },
+      (cmd, args) => (cmd === "bash" && args[0] === "--version" ? "GNU bash" : ""),
+    ),
   ).effect("installs a PrivacyCode major release with the same installer", () =>
     Effect.gen(function* () {
       yield* Installation.use.upgradeMajor("curl")

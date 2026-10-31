@@ -1,477 +1,1677 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PrivacyCode — The privacy-first AI coding agent</title>
-<meta name="description" content="Open-source AI coding agent that keeps your data private. Tokenizes secrets before they leave your machine.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🔒</text></svg>">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#08090b;--surface:#0f1115;--surface-2:#14161c;--border:#1e2028;--border-2:#2a2c36;--text:#e8eaed;--text-secondary:#a0a4b8;--text-muted:#6b6f82;--accent:#00d4aa;--accent-dim:rgba(0,212,170,0.12);--accent-glow:rgba(0,212,170,0.25);--purple:#7c5cfc;--purple-dim:rgba(124,92,252,0.12);--red:#f87171;--red-bg:rgba(248,113,113,0.08);--green:#00d4aa;--green-bg:rgba(0,212,170,0.08);--radius:12px;--radius-sm:8px;--font-sans:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Noto Sans,sans-serif;--font-mono:'JetBrains Mono','Fira Code','SF Mono',ui-monospace,monospace}
-html{scroll-behavior:smooth}
-body{font-family:var(--font-sans);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-a{color:var(--accent);text-decoration:none}
-a:hover{opacity:.8}
-img{max-width:100%;display:block}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrivacyCode — The privacy-first AI coding agent</title>
+    <meta
+      name="description"
+      content="Open-source AI coding agent that keeps your data private. Tokenizes secrets before they leave your machine."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🔒</text></svg>"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #08090b;
+        --surface: #0f1115;
+        --surface-2: #14161c;
+        --border: #1e2028;
+        --border-2: #2a2c36;
+        --text: #e8eaed;
+        --text-secondary: #a0a4b8;
+        --text-muted: #6b6f82;
+        --accent: #00d4aa;
+        --accent-dim: rgba(0, 212, 170, 0.12);
+        --accent-glow: rgba(0, 212, 170, 0.25);
+        --purple: #7c5cfc;
+        --purple-dim: rgba(124, 92, 252, 0.12);
+        --red: #f87171;
+        --red-bg: rgba(248, 113, 113, 0.08);
+        --green: #00d4aa;
+        --green-bg: rgba(0, 212, 170, 0.08);
+        --radius: 12px;
+        --radius-sm: 8px;
+        --font-sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, sans-serif;
+        --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", ui-monospace, monospace;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: var(--font-sans);
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        opacity: 0.8;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
 
-/* navigation */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,9,11,.8);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 24px;height:60px}
-.nav-logo{font-weight:700;font-size:18px;color:var(--text);display:flex;align-items:center;gap:8px}
-.nav-logo span{color:var(--accent)}
-.nav-links{display:flex;gap:4px;align-items:center}
-.nav-links a{padding:6px 14px;border-radius:var(--radius-sm);font-size:14px;font-weight:500;color:var(--text-secondary);transition:all .2s}
-.nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--accent-dim)}
-.nav-cta{padding:7px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;background:var(--accent);color:#fff;margin-left:8px;transition:opacity .2s}
-.nav-cta:hover{opacity:.9;color:#fff}
-.nav-mobile-btn{display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;padding:4px}
+      /* navigation */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(8, 9, 11, 0.8);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        height: 60px;
+      }
+      .nav-logo {
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .nav-logo span {
+        color: var(--accent);
+      }
+      .nav-links {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+      .nav-links a {
+        padding: 6px 14px;
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        transition: all 0.2s;
+      }
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: var(--text);
+        background: var(--accent-dim);
+      }
+      .nav-cta {
+        padding: 7px 18px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 600;
+        background: var(--accent);
+        color: #fff;
+        margin-left: 8px;
+        transition: opacity 0.2s;
+      }
+      .nav-cta:hover {
+        opacity: 0.9;
+        color: #fff;
+      }
+      .nav-mobile-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--text);
+        font-size: 24px;
+        cursor: pointer;
+        padding: 4px;
+      }
 
-/* main */
-main{max-width:1200px;margin:0 auto;padding:0 24px}
+      /* main */
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
 
-/* page sections */
-.page{display:none;animation:fadeIn .3s ease}
-.page.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+      /* page sections */
+      .page {
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+      .page.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-/* hero */
-.hero{padding:160px 0 100px;text-align:center;position:relative}
-.hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(0,212,170,.06) 0%,transparent 70%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px 4px 10px;border-radius:100px;font-size:12px;font-weight:600;background:var(--accent-dim);border:1px solid rgba(0,212,170,.2);color:var(--accent);margin-bottom:24px}
-.hero-badge svg{width:12px;height:12px}
-.hero h1{font-size:clamp(42px,7vw,80px);font-weight:800;line-height:1.08;letter-spacing:-.03em;margin-bottom:20px;background:linear-gradient(135deg,#fff 30%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:clamp(16px,2vw,20px);color:var(--text-secondary);max-width:600px;margin:0 auto 40px;line-height:1.7}
-.hero-commands{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:48px}
-.hero-command{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 20px;font-family:var(--font-mono);font-size:14px;position:relative;transition:border-color .2s;width:auto;min-width:400px;justify-content:space-between}
-.hero-command:hover{border-color:var(--border-2)}
-.hero-command .cmd-text{color:var(--text)}
-.hero-command .cmd-prompt{color:var(--text-muted)}
-.hero-command .cmd-copy{background:none;border:none;color:var(--text-muted);cursor:pointer;padding:4px;border-radius:4px;transition:all .2s;display:flex;align-items:center}
-.hero-command .cmd-copy:hover{color:var(--accent);background:var(--accent-dim)}
-.hero-command .cmd-copy.copied{color:var(--accent)}
-.hero-sub{font-size:13px;color:var(--text-muted)}
-.hero-sub a{color:var(--text-secondary)}
+      /* hero */
+      .hero {
+        padding: 160px 0 100px;
+        text-align: center;
+        position: relative;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: -200px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(circle, rgba(0, 212, 170, 0.06) 0%, transparent 70%);
+        pointer-events: none;
+      }
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 14px 4px 10px;
+        border-radius: 100px;
+        font-size: 12px;
+        font-weight: 600;
+        background: var(--accent-dim);
+        border: 1px solid rgba(0, 212, 170, 0.2);
+        color: var(--accent);
+        margin-bottom: 24px;
+      }
+      .hero-badge svg {
+        width: 12px;
+        height: 12px;
+      }
+      .hero h1 {
+        font-size: clamp(42px, 7vw, 80px);
+        font-weight: 800;
+        line-height: 1.08;
+        letter-spacing: -0.03em;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #fff 30%, var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .hero p {
+        font-size: clamp(16px, 2vw, 20px);
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 40px;
+        line-height: 1.7;
+      }
+      .hero-commands {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 48px;
+      }
+      .hero-command {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 20px;
+        font-family: var(--font-mono);
+        font-size: 14px;
+        position: relative;
+        transition: border-color 0.2s;
+        width: auto;
+        min-width: 400px;
+        justify-content: space-between;
+      }
+      .hero-command:hover {
+        border-color: var(--border-2);
+      }
+      .hero-command .cmd-text {
+        color: var(--text);
+      }
+      .hero-command .cmd-prompt {
+        color: var(--text-muted);
+      }
+      .hero-command .cmd-copy {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+      }
+      .hero-command .cmd-copy:hover {
+        color: var(--accent);
+        background: var(--accent-dim);
+      }
+      .hero-command .cmd-copy.copied {
+        color: var(--accent);
+      }
+      .hero-sub {
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+      .hero-sub a {
+        color: var(--text-secondary);
+      }
 
-/* comparison */
-.comparison{padding:80px 0}
-.comparison h2{text-align:center;font-size:clamp(28px,4vw,40px);font-weight:700;margin-bottom:12px;letter-spacing:-.02em}
-.comparison-sub{text-align:center;color:var(--text-secondary);font-size:15px;margin-bottom:40px}
-.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:840px;margin:0 auto}
-.term-card{background:#0a0c0e;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .3s}
-.term-card:hover{border-color:var(--border-2)}
-.term-card-header{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface-2)}
-.term-card-header .dot{width:9px;height:9px;border-radius:50%}
-.term-card-header .dot:nth-child(1){background:#f87171}
-.term-card-header .dot:nth-child(2){background:#fbbf24}
-.term-card-header .dot:nth-child(3){background:#34d399}
-.term-card-title{font-size:11px;color:var(--text-muted);margin-left:auto;font-family:var(--font-mono);font-weight:500;letter-spacing:.02em}
-.term-card-body{padding:16px 18px;font-family:var(--font-mono);font-size:12px;line-height:1.8;min-height:200px}
-.term-line{display:flex;align-items:flex-start;gap:6px;padding:2px 0}
-.term-line .label{color:var(--text-secondary);min-width:16px}
-.term-line .text{color:#e8eaed;word-break:break-all}
-.term-line .bad-text{color:var(--red);word-break:break-all}
-.term-line .good-text{color:var(--accent);word-break:break-all}
-.term-divider{margin:10px 0;border-top:1px dashed var(--border)}
-.term-status{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:6px 10px;border-radius:6px;font-size:11px;font-weight:600;font-family:var(--font-sans)}
-.term-status.bad{background:var(--red-bg);color:var(--red)}
-.term-status.good{background:var(--green-bg);color:var(--accent)}
+      /* comparison */
+      .comparison {
+        padding: 80px 0;
+      }
+      .comparison h2 {
+        text-align: center;
+        font-size: clamp(28px, 4vw, 40px);
+        font-weight: 700;
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+      }
+      .comparison-sub {
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 15px;
+        margin-bottom: 40px;
+      }
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        max-width: 840px;
+        margin: 0 auto;
+      }
+      .term-card {
+        background: #0a0c0e;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        transition: border-color 0.3s;
+      }
+      .term-card:hover {
+        border-color: var(--border-2);
+      }
+      .term-card-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface-2);
+      }
+      .term-card-header .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+      }
+      .term-card-header .dot:nth-child(1) {
+        background: #f87171;
+      }
+      .term-card-header .dot:nth-child(2) {
+        background: #fbbf24;
+      }
+      .term-card-header .dot:nth-child(3) {
+        background: #34d399;
+      }
+      .term-card-title {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-left: auto;
+        font-family: var(--font-mono);
+        font-weight: 500;
+        letter-spacing: 0.02em;
+      }
+      .term-card-body {
+        padding: 16px 18px;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.8;
+        min-height: 200px;
+      }
+      .term-line {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 2px 0;
+      }
+      .term-line .label {
+        color: var(--text-secondary);
+        min-width: 16px;
+      }
+      .term-line .text {
+        color: #e8eaed;
+        word-break: break-all;
+      }
+      .term-line .bad-text {
+        color: var(--red);
+        word-break: break-all;
+      }
+      .term-line .good-text {
+        color: var(--accent);
+        word-break: break-all;
+      }
+      .term-divider {
+        margin: 10px 0;
+        border-top: 1px dashed var(--border);
+      }
+      .term-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        font-family: var(--font-sans);
+      }
+      .term-status.bad {
+        background: var(--red-bg);
+        color: var(--red);
+      }
+      .term-status.good {
+        background: var(--green-bg);
+        color: var(--accent);
+      }
 
-/* terminal demo */
-.terminal-demo{padding:60px 0 80px}
-.terminal{background:#0a0c0e;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;max-width:700px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,.4)}
-.terminal-header{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--surface-2);border-bottom:1px solid var(--border)}
-.terminal-dot{width:10px;height:10px;border-radius:50%}
-.terminal-dot:nth-child(1){background:#f87171}
-.terminal-dot:nth-child(2){background:#fbbf24}
-.terminal-dot:nth-child(3){background:#34d399}
-.terminal-title{font-size:12px;color:var(--text-muted);margin-left:auto;font-family:var(--font-mono)}
-.terminal-body{padding:20px;font-family:var(--font-mono);font-size:13px;line-height:1.8;min-height:240px;color:#e8eaed}
-.terminal-line{opacity:0;animation:typeIn .3s forwards}
-.terminal-line .prompt{color:var(--accent)}
-.terminal-line .text-green{color:#34d399}
-.terminal-line .text-yellow{color:#fbbf24}
-.terminal-line .text-blue{color:#60a5fa}
-.terminal-line .text-muted-t{color:#6b6f82}
-.terminal-line .text-red-t{color:#f87171}
-.terminal-cursor{display:inline-block;width:8px;height:15px;background:var(--accent);animation:blink 1s infinite;margin-left:2px;vertical-align:text-bottom}
-@keyframes typeIn{to{opacity:1}}
-@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
+      /* terminal demo */
+      .terminal-demo {
+        padding: 60px 0 80px;
+      }
+      .terminal {
+        background: #0a0c0e;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        max-width: 700px;
+        margin: 0 auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      }
+      .terminal-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        background: var(--surface-2);
+        border-bottom: 1px solid var(--border);
+      }
+      .terminal-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .terminal-dot:nth-child(1) {
+        background: #f87171;
+      }
+      .terminal-dot:nth-child(2) {
+        background: #fbbf24;
+      }
+      .terminal-dot:nth-child(3) {
+        background: #34d399;
+      }
+      .terminal-title {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-left: auto;
+        font-family: var(--font-mono);
+      }
+      .terminal-body {
+        padding: 20px;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        line-height: 1.8;
+        min-height: 240px;
+        color: #e8eaed;
+      }
+      .terminal-line {
+        opacity: 0;
+        animation: typeIn 0.3s forwards;
+      }
+      .terminal-line .prompt {
+        color: var(--accent);
+      }
+      .terminal-line .text-green {
+        color: #34d399;
+      }
+      .terminal-line .text-yellow {
+        color: #fbbf24;
+      }
+      .terminal-line .text-blue {
+        color: #60a5fa;
+      }
+      .terminal-line .text-muted-t {
+        color: #6b6f82;
+      }
+      .terminal-line .text-red-t {
+        color: #f87171;
+      }
+      .terminal-cursor {
+        display: inline-block;
+        width: 8px;
+        height: 15px;
+        background: var(--accent);
+        animation: blink 1s infinite;
+        margin-left: 2px;
+        vertical-align: text-bottom;
+      }
+      @keyframes typeIn {
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
+        }
+        51%,
+        100% {
+          opacity: 0;
+        }
+      }
 
-/* features */
-.features{padding:80px 0}
-.features h2{text-align:center;font-size:clamp(28px,4vw,40px);font-weight:700;margin-bottom:12px;letter-spacing:-.02em}
-.features-sub{text-align:center;color:var(--text-secondary);font-size:16px;margin-bottom:48px;max-width:500px;margin-left:auto;margin-right:auto}
-.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:all .3s;position:relative;overflow:hidden}
-.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
-.feature-card:hover{transform:translateY(-2px);border-color:var(--border-2)}
-.feature-card:hover::before{opacity:1}
-.feature-icon{width:40px;height:40px;border-radius:10px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px}
-.feature-card h3{font-size:16px;font-weight:600;margin-bottom:8px}
-.feature-card p{font-size:14px;color:var(--text-secondary);line-height:1.6}
+      /* features */
+      .features {
+        padding: 80px 0;
+      }
+      .features h2 {
+        text-align: center;
+        font-size: clamp(28px, 4vw, 40px);
+        font-weight: 700;
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+      }
+      .features-sub {
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 16px;
+        margin-bottom: 48px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .feature-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .feature-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--border-2);
+      }
+      .feature-card:hover::before {
+        opacity: 1;
+      }
+      .feature-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--accent-dim);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin-bottom: 16px;
+      }
+      .feature-card h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .feature-card p {
+        font-size: 14px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
 
-/* cta */
-.cta{padding:100px 0;text-align:center}
-.cta-box{background:linear-gradient(135deg,var(--surface),var(--surface-2));border:1px solid var(--border);border-radius:16px;padding:60px 40px;max-width:700px;margin:0 auto;position:relative;overflow:hidden}
-.cta-box::before{content:'';position:absolute;top:-100px;right:-100px;width:300px;height:300px;background:radial-gradient(circle,rgba(0,212,170,.08),transparent 70%);pointer-events:none}
-.cta h2{font-size:clamp(28px,4vw,36px);font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
-.cta p{color:var(--text-secondary);font-size:16px;margin-bottom:32px}
-.cta-buttons{display:flex;flex-direction:column;align-items:center;gap:12px}
-.cta-command{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;font-family:var(--font-mono);font-size:14px;width:100%;max-width:500px;transition:border-color .2s}
-.cta-command:hover{border-color:var(--border-2)}
-.cta-command .cmd-copy{background:none;border:none;color:var(--text-muted);cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center;transition:all .2s}
-.cta-command .cmd-copy:hover{color:var(--accent);background:var(--accent-dim)}
-.cta-alt{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
-.cta-alt code{font-family:var(--font-mono);background:var(--accent-dim);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--accent)}
+      /* cta */
+      .cta {
+        padding: 100px 0;
+        text-align: center;
+      }
+      .cta-box {
+        background: linear-gradient(135deg, var(--surface), var(--surface-2));
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 60px 40px;
+        max-width: 700px;
+        margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+      }
+      .cta-box::before {
+        content: "";
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(0, 212, 170, 0.08), transparent 70%);
+        pointer-events: none;
+      }
+      .cta h2 {
+        font-size: clamp(28px, 4vw, 36px);
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+      }
+      .cta p {
+        color: var(--text-secondary);
+        font-size: 16px;
+        margin-bottom: 32px;
+      }
+      .cta-buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .cta-command {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 14px 20px;
+        font-family: var(--font-mono);
+        font-size: 14px;
+        width: 100%;
+        max-width: 500px;
+        transition: border-color 0.2s;
+      }
+      .cta-command:hover {
+        border-color: var(--border-2);
+      }
+      .cta-command .cmd-copy {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        transition: all 0.2s;
+      }
+      .cta-command .cmd-copy:hover {
+        color: var(--accent);
+        background: var(--accent-dim);
+      }
+      .cta-alt {
+        font-size: 13px;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .cta-alt code {
+        font-family: var(--font-mono);
+        background: var(--accent-dim);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        color: var(--accent);
+      }
 
-/* footer */
-footer{margin-top:80px;border-top:1px solid var(--border);padding:40px 0 60px}
-.footer-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
-.footer-brand p{font-size:13px;color:var(--text-muted);margin-top:8px;max-width:280px;line-height:1.6}
-.footer-col h4{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:16px}
-.footer-col a{display:block;font-size:14px;color:var(--text-secondary);padding:4px 0;transition:color .2s}
-.footer-col a:hover{color:var(--text)}
-.footer-bottom{border-top:1px solid var(--border);margin-top:40px;padding-top:20px;max-width:1200px;margin-left:auto;margin-right:auto;padding-left:24px;padding-right:24px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-muted)}
+      /* footer */
+      footer {
+        margin-top: 80px;
+        border-top: 1px solid var(--border);
+        padding: 40px 0 60px;
+      }
+      .footer-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 40px;
+      }
+      .footer-brand p {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: 8px;
+        max-width: 280px;
+        line-height: 1.6;
+      }
+      .footer-col h4 {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+      }
+      .footer-col a {
+        display: block;
+        font-size: 14px;
+        color: var(--text-secondary);
+        padding: 4px 0;
+        transition: color 0.2s;
+      }
+      .footer-col a:hover {
+        color: var(--text);
+      }
+      .footer-bottom {
+        border-top: 1px solid var(--border);
+        margin-top: 40px;
+        padding-top: 20px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 24px;
+        padding-right: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        color: var(--text-muted);
+      }
 
-/* docs/cli/enterprise/privacy pages */
-.page-content{padding-top:100px;padding-bottom:80px;max-width:800px;margin:0 auto}
-.page-content h1{font-size:clamp(28px,4vw,40px);font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
-.page-content .page-lead{color:var(--text-secondary);font-size:16px;margin-bottom:40px}
-.page-content h2{font-size:20px;font-weight:600;margin-top:40px;margin-bottom:12px;color:var(--text)}
-.page-content h3{font-size:16px;font-weight:600;margin-top:28px;margin-bottom:8px}
-.page-content p{color:var(--text-secondary);margin-bottom:16px;line-height:1.7}
-.page-content ul{color:var(--text-secondary);margin-bottom:16px;padding-left:20px}
-.page-content ul li{margin-bottom:6px}
-.page-content code{font-family:var(--font-mono);font-size:13px;background:var(--surface-2);padding:2px 6px;border-radius:4px;color:var(--accent)}
-.page-content pre{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;overflow-x:auto;margin-bottom:20px;font-family:var(--font-mono);font-size:13px;line-height:1.7;color:var(--text)}
-.page-content pre .comment{color:var(--text-muted)}
-.page-content pre .keyword{color:var(--purple)}
-.page-content pre .string{color:var(--accent)}
-.page-content .cmd-table{width:100%;border-collapse:collapse;margin-bottom:24px;font-size:14px}
-.page-content .cmd-table th{text-align:left;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);padding:8px 12px;border-bottom:1px solid var(--border)}
-.page-content .cmd-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text-secondary)}
-.page-content .cmd-table td:first-child{font-family:var(--font-mono);font-size:13px;color:var(--text);white-space:nowrap}
-.page-content .cmd-table tr:hover td{background:var(--surface)}
+      /* docs/cli/enterprise/privacy pages */
+      .page-content {
+        padding-top: 100px;
+        padding-bottom: 80px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .page-content h1 {
+        font-size: clamp(28px, 4vw, 40px);
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+      }
+      .page-content .page-lead {
+        color: var(--text-secondary);
+        font-size: 16px;
+        margin-bottom: 40px;
+      }
+      .page-content h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin-top: 40px;
+        margin-bottom: 12px;
+        color: var(--text);
+      }
+      .page-content h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 8px;
+      }
+      .page-content p {
+        color: var(--text-secondary);
+        margin-bottom: 16px;
+        line-height: 1.7;
+      }
+      .page-content ul {
+        color: var(--text-secondary);
+        margin-bottom: 16px;
+        padding-left: 20px;
+      }
+      .page-content ul li {
+        margin-bottom: 6px;
+      }
+      .page-content code {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        background: var(--surface-2);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--accent);
+      }
+      .page-content pre {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 20px;
+        overflow-x: auto;
+        margin-bottom: 20px;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--text);
+      }
+      .page-content pre .comment {
+        color: var(--text-muted);
+      }
+      .page-content pre .keyword {
+        color: var(--purple);
+      }
+      .page-content pre .string {
+        color: var(--accent);
+      }
+      .page-content .cmd-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 24px;
+        font-size: 14px;
+      }
+      .page-content .cmd-table th {
+        text-align: left;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .page-content .cmd-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+      .page-content .cmd-table td:first-child {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        color: var(--text);
+        white-space: nowrap;
+      }
+      .page-content .cmd-table tr:hover td {
+        background: var(--surface);
+      }
 
-/* privacy policy */
-.policy-date{font-size:13px;color:var(--text-muted);margin-bottom:32px}
-.policy-section h2{margin-top:32px}
-.policy-section p{color:var(--text-secondary);margin-bottom:12px}
-.policy-section ul{color:var(--text-secondary);padding-left:20px;margin-bottom:12px}
-.policy-section ul li{margin-bottom:4px}
+      /* privacy policy */
+      .policy-date {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: 32px;
+      }
+      .policy-section h2 {
+        margin-top: 32px;
+      }
+      .policy-section p {
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+      }
+      .policy-section ul {
+        color: var(--text-secondary);
+        padding-left: 20px;
+        margin-bottom: 12px;
+      }
+      .policy-section ul li {
+        margin-bottom: 4px;
+      }
 
-/* enterprise / services page */
-.services-hero{padding:140px 0 60px;text-align:center}
-.services-hero h1{font-size:clamp(32px,5vw,48px);font-weight:700;margin-bottom:16px;letter-spacing:-.02em}
-.services-hero p{color:var(--text-secondary);font-size:18px;max-width:600px;margin:0 auto}
-.services-hero .highlight{color:var(--accent)}
-.enterprise-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:60px}
-.enterprise-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:border-color .2s}
-.enterprise-card:hover{border-color:var(--border-2)}
-.enterprise-card .icon{font-size:28px;margin-bottom:12px}
-.enterprise-card h3{font-size:16px;font-weight:600;margin-bottom:6px}
-.enterprise-card p{font-size:14px;color:var(--text-secondary);line-height:1.6}
-/* pricing */
-.pricing-header{text-align:center;padding:60px 0 40px}
-.pricing-header h2{font-size:clamp(26px,4vw,36px);font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
-.pricing-header p{color:var(--text-secondary);font-size:15px;max-width:500px;margin:0 auto}
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:960px;margin:0 auto 48px}
-.pricing-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px 28px;display:flex;flex-direction:column;position:relative;transition:border-color .3s}
-.pricing-card:hover{border-color:var(--border-2)}
-.pricing-card.featured{border-color:var(--accent);background:linear-gradient(135deg,var(--surface),rgba(0,212,170,.04))}
-.pricing-card.featured::before{content:'Popular';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#08090b;font-size:11px;font-weight:700;padding:2px 14px;border-radius:100px;text-transform:uppercase;letter-spacing:.05em}
-.pricing-card .name{font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);margin-bottom:4px}
-.pricing-card .price{font-size:36px;font-weight:800;color:var(--text);letter-spacing:-.03em;margin-bottom:4px}
-.pricing-card .price span{font-size:14px;font-weight:500;color:var(--text-muted)}
-.pricing-card .desc{font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.5}
-.pricing-card ul{list-style:none;padding:0;margin:0 0 auto 0}
-.pricing-card ul li{font-size:13px;color:var(--text-secondary);padding:7px 0 7px 20px;position:relative;line-height:1.5}
-.pricing-card ul li::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700}
-.pricing-card .btn{margin-top:24px;display:block;text-align:center;padding:10px 20px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;transition:all .2s}
-.pricing-card .btn.primary{background:var(--accent);color:#08090b}
-.pricing-card .btn.primary:hover{opacity:.9;color:#08090b}
-.pricing-card .btn.secondary{border:1px solid var(--border);color:var(--text)}
-.pricing-card .btn.secondary:hover{background:var(--surface-2);border-color:var(--border-2)}
-.process-section{padding:60px 0}
-.process-section h2{text-align:center;font-size:clamp(24px,3.5vw,32px);font-weight:700;margin-bottom:48px;letter-spacing:-.02em}
-.process-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:800px;margin:0 auto}
-.process-step{text-align:center}
-.process-step .num{width:44px;height:44px;border-radius:50%;background:var(--accent-dim);border:1px solid rgba(0,212,170,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:16px;font-weight:700;color:var(--accent)}
-.process-step h3{font-size:16px;font-weight:600;margin-bottom:6px}
-.process-step p{font-size:13px;color:var(--text-secondary);line-height:1.6;max-width:240px;margin:0 auto}
-.enterprise-cta{text-align:center;padding:60px 0 40px}
-.enterprise-cta h2{font-size:24px;font-weight:700;margin-bottom:8px}
-.enterprise-cta p{color:var(--text-secondary);margin-bottom:24px;font-size:15px}
-.enterprise-cta .cta-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.enterprise-cta .cta-buttons a{display:inline-block;padding:12px 28px;border-radius:var(--radius-sm);font-weight:600;font-size:14px;transition:all .2s}
-.enterprise-cta .cta-buttons a.primary{background:var(--accent);color:#08090b}
-.enterprise-cta .cta-buttons a.primary:hover{opacity:.9;color:#08090b}
-.enterprise-cta .cta-buttons a.secondary{border:1px solid var(--border);color:var(--text)}
-.enterprise-cta .cta-buttons a.secondary:hover{background:var(--surface-2)}
+      /* enterprise / services page */
+      .services-hero {
+        padding: 140px 0 60px;
+        text-align: center;
+      }
+      .services-hero h1 {
+        font-size: clamp(32px, 5vw, 48px);
+        font-weight: 700;
+        margin-bottom: 16px;
+        letter-spacing: -0.02em;
+      }
+      .services-hero p {
+        color: var(--text-secondary);
+        font-size: 18px;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .services-hero .highlight {
+        color: var(--accent);
+      }
+      .enterprise-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 60px;
+      }
+      .enterprise-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px;
+        transition: border-color 0.2s;
+      }
+      .enterprise-card:hover {
+        border-color: var(--border-2);
+      }
+      .enterprise-card .icon {
+        font-size: 28px;
+        margin-bottom: 12px;
+      }
+      .enterprise-card h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .enterprise-card p {
+        font-size: 14px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+      /* pricing */
+      .pricing-header {
+        text-align: center;
+        padding: 60px 0 40px;
+      }
+      .pricing-header h2 {
+        font-size: clamp(26px, 4vw, 36px);
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+      }
+      .pricing-header p {
+        color: var(--text-secondary);
+        font-size: 15px;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        max-width: 960px;
+        margin: 0 auto 48px;
+      }
+      .pricing-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px 28px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        transition: border-color 0.3s;
+      }
+      .pricing-card:hover {
+        border-color: var(--border-2);
+      }
+      .pricing-card.featured {
+        border-color: var(--accent);
+        background: linear-gradient(135deg, var(--surface), rgba(0, 212, 170, 0.04));
+      }
+      .pricing-card.featured::before {
+        content: "Popular";
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--accent);
+        color: #08090b;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 14px;
+        border-radius: 100px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .pricing-card .name {
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--accent);
+        margin-bottom: 4px;
+      }
+      .pricing-card .price {
+        font-size: 36px;
+        font-weight: 800;
+        color: var(--text);
+        letter-spacing: -0.03em;
+        margin-bottom: 4px;
+      }
+      .pricing-card .price span {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-muted);
+      }
+      .pricing-card .desc {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+      .pricing-card ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 auto 0;
+      }
+      .pricing-card ul li {
+        font-size: 13px;
+        color: var(--text-secondary);
+        padding: 7px 0 7px 20px;
+        position: relative;
+        line-height: 1.5;
+      }
+      .pricing-card ul li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+        font-weight: 700;
+      }
+      .pricing-card .btn {
+        margin-top: 24px;
+        display: block;
+        text-align: center;
+        padding: 10px 20px;
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .pricing-card .btn.primary {
+        background: var(--accent);
+        color: #08090b;
+      }
+      .pricing-card .btn.primary:hover {
+        opacity: 0.9;
+        color: #08090b;
+      }
+      .pricing-card .btn.secondary {
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+      .pricing-card .btn.secondary:hover {
+        background: var(--surface-2);
+        border-color: var(--border-2);
+      }
+      .process-section {
+        padding: 60px 0;
+      }
+      .process-section h2 {
+        text-align: center;
+        font-size: clamp(24px, 3.5vw, 32px);
+        font-weight: 700;
+        margin-bottom: 48px;
+        letter-spacing: -0.02em;
+      }
+      .process-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .process-step {
+        text-align: center;
+      }
+      .process-step .num {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--accent-dim);
+        border: 1px solid rgba(0, 212, 170, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .process-step h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .process-step p {
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        max-width: 240px;
+        margin: 0 auto;
+      }
+      .enterprise-cta {
+        text-align: center;
+        padding: 60px 0 40px;
+      }
+      .enterprise-cta h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .enterprise-cta p {
+        color: var(--text-secondary);
+        margin-bottom: 24px;
+        font-size: 15px;
+      }
+      .enterprise-cta .cta-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .enterprise-cta .cta-buttons a {
+        display: inline-block;
+        padding: 12px 28px;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      .enterprise-cta .cta-buttons a.primary {
+        background: var(--accent);
+        color: #08090b;
+      }
+      .enterprise-cta .cta-buttons a.primary:hover {
+        opacity: 0.9;
+        color: #08090b;
+      }
+      .enterprise-cta .cta-buttons a.secondary {
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+      .enterprise-cta .cta-buttons a.secondary:hover {
+        background: var(--surface-2);
+      }
 
-/* responsive */
-@media(max-width:900px){
-  main{padding:0 16px}
-  .features-grid{grid-template-columns:1fr 1fr}
-  .footer-inner{grid-template-columns:1fr 1fr;gap:24px}
-  .hero-command{min-width:auto;width:100%;max-width:none;font-size:13px;padding:10px 14px}
-  .comparison-grid{grid-template-columns:1fr;max-width:480px}
-  .term-card-body{font-size:11px;min-height:auto;padding:14px 16px}
-  .enterprise-grid{grid-template-columns:1fr 1fr}
-  .pricing-grid{grid-template-columns:1fr 1fr;max-width:600px}
-  .terminal{max-width:100%}
-}
-@media(max-width:640px){
-  .nav-inner{padding:0 16px}
-  .nav-links{display:none}
-  .nav-links.active{display:flex;flex-direction:column;position:absolute;top:60px;left:0;right:0;background:rgba(8,9,11,.96);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:12px 16px;gap:2px}
-  .nav-links.active a{display:block;padding:12px 14px;font-size:15px}
-  .nav-links.active .nav-cta{text-align:center;margin-left:0;margin-top:4px}
-  .nav-mobile-btn{display:block}
-  .nav-hide-mobile{display:block}
+      /* responsive */
+      @media (max-width: 900px) {
+        main {
+          padding: 0 16px;
+        }
+        .features-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .footer-inner {
+          grid-template-columns: 1fr 1fr;
+          gap: 24px;
+        }
+        .hero-command {
+          min-width: auto;
+          width: 100%;
+          max-width: none;
+          font-size: 13px;
+          padding: 10px 14px;
+        }
+        .comparison-grid {
+          grid-template-columns: 1fr;
+          max-width: 480px;
+        }
+        .term-card-body {
+          font-size: 11px;
+          min-height: auto;
+          padding: 14px 16px;
+        }
+        .enterprise-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .pricing-grid {
+          grid-template-columns: 1fr 1fr;
+          max-width: 600px;
+        }
+        .terminal {
+          max-width: 100%;
+        }
+      }
+      @media (max-width: 640px) {
+        .nav-inner {
+          padding: 0 16px;
+        }
+        .nav-links {
+          display: none;
+        }
+        .nav-links.active {
+          display: flex;
+          flex-direction: column;
+          position: absolute;
+          top: 60px;
+          left: 0;
+          right: 0;
+          background: rgba(8, 9, 11, 0.96);
+          -webkit-backdrop-filter: blur(16px);
+          backdrop-filter: blur(16px);
+          border-bottom: 1px solid var(--border);
+          padding: 12px 16px;
+          gap: 2px;
+        }
+        .nav-links.active a {
+          display: block;
+          padding: 12px 14px;
+          font-size: 15px;
+        }
+        .nav-links.active .nav-cta {
+          text-align: center;
+          margin-left: 0;
+          margin-top: 4px;
+        }
+        .nav-mobile-btn {
+          display: block;
+        }
+        .nav-hide-mobile {
+          display: block;
+        }
 
-  .hero{padding:100px 0 40px}
-  .hero h1{font-size:clamp(32px,10vw,44px)}
-  .hero p{font-size:15px;margin-bottom:28px}
-  .hero-commands{gap:8px;margin-bottom:32px}
-  .hero-command{font-size:12px;padding:10px 12px;flex-wrap:nowrap}
-  .hero-command .cmd-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .hero {
+          padding: 100px 0 40px;
+        }
+        .hero h1 {
+          font-size: clamp(32px, 10vw, 44px);
+        }
+        .hero p {
+          font-size: 15px;
+          margin-bottom: 28px;
+        }
+        .hero-commands {
+          gap: 8px;
+          margin-bottom: 32px;
+        }
+        .hero-command {
+          font-size: 12px;
+          padding: 10px 12px;
+          flex-wrap: nowrap;
+        }
+        .hero-command .cmd-text {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
 
-  .comparison{padding:40px 0}
-  .comparison-sub{font-size:14px;margin-bottom:28px}
-  .comparison-grid{max-width:none}
-  .term-card-body{font-size:11px;padding:12px 14px;min-height:auto}
-  .term-card-body .term-line{padding:1px 0}
-  .term-status{font-size:10px;padding:4px 8px}
+        .comparison {
+          padding: 40px 0;
+        }
+        .comparison-sub {
+          font-size: 14px;
+          margin-bottom: 28px;
+        }
+        .comparison-grid {
+          max-width: none;
+        }
+        .term-card-body {
+          font-size: 11px;
+          padding: 12px 14px;
+          min-height: auto;
+        }
+        .term-card-body .term-line {
+          padding: 1px 0;
+        }
+        .term-status {
+          font-size: 10px;
+          padding: 4px 8px;
+        }
 
-  .terminal-demo{padding:20px 0 40px}
-  .terminal-body{font-size:11px;padding:14px;min-height:180px}
-  .terminal-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .terminal-demo {
+          padding: 20px 0 40px;
+        }
+        .terminal-body {
+          font-size: 11px;
+          padding: 14px;
+          min-height: 180px;
+        }
+        .terminal-line {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
 
-  .features{padding:40px 0}
-  .features h2{font-size:clamp(24px,8vw,30px)}
-  .features-sub{font-size:14px;margin-bottom:28px}
-  .features-grid{grid-template-columns:1fr;gap:14px}
-  .feature-card{padding:20px}
+        .features {
+          padding: 40px 0;
+        }
+        .features h2 {
+          font-size: clamp(24px, 8vw, 30px);
+        }
+        .features-sub {
+          font-size: 14px;
+          margin-bottom: 28px;
+        }
+        .features-grid {
+          grid-template-columns: 1fr;
+          gap: 14px;
+        }
+        .feature-card {
+          padding: 20px;
+        }
 
-  .cta{padding:60px 0}
-  .cta-box{padding:32px 20px}
-  .cta h2{font-size:clamp(22px,7vw,28px)}
-  .cta p{font-size:14px;margin-bottom:24px}
-  .cta-command{font-size:12px;padding:10px 12px;overflow:hidden}
-  .cta-command span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .cta-alt{font-size:12px;flex-wrap:wrap;justify-content:center}
+        .cta {
+          padding: 60px 0;
+        }
+        .cta-box {
+          padding: 32px 20px;
+        }
+        .cta h2 {
+          font-size: clamp(22px, 7vw, 28px);
+        }
+        .cta p {
+          font-size: 14px;
+          margin-bottom: 24px;
+        }
+        .cta-command {
+          font-size: 12px;
+          padding: 10px 12px;
+          overflow: hidden;
+        }
+        .cta-command span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .cta-alt {
+          font-size: 12px;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
 
-  .footer-inner{grid-template-columns:1fr;gap:28px}
-  footer{margin-top:40px;padding:28px 0 40px}
-  .footer-bottom{flex-direction:column;gap:8px;text-align:center;padding-top:16px}
+        .footer-inner {
+          grid-template-columns: 1fr;
+          gap: 28px;
+        }
+        footer {
+          margin-top: 40px;
+          padding: 28px 0 40px;
+        }
+        .footer-bottom {
+          flex-direction: column;
+          gap: 8px;
+          text-align: center;
+          padding-top: 16px;
+        }
 
-  .page-content{padding-top:80px;padding-bottom:40px}
-  .page-content h1{font-size:clamp(24px,7vw,32px)}
-  .page-content .page-lead{font-size:14px;margin-bottom:28px}
-  .page-content h2{font-size:18px}
-  .page-content pre{font-size:12px;padding:14px 16px}
-  .page-content .cmd-table{font-size:13px}
-  .page-content .cmd-table td, .page-content .cmd-table th{padding:8px 10px}
-  .page-content .cmd-table td:first-child{font-size:12px;white-space:normal;word-break:break-all}
+        .page-content {
+          padding-top: 80px;
+          padding-bottom: 40px;
+        }
+        .page-content h1 {
+          font-size: clamp(24px, 7vw, 32px);
+        }
+        .page-content .page-lead {
+          font-size: 14px;
+          margin-bottom: 28px;
+        }
+        .page-content h2 {
+          font-size: 18px;
+        }
+        .page-content pre {
+          font-size: 12px;
+          padding: 14px 16px;
+        }
+        .page-content .cmd-table {
+          font-size: 13px;
+        }
+        .page-content .cmd-table td,
+        .page-content .cmd-table th {
+          padding: 8px 10px;
+        }
+        .page-content .cmd-table td:first-child {
+          font-size: 12px;
+          white-space: normal;
+          word-break: break-all;
+        }
 
-  .enterprise-hero{padding:100px 0 40px}
-  .enterprise-hero h1{font-size:clamp(24px,7vw,36px)}
-  .enterprise-hero p{font-size:15px}
-  .enterprise-grid{grid-template-columns:1fr;gap:14px;margin-bottom:40px}
-  .enterprise-card{padding:20px}
-  .pricing-grid{grid-template-columns:1fr;max-width:400px;gap:16px}
-  .pricing-card{padding:24px 20px}
-  .pricing-card .price{font-size:30px}
-  .process-grid{grid-template-columns:1fr;gap:32px;max-width:320px}
-  .services-hero{padding:100px 0 40px}
-  .services-hero h1{font-size:clamp(24px,7vw,36px)}
-  .services-hero p{font-size:15px}
-  .pricing-header{padding:40px 0 24px}
-  .pricing-header h2{font-size:clamp(22px,6vw,28px)}
-  .process-section{padding:40px 0}
-  .process-section h2{font-size:clamp(22px,6vw,28px);margin-bottom:32px}
-  .enterprise-cta{padding:40px 0 20px}
-}
+        .enterprise-hero {
+          padding: 100px 0 40px;
+        }
+        .enterprise-hero h1 {
+          font-size: clamp(24px, 7vw, 36px);
+        }
+        .enterprise-hero p {
+          font-size: 15px;
+        }
+        .enterprise-grid {
+          grid-template-columns: 1fr;
+          gap: 14px;
+          margin-bottom: 40px;
+        }
+        .enterprise-card {
+          padding: 20px;
+        }
+        .pricing-grid {
+          grid-template-columns: 1fr;
+          max-width: 400px;
+          gap: 16px;
+        }
+        .pricing-card {
+          padding: 24px 20px;
+        }
+        .pricing-card .price {
+          font-size: 30px;
+        }
+        .process-grid {
+          grid-template-columns: 1fr;
+          gap: 32px;
+          max-width: 320px;
+        }
+        .services-hero {
+          padding: 100px 0 40px;
+        }
+        .services-hero h1 {
+          font-size: clamp(24px, 7vw, 36px);
+        }
+        .services-hero p {
+          font-size: 15px;
+        }
+        .pricing-header {
+          padding: 40px 0 24px;
+        }
+        .pricing-header h2 {
+          font-size: clamp(22px, 6vw, 28px);
+        }
+        .process-section {
+          padding: 40px 0;
+        }
+        .process-section h2 {
+          font-size: clamp(22px, 6vw, 28px);
+          margin-bottom: 32px;
+        }
+        .enterprise-cta {
+          padding: 40px 0 20px;
+        }
+      }
 
-@media(max-width:400px){
-  .hero-command{font-size:11px;padding:8px 10px}
-  .hero-command .cmd-copy svg{width:14px;height:14px}
-  .term-card-body{font-size:10px;padding:10px 12px}
-  .terminal-body{font-size:10px;padding:10px;min-height:150px}
-  .pricing-card .price{font-size:26px}
-  .pricing-card{padding:20px 16px}
-}
-</style>
-<style id="pc-dynamic"></style>
-</head>
-<body>
-
-<nav>
-  <div class="nav-inner">
-    <a class="nav-logo" href="#/" data-nav>
-      <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><rect x="2" y="2" width="28" height="28" rx="6" stroke="currentColor" stroke-width="2.5"/><path d="M10 10h12v4H10zM10 18h12v4H10z" fill="var(--accent)"/></svg>
-      Privacy<span>Code</span>
-    </a>
-    <div class="nav-links" id="navLinks">
-      <a href="#/cli" data-nav>CLI</a>
-      <a href="#/docs" data-nav>Docs</a>
-      <a href="#/services" data-nav>Services</a>
-      <a href="#/privacy" data-nav class="nav-hide-mobile">Privacy</a>
-      <a href="#/docs" class="nav-cta">Get Started</a>
-    </div>
-    <button class="nav-mobile-btn" id="navToggle" aria-label="Menu">&#9776;</button>
-  </div>
-</nav>
-
-<main>
-
-<!-- ========== HOME ========== -->
-<section class="page active" id="page-home">
-
-<div class="hero">
-  <div class="hero-badge">
-    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l2 4 4.5.5-3.2 3.2L12 13l-4-2.2L4 13l.7-4.3L1.5 5.5 6 5z"/></svg>
-    Privacy by default
-  </div>
-  <h1>Your AI shouldn't<br>see your secrets.</h1>
-  <p>AI coding agent with built-in privacy. Tokenizes API keys, credentials, and PII before they ever leave your machine.</p>
-  <div class="hero-commands">
-    <div class="hero-command">
-      <span><span class="cmd-prompt">$</span> <span class="cmd-text">curl -fsSL https://getprivacycode.com/install.sh | sh</span></span>
-      <button class="cmd-copy" onclick="copyCmd(this,'curl -fsSL https://getprivacycode.com/install.sh | sh')" aria-label="Copy command">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-      </button>
-    </div>
-    <div class="hero-sub">No signup. No credit card. <a href="https://github.com/profullstack/getprivacycode" target="_blank">Open source</a>.</div>
-  </div>
-</div>
-
-<div class="comparison" id="comparison">
-  <h2>See the difference</h2>
-  <p class="comparison-sub">Watch how PrivacyCode protects your data before it reaches the AI provider.</p>
-  <div class="comparison-grid">
-    <div class="term-card">
-      <div class="term-card-header">
-        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        <span class="term-card-title">Without PrivacyCode</span>
+      @media (max-width: 400px) {
+        .hero-command {
+          font-size: 11px;
+          padding: 8px 10px;
+        }
+        .hero-command .cmd-copy svg {
+          width: 14px;
+          height: 14px;
+        }
+        .term-card-body {
+          font-size: 10px;
+          padding: 10px 12px;
+        }
+        .terminal-body {
+          font-size: 10px;
+          padding: 10px;
+          min-height: 150px;
+        }
+        .pricing-card .price {
+          font-size: 26px;
+        }
+        .pricing-card {
+          padding: 20px 16px;
+        }
+      }
+    </style>
+    <style id="pc-dynamic"></style>
+  </head>
+  <body>
+    <nav>
+      <div class="nav-inner">
+        <a class="nav-logo" href="#/" data-nav>
+          <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+            <rect x="2" y="2" width="28" height="28" rx="6" stroke="currentColor" stroke-width="2.5" />
+            <path d="M10 10h12v4H10zM10 18h12v4H10z" fill="var(--accent)" />
+          </svg>
+          Privacy<span>Code</span>
+        </a>
+        <div class="nav-links" id="navLinks">
+          <a href="#/cli" data-nav>CLI</a>
+          <a href="#/docs" data-nav>Docs</a>
+          <a href="#/services" data-nav>Services</a>
+          <a href="#/privacy" data-nav class="nav-hide-mobile">Privacy</a>
+          <a href="#/docs" class="nav-cta">Get Started</a>
+        </div>
+        <button class="nav-mobile-btn" id="navToggle" aria-label="Menu">&#9776;</button>
       </div>
-      <div class="term-card-body">
-        <div class="term-line"><span class="label">$</span><span class="text">Fix auth for jane@acme.com</span></div>
-        <div class="term-line"><span class="label"></span><span class="bad-text">sk-live-51HdF8xKd...</span></div>
-        <div class="term-divider"></div>
-        <div class="term-line"><span class="label">→</span><span class="text">Sent to provider:</span></div>
-        <div class="term-line"><span class="label"></span><span class="bad-text">jane@acme.com</span></div>
-        <div class="term-line"><span class="label"></span><span class="bad-text">sk-live-51HdF8xKd...</span></div>
-        <div class="term-status bad">&#9888;&#65039; Provider sees your real data</div>
-      </div>
-    </div>
-    <div class="term-card">
-      <div class="term-card-header">
-        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        <span class="term-card-title">With PrivacyCode</span>
-      </div>
-      <div class="term-card-body">
-        <div class="term-line"><span class="label">$</span><span class="text">Fix auth for [EMAI-1A2B...]</span></div>
-        <div class="term-line"><span class="label"></span><span class="good-text">[KEY-E65774...]</span></div>
-        <div class="term-divider"></div>
-        <div class="term-line"><span class="label">→</span><span class="text">Sent to provider:</span></div>
-        <div class="term-line"><span class="label"></span><span class="good-text">[EMAI-1A2B...]</span></div>
-        <div class="term-line"><span class="label"></span><span class="good-text">[KEY-E65774...]</span></div>
-        <div class="term-status good">&#10003; Provider sees only tokens</div>
-      </div>
-    </div>
-  </div>
-</div>
+    </nav>
 
-<div class="terminal-demo">
-  <div class="terminal">
-    <div class="terminal-header">
-      <span class="terminal-dot"></span>
-      <span class="terminal-dot"></span>
-      <span class="terminal-dot"></span>
-      <span class="terminal-title">privacycode</span>
-    </div>
-    <div class="terminal-body" id="terminalBody">
-      <div class="terminal-line" style="animation-delay:0s"><span class="prompt">~/project $</span> privacycode</div>
-      <div class="terminal-line" style="animation-delay:.3s"><span class="text-blue">┌─ PrivacyCode ──────────────────────────┐</span></div>
-      <div class="terminal-line" style="animation-delay:.6s"><span class="text-blue">│</span> Debug payment timeout for invoice <span class="text-yellow">#INV-08842</span> <span class="text-blue">│</span></div>
-      <div class="terminal-line" style="animation-delay:.9s"><span class="text-blue">│</span> Stripe key: <span class="text-red-t">sk_live_51HdF...</span> → <span class="text-green">[KEY-8F3A...]</span> <span class="text-blue">│</span></div>
-      <div class="terminal-line" style="animation-delay:1.2s"><span class="text-blue">│</span> <span class="text-yellow">●</span> Thinking<span class="text-muted-t">...</span> <span class="text-blue">│</span></div>
-      <div class="terminal-line" style="animation-delay:1.5s"><span class="text-blue">│</span> <span class="text-yellow">●</span> Analyzing Stripe rate limits<span class="text-muted-t">...</span> <span class="text-blue">│</span></div>
-      <div class="terminal-line" style="animation-delay:1.8s"><span class="text-blue">│</span> <span class="text-green">✓</span> Found: rate limit at 100 req/s <span class="text-blue">│</span></div>
-      <div class="terminal-line" style="animation-delay:2.1s"><span class="text-blue">│</span> <span class="text-green">✓</span> Raised to 250 in config/payment.ts <span class="text-blue">│</span></div>
-      <div class="terminal-line" style="animation-delay:2.4s"><span class="text-blue">│</span> <span class="text-green">✓</span> Invoice retried. Customer notified. <span class="text-blue">│</span></div>
-      <div class="terminal-line" style="animation-delay:2.7s"><span class="text-blue">└──────────────────────────────────────────┘</span></div>
-      <div class="terminal-line" style="animation-delay:3s"><span class="prompt">~/project $</span> <span class="terminal-cursor"></span></div>
-    </div>
-  </div>
-</div>
+    <main>
+      <!-- ========== HOME ========== -->
+      <section class="page active" id="page-home">
+        <div class="hero">
+          <div class="hero-badge">
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 1l2 4 4.5.5-3.2 3.2L12 13l-4-2.2L4 13l.7-4.3L1.5 5.5 6 5z" />
+            </svg>
+            Privacy by default
+          </div>
+          <h1>Your AI shouldn't<br />see your secrets.</h1>
+          <p>
+            AI coding agent with built-in privacy. Tokenizes API keys, credentials, and PII before they ever leave your
+            machine.
+          </p>
+          <div class="hero-commands">
+            <div class="hero-command">
+              <span
+                ><span class="cmd-prompt">$</span>
+                <span class="cmd-text">curl -fsSL https://getprivacycode.com/install.sh | sh</span></span
+              >
+              <button
+                class="cmd-copy"
+                onclick="copyCmd(this,'curl -fsSL https://getprivacycode.com/install.sh | sh')"
+                aria-label="Copy command"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                </svg>
+              </button>
+            </div>
+            <div class="hero-sub">
+              No signup. No credit card.
+              <a href="https://github.com/profullstack/getprivacycode" target="_blank">Open source</a>.
+            </div>
+          </div>
+        </div>
 
-<div class="features" id="features">
-  <h2>Everything you need.</h2>
-  <p class="features-sub">Privacy-first AI coding, without compromise.</p>
-  <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon">&#128274;</div>
-      <h3>Defender&trade; Privacy</h3>
-      <p>18 PII/PHI patterns tokenized before any cloud provider sees your data. SOC 2 and HIPAA ready.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">&#9889;</div>
-      <h3>165+ Providers</h3>
-      <p>OpenAI, Claude, Gemini, Groq, Ollama, and more. Bring your own keys.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">&#128187;</div>
-      <h3>Multi-Platform</h3>
-      <p>Terminal, desktop, mobile, web. Same agent, synced sessions everywhere.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">&#9989;</div>
-      <h3>Approval Gated</h3>
-      <p>Explicit approval for every mutation. Diffs shown before any write happens.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">&#128200;</div>
-      <h3>Zero Telemetry</h3>
-      <p>No servers. No analytics. No crash reporting. What you run stays yours.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">&#127760;</div>
-      <h3>Air-Gap Ready</h3>
-      <p>Works fully offline. Local models, bundled registry, no internet required.</p>
-    </div>
-  </div>
-</div>
+        <div class="comparison" id="comparison">
+          <h2>See the difference</h2>
+          <p class="comparison-sub">Watch how PrivacyCode protects your data before it reaches the AI provider.</p>
+          <div class="comparison-grid">
+            <div class="term-card">
+              <div class="term-card-header">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="term-card-title">Without PrivacyCode</span>
+              </div>
+              <div class="term-card-body">
+                <div class="term-line">
+                  <span class="label">$</span><span class="text">Fix auth for jane@acme.com</span>
+                </div>
+                <div class="term-line">
+                  <span class="label"></span><span class="bad-text">sk-live-51HdF8xKd...</span>
+                </div>
+                <div class="term-divider"></div>
+                <div class="term-line"><span class="label">→</span><span class="text">Sent to provider:</span></div>
+                <div class="term-line"><span class="label"></span><span class="bad-text">jane@acme.com</span></div>
+                <div class="term-line">
+                  <span class="label"></span><span class="bad-text">sk-live-51HdF8xKd...</span>
+                </div>
+                <div class="term-status bad">&#9888;&#65039; Provider sees your real data</div>
+              </div>
+            </div>
+            <div class="term-card">
+              <div class="term-card-header">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span class="term-card-title">With PrivacyCode</span>
+              </div>
+              <div class="term-card-body">
+                <div class="term-line">
+                  <span class="label">$</span><span class="text">Fix auth for [EMAI-1A2B...]</span>
+                </div>
+                <div class="term-line"><span class="label"></span><span class="good-text">[KEY-E65774...]</span></div>
+                <div class="term-divider"></div>
+                <div class="term-line"><span class="label">→</span><span class="text">Sent to provider:</span></div>
+                <div class="term-line"><span class="label"></span><span class="good-text">[EMAI-1A2B...]</span></div>
+                <div class="term-line"><span class="label"></span><span class="good-text">[KEY-E65774...]</span></div>
+                <div class="term-status good">&#10003; Provider sees only tokens</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-<div class="cta">
-  <div class="cta-box">
-    <h2>One command. Privacy on.</h2>
-    <p>No signup. No credit card. Open source and free.</p>
-    <div class="cta-buttons">
-      <div class="cta-command">
-        <span>curl -fsSL https://getprivacycode.com/install.sh | sh</span>
-        <button class="cmd-copy" onclick="copyCmd(this,'curl -fsSL https://getprivacycode.com/install.sh | sh')" aria-label="Copy command">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-        </button>
-      </div>
-      <div class="cta-alt">Set your key and run <code>privacycode</code></div>
-    </div>
-  </div>
-</div>
+        <div class="terminal-demo">
+          <div class="terminal">
+            <div class="terminal-header">
+              <span class="terminal-dot"></span>
+              <span class="terminal-dot"></span>
+              <span class="terminal-dot"></span>
+              <span class="terminal-title">privacycode</span>
+            </div>
+            <div class="terminal-body" id="terminalBody">
+              <div class="terminal-line" style="animation-delay: 0s">
+                <span class="prompt">~/project $</span> privacycode
+              </div>
+              <div class="terminal-line" style="animation-delay: 0.3s">
+                <span class="text-blue">┌─ PrivacyCode ──────────────────────────┐</span>
+              </div>
+              <div class="terminal-line" style="animation-delay: 0.6s">
+                <span class="text-blue">│</span> Debug payment timeout for invoice
+                <span class="text-yellow">#INV-08842</span> <span class="text-blue">│</span>
+              </div>
+              <div class="terminal-line" style="animation-delay: 0.9s">
+                <span class="text-blue">│</span> Stripe key: <span class="text-red-t">sk_live_51HdF...</span> →
+                <span class="text-green">[KEY-8F3A...]</span> <span class="text-blue">│</span>
+              </div>
+              <div class="terminal-line" style="animation-delay: 1.2s">
+                <span class="text-blue">│</span> <span class="text-yellow">●</span> Thinking<span class="text-muted-t"
+                  >...</span
+                >
+                <span class="text-blue">│</span>
+              </div>
+              <div class="terminal-line" style="animation-delay: 1.5s">
+                <span class="text-blue">│</span> <span class="text-yellow">●</span> Analyzing Stripe rate limits<span
+                  class="text-muted-t"
+                  >...</span
+                >
+                <span class="text-blue">│</span>
+              </div>
+              <div class="terminal-line" style="animation-delay: 1.8s">
+                <span class="text-blue">│</span> <span class="text-green">✓</span> Found: rate limit at 100 req/s
+                <span class="text-blue">│</span>
+              </div>
+              <div class="terminal-line" style="animation-delay: 2.1s">
+                <span class="text-blue">│</span> <span class="text-green">✓</span> Raised to 250 in config/payment.ts
+                <span class="text-blue">│</span>
+              </div>
+              <div class="terminal-line" style="animation-delay: 2.4s">
+                <span class="text-blue">│</span> <span class="text-green">✓</span> Invoice retried. Customer notified.
+                <span class="text-blue">│</span>
+              </div>
+              <div class="terminal-line" style="animation-delay: 2.7s">
+                <span class="text-blue">└──────────────────────────────────────────┘</span>
+              </div>
+              <div class="terminal-line" style="animation-delay: 3s">
+                <span class="prompt">~/project $</span> <span class="terminal-cursor"></span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-</section>
+        <div class="features" id="features">
+          <h2>Everything you need.</h2>
+          <p class="features-sub">Privacy-first AI coding, without compromise.</p>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon">&#128274;</div>
+              <h3>Defender&trade; Privacy</h3>
+              <p>18 PII/PHI patterns tokenized before any cloud provider sees your data. SOC 2 and HIPAA ready.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">&#9889;</div>
+              <h3>165+ Providers</h3>
+              <p>OpenAI, Claude, Gemini, Groq, Ollama, and more. Bring your own keys.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">&#128187;</div>
+              <h3>Multi-Platform</h3>
+              <p>Terminal, desktop, mobile, web. Same agent, synced sessions everywhere.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">&#9989;</div>
+              <h3>Approval Gated</h3>
+              <p>Explicit approval for every mutation. Diffs shown before any write happens.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">&#128200;</div>
+              <h3>Zero Telemetry</h3>
+              <p>No servers. No analytics. No crash reporting. What you run stays yours.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">&#127760;</div>
+              <h3>Air-Gap Ready</h3>
+              <p>Works fully offline. Local models, bundled registry, no internet required.</p>
+            </div>
+          </div>
+        </div>
 
-<!-- ========== CLI ========== -->
-<section class="page" id="page-cli">
-<div class="page-content">
-<h1>CLI Reference</h1>
-<p class="page-lead">PrivacyCode runs entirely in your terminal. No daemon, no background service.</p>
+        <div class="cta">
+          <div class="cta-box">
+            <h2>One command. Privacy on.</h2>
+            <p>No signup. No credit card. Open source and free.</p>
+            <div class="cta-buttons">
+              <div class="cta-command">
+                <span>curl -fsSL https://getprivacycode.com/install.sh | sh</span>
+                <button
+                  class="cmd-copy"
+                  onclick="copyCmd(this,'curl -fsSL https://getprivacycode.com/install.sh | sh')"
+                  aria-label="Copy command"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                  </svg>
+                </button>
+              </div>
+              <div class="cta-alt">Set your key and run <code>privacycode</code></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<h2>Quick Start</h2>
-<pre><span class="comment"># Install</span>
+      <!-- ========== CLI ========== -->
+      <section class="page" id="page-cli">
+        <div class="page-content">
+          <h1>CLI Reference</h1>
+          <p class="page-lead">PrivacyCode runs entirely in your terminal. No daemon, no background service.</p>
+
+          <h2>Quick Start</h2>
+          <pre><span class="comment"># Install</span>
 curl -fsSL https://getprivacycode.com/install.sh | sh
 
 <span class="comment"># Set your key</span>
@@ -480,366 +1680,530 @@ export OPENAI_API_KEY=sk-...
 <span class="comment"># Run</span>
 privacycode</pre>
 
-<h2>Commands</h2>
-<table class="cmd-table">
-<tr><th>Command</th><th>Description</th></tr>
-<tr><td>privacycode</td><td>Start interactive session in current directory</td></tr>
-<tr><td>privacycode &lt;prompt&gt;</td><td>Run a single prompt and exit</td></tr>
-<tr><td>privacycode --model &lt;id&gt;</td><td>Start with a specific model</td></tr>
-<tr><td>privacycode --provider &lt;id&gt;</td><td>Start with a specific provider</td></tr>
-</table>
+          <h2>Commands</h2>
+          <table class="cmd-table">
+            <tr>
+              <th>Command</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>privacycode</td>
+              <td>Start interactive session in current directory</td>
+            </tr>
+            <tr>
+              <td>privacycode &lt;prompt&gt;</td>
+              <td>Run a single prompt and exit</td>
+            </tr>
+            <tr>
+              <td>privacycode --model &lt;id&gt;</td>
+              <td>Start with a specific model</td>
+            </tr>
+            <tr>
+              <td>privacycode --provider &lt;id&gt;</td>
+              <td>Start with a specific provider</td>
+            </tr>
+          </table>
 
-<h2>Slash Commands</h2>
-<table class="cmd-table">
-<tr><th>Command</th><th>Description</th></tr>
-<tr><td>/privacy on|off</td><td>Toggle Defender tokenization</td></tr>
-<tr><td>/model &lt;id&gt;</td><td>Switch AI model</td></tr>
-<tr><td>/provider &lt;id&gt;</td><td>Switch AI provider</td></tr>
-<tr><td>/stats</td><td>Show token usage statistics</td></tr>
-<tr><td>/vault</td><td>Show vault statistics</td></tr>
-<tr><td>/clear</td><td>Clear conversation history</td></tr>
-<tr><td>/exit</td><td>Quit</td></tr>
-</table>
+          <h2>Slash Commands</h2>
+          <table class="cmd-table">
+            <tr>
+              <th>Command</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>/privacy on|off</td>
+              <td>Toggle Defender tokenization</td>
+            </tr>
+            <tr>
+              <td>/model &lt;id&gt;</td>
+              <td>Switch AI model</td>
+            </tr>
+            <tr>
+              <td>/provider &lt;id&gt;</td>
+              <td>Switch AI provider</td>
+            </tr>
+            <tr>
+              <td>/stats</td>
+              <td>Show token usage statistics</td>
+            </tr>
+            <tr>
+              <td>/vault</td>
+              <td>Show vault statistics</td>
+            </tr>
+            <tr>
+              <td>/clear</td>
+              <td>Clear conversation history</td>
+            </tr>
+            <tr>
+              <td>/exit</td>
+              <td>Quit</td>
+            </tr>
+          </table>
 
-<h2>File Mentions</h2>
-<p>Attach files to your prompt with <code>@path/to/file</code>:</p>
-<pre>privacycode&gt; Look at @src/auth.js and fix the null check on line 42</pre>
+          <h2>File Mentions</h2>
+          <p>Attach files to your prompt with <code>@path/to/file</code>:</p>
+          <pre>privacycode&gt; Look at @src/auth.js and fix the null check on line 42</pre>
 
-<h2>Configuration</h2>
-<p>Config is resolved in order: CLI flags &rarr; environment variables &rarr; project config &rarr; global config.</p>
-<pre><span class="comment">// ~/.config/privacycode/config.json</span>
+          <h2>Configuration</h2>
+          <p>
+            Config is resolved in order: CLI flags &rarr; environment variables &rarr; project config &rarr; global
+            config.
+          </p>
+          <pre><span class="comment">// ~/.config/privacycode/config.json</span>
 {
   "provider": "anthropic",
   "model": "claude-sonnet-4-20250514"
 }</pre>
-<p>Project-level config (place in your repo):</p>
-<pre><span class="comment">// ./privacycode.jsonc</span>
+          <p>Project-level config (place in your repo):</p>
+          <pre><span class="comment">// ./privacycode.jsonc</span>
 {
   "provider": "openai",
   "model": "gpt-4o"
 }</pre>
 
-<h2>Environment Variables</h2>
-<table class="cmd-table">
-<tr><th>Variable</th><th>Description</th></tr>
-<tr><td>OPENAI_API_KEY</td><td>OpenAI API key</td></tr>
-<tr><td>ANTHROPIC_API_KEY</td><td>Anthropic API key</td></tr>
-<tr><td>PRIVACYCODE_PROVIDER</td><td>Default provider name</td></tr>
-<tr><td>PRIVACYCODE_MODEL</td><td>Default model name</td></tr>
-</table>
-</div>
-</section>
+          <h2>Environment Variables</h2>
+          <table class="cmd-table">
+            <tr>
+              <th>Variable</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>OPENAI_API_KEY</td>
+              <td>OpenAI API key</td>
+            </tr>
+            <tr>
+              <td>ANTHROPIC_API_KEY</td>
+              <td>Anthropic API key</td>
+            </tr>
+            <tr>
+              <td>PRIVACYCODE_PROVIDER</td>
+              <td>Default provider name</td>
+            </tr>
+            <tr>
+              <td>PRIVACYCODE_MODEL</td>
+              <td>Default model name</td>
+            </tr>
+          </table>
+        </div>
+      </section>
 
-<!-- ========== DOCS ========== -->
-<section class="page" id="page-docs">
-<div class="page-content">
-<h1>Documentation</h1>
-<p class="page-lead">Quick start guide for PrivacyCode.</p>
+      <!-- ========== DOCS ========== -->
+      <section class="page" id="page-docs">
+        <div class="page-content">
+          <h1>Documentation</h1>
+          <p class="page-lead">Quick start guide for PrivacyCode.</p>
 
-<h2>Installation</h2>
-<pre>curl -fsSL https://getprivacycode.com/install.sh | sh</pre>
-<p>The install script detects your OS and architecture, downloads the latest release, and places it in <code>~/.local/bin</code>.</p>
+          <h2>Installation</h2>
+          <pre>curl -fsSL https://getprivacycode.com/install.sh | sh</pre>
+          <p>
+            The install script detects your OS and architecture, downloads the latest release, and places it in
+            <code>~/.local/bin</code>.
+          </p>
 
-<h3>Verify Installation</h3>
-<pre>privacycode --version</pre>
+          <h3>Verify Installation</h3>
+          <pre>privacycode --version</pre>
 
-<h3>Manual Install</h3>
-<pre><span class="comment"># Download the latest release for your platform</span>
+          <h3>Manual Install</h3>
+          <pre><span class="comment"># Download the latest release for your platform</span>
 curl -OL https://github.com/profullstack/getprivacycode/releases/latest/download/privacycode-\$(uname -s)-\$(uname -m).tar.gz
 tar xzf privacycode-*.tar.gz
 sudo mv privacycode /usr/local/bin/</pre>
 
-<h2>Getting Started</h2>
-<p>PrivacyCode is <strong>on by default</strong>. No extra configuration needed. Just set your API key and run:</p>
-<pre>export OPENAI_API_KEY=sk-...
-privacycode</pre>
+          <h2>Getting Started</h2>
+          <p>
+            PrivacyCode is <strong>on by default</strong>. No extra configuration needed. Just set your API key and run:
+          </p>
+          <pre>
+export OPENAI_API_KEY=sk-...
+privacycode</pre
+          >
 
-<h2>Choose a Provider</h2>
-<p>PrivacyCode supports 165+ providers. Set your preferred provider:</p>
-<pre>export PRIVACYCODE_PROVIDER=anthropic
-export ANTHROPIC_API_KEY=sk-ant-...</pre>
-<p>List all supported providers:</p>
-<pre>privacycode providers</pre>
+          <h2>Choose a Provider</h2>
+          <p>PrivacyCode supports 165+ providers. Set your preferred provider:</p>
+          <pre>
+export PRIVACYCODE_PROVIDER=anthropic
+export ANTHROPIC_API_KEY=sk-ant-...</pre
+          >
+          <p>List all supported providers:</p>
+          <pre>privacycode providers</pre>
 
-<h2>Slash Commands</h2>
-<table class="cmd-table">
-<tr><th>Command</th><th>Description</th></tr>
-<tr><td>/privacy on|off</td><td>Toggle Defender tokenization</td></tr>
-<tr><td>/model &lt;id&gt;</td><td>Switch AI model</td></tr>
-<tr><td>/provider &lt;id&gt;</td><td>Switch AI provider</td></tr>
-<tr><td>/stats</td><td>Show token usage</td></tr>
-<tr><td>/vault</td><td>Show vault statistics</td></tr>
-<tr><td>/clear</td><td>Clear conversation history</td></tr>
-<tr><td>/exit</td><td>Quit</td></tr>
-</table>
+          <h2>Slash Commands</h2>
+          <table class="cmd-table">
+            <tr>
+              <th>Command</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>/privacy on|off</td>
+              <td>Toggle Defender tokenization</td>
+            </tr>
+            <tr>
+              <td>/model &lt;id&gt;</td>
+              <td>Switch AI model</td>
+            </tr>
+            <tr>
+              <td>/provider &lt;id&gt;</td>
+              <td>Switch AI provider</td>
+            </tr>
+            <tr>
+              <td>/stats</td>
+              <td>Show token usage</td>
+            </tr>
+            <tr>
+              <td>/vault</td>
+              <td>Show vault statistics</td>
+            </tr>
+            <tr>
+              <td>/clear</td>
+              <td>Clear conversation history</td>
+            </tr>
+            <tr>
+              <td>/exit</td>
+              <td>Quit</td>
+            </tr>
+          </table>
 
-<h2>File Mentions</h2>
-<p>Attach files to your prompt with <code>@path/to/file</code>:</p>
-<pre>privacycode&gt; Look at @src/auth.js and fix the null check on line 42</pre>
+          <h2>File Mentions</h2>
+          <p>Attach files to your prompt with <code>@path/to/file</code>:</p>
+          <pre>privacycode&gt; Look at @src/auth.js and fix the null check on line 42</pre>
 
-<h2>Configuration</h2>
-<p>Config is resolved in order: CLI flags &rarr; environment variables &rarr; project config &rarr; global config.</p>
-<pre><span class="comment">// ~/.config/privacycode/config.json</span>
+          <h2>Configuration</h2>
+          <p>
+            Config is resolved in order: CLI flags &rarr; environment variables &rarr; project config &rarr; global
+            config.
+          </p>
+          <pre><span class="comment">// ~/.config/privacycode/config.json</span>
 {
   "provider": "anthropic",
   "model": "claude-sonnet-4-20250514"
 }</pre>
-<p>Project-level config (place in your repo):</p>
-<pre><span class="comment">// ./privacycode.jsonc</span>
+          <p>Project-level config (place in your repo):</p>
+          <pre><span class="comment">// ./privacycode.jsonc</span>
 {
   "provider": "openai",
   "model": "gpt-4o"
 }</pre>
-</div>
-</section>
+        </div>
+      </section>
 
-<!-- ========== SERVICES ========== -->
-<section class="page" id="page-services">
-<div class="services-hero">
-  <h1>AI coding that passes<br><span class="highlight">compliance audits.</span></h1>
-  <p>Your devs want AI coding tools. Your compliance team needs guarantees. PrivacyCode lets you say yes to both — tokenizing PHI, PII, and credentials before they ever reach a third-party model.</p>
-</div>
+      <!-- ========== SERVICES ========== -->
+      <section class="page" id="page-services">
+        <div class="services-hero">
+          <h1>AI coding that passes<br /><span class="highlight">compliance audits.</span></h1>
+          <p>
+            Your devs want AI coding tools. Your compliance team needs guarantees. PrivacyCode lets you say yes to both
+            — tokenizing PHI, PII, and credentials before they ever reach a third-party model.
+          </p>
+        </div>
 
-<div class="pricing-header">
-  <h2>Plans for regulated environments</h2>
-  <p>PrivacyCode is free and open source. These plans cover deployment, custom configuration, and compliance readiness for your organization.</p>
-</div>
+        <div class="pricing-header">
+          <h2>Plans for regulated environments</h2>
+          <p>
+            PrivacyCode is free and open source. These plans cover deployment, custom configuration, and compliance
+            readiness for your organization.
+          </p>
+        </div>
 
-<div class="pricing-grid">
-  <div class="pricing-card">
-    <div class="name">Starter</div>
-    <div class="price">$299 <span>/month</span></div>
-    <div class="desc">For small teams who want PrivacyCode deployed and configured remotely.</div>
-    <ul>
-      <li>Remote installation &amp; configuration</li>
-      <li>Defender tokenization tuned for your stack</li>
-      <li>Provider key setup (OpenAI, Claude, etc.)</li>
-      <li>Team training session (60 min)</li>
-      <li>Up to 10 developers</li>
-      <li>Email support (48h response)</li>
-    </ul>
-    <a href="mailto:sales@getprivacycode.com?subject=Starter%20Plan" class="btn primary">Get Started</a>
-  </div>
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <div class="name">Starter</div>
+            <div class="price">$299 <span>/month</span></div>
+            <div class="desc">For small teams who want PrivacyCode deployed and configured remotely.</div>
+            <ul>
+              <li>Remote installation &amp; configuration</li>
+              <li>Defender tokenization tuned for your stack</li>
+              <li>Provider key setup (OpenAI, Claude, etc.)</li>
+              <li>Team training session (60 min)</li>
+              <li>Up to 10 developers</li>
+              <li>Email support (48h response)</li>
+            </ul>
+            <a href="mailto:sales@getprivacycode.com?subject=Starter%20Plan" class="btn primary">Get Started</a>
+          </div>
 
-  <div class="pricing-card featured">
-    <div class="name">Compliance</div>
-    <div class="price">$1,500 <span>/month</span></div>
-    <div class="desc">For SOC 2 and HIPAA environments. Audit trails, custom patterns, SSO, and compliance documentation.</div>
-    <ul>
-      <li>Everything in Starter</li>
-      <li>PHI / PII tokenization verified per audit</li>
-      <li>Complete audit log pipeline (JSON + SIEM export)</li>
-      <li>Custom healthcare identifier patterns</li>
-      <li>SSO / SAML / OIDC integration</li>
-      <li>Usage dashboards with cost allocation</li>
-      <li>Up to 50 developers</li>
-      <li>Priority support (4h response)</li>
-    </ul>
-    <a href="mailto:sales@getprivacycode.com?subject=Compliance%20Plan" class="btn primary">Get Started</a>
-  </div>
+          <div class="pricing-card featured">
+            <div class="name">Compliance</div>
+            <div class="price">$1,500 <span>/month</span></div>
+            <div class="desc">
+              For SOC 2 and HIPAA environments. Audit trails, custom patterns, SSO, and compliance documentation.
+            </div>
+            <ul>
+              <li>Everything in Starter</li>
+              <li>PHI / PII tokenization verified per audit</li>
+              <li>Complete audit log pipeline (JSON + SIEM export)</li>
+              <li>Custom healthcare identifier patterns</li>
+              <li>SSO / SAML / OIDC integration</li>
+              <li>Usage dashboards with cost allocation</li>
+              <li>Up to 50 developers</li>
+              <li>Priority support (4h response)</li>
+            </ul>
+            <a href="mailto:sales@getprivacycode.com?subject=Compliance%20Plan" class="btn primary">Get Started</a>
+          </div>
 
-  <div class="pricing-card">
-    <div class="name">Enterprise</div>
-    <div class="price">Custom</div>
-    <div class="desc">Self-hosted, air-gapped, or VPC deployment with dedicated compliance engineering and SLA.</div>
-    <ul>
-      <li>Everything in Compliance</li>
-      <li>Self-hosted / air-gapped deployment</li>
-      <li>VPC or on-premises installation</li>
-      <li>No data ever reaches our infrastructure</li>
-      <li>Custom compliance documentation package</li>
-      <li>Dedicated support engineer</li>
-      <li>Unlimited developers</li>
-      <li>SLA guarantee</li>
-    </ul>
-    <a href="mailto:sales@getprivacycode.com?subject=Enterprise%20Plan" class="btn secondary">Contact Sales</a>
-  </div>
-</div>
+          <div class="pricing-card">
+            <div class="name">Enterprise</div>
+            <div class="price">Custom</div>
+            <div class="desc">
+              Self-hosted, air-gapped, or VPC deployment with dedicated compliance engineering and SLA.
+            </div>
+            <ul>
+              <li>Everything in Compliance</li>
+              <li>Self-hosted / air-gapped deployment</li>
+              <li>VPC or on-premises installation</li>
+              <li>No data ever reaches our infrastructure</li>
+              <li>Custom compliance documentation package</li>
+              <li>Dedicated support engineer</li>
+              <li>Unlimited developers</li>
+              <li>SLA guarantee</li>
+            </ul>
+            <a href="mailto:sales@getprivacycode.com?subject=Enterprise%20Plan" class="btn secondary">Contact Sales</a>
+          </div>
+        </div>
 
-<div class="process-section">
-  <h2>How it works</h2>
-  <div class="process-grid">
-    <div class="process-step">
-      <div class="num">1</div>
-      <h3>Compliance Assessment</h3>
-      <p>We evaluate your compliance requirements, team size, stack, and AI provider usage to design a deployment that satisfies your audit framework.</p>
-    </div>
-    <div class="process-step">
-      <div class="num">2</div>
-      <h3>Deploy &amp; Configure</h3>
-      <p>I install PrivacyCode, configure Defender tokenization for your data types, set up SSO, wire audit logging, and verify tokenization coverage with a compliance report.</p>
-    </div>
-    <div class="process-step">
-      <div class="num">3</div>
-      <h3>Audit &amp; Support</h3>
-      <p>Your team gets trained. We provide compliance documentation for your auditor. Ongoing support keeps patterns updated and policies aligned.</p>
-    </div>
-  </div>
-</div>
+        <div class="process-section">
+          <h2>How it works</h2>
+          <div class="process-grid">
+            <div class="process-step">
+              <div class="num">1</div>
+              <h3>Compliance Assessment</h3>
+              <p>
+                We evaluate your compliance requirements, team size, stack, and AI provider usage to design a deployment
+                that satisfies your audit framework.
+              </p>
+            </div>
+            <div class="process-step">
+              <div class="num">2</div>
+              <h3>Deploy &amp; Configure</h3>
+              <p>
+                I install PrivacyCode, configure Defender tokenization for your data types, set up SSO, wire audit
+                logging, and verify tokenization coverage with a compliance report.
+              </p>
+            </div>
+            <div class="process-step">
+              <div class="num">3</div>
+              <h3>Audit &amp; Support</h3>
+              <p>
+                Your team gets trained. We provide compliance documentation for your auditor. Ongoing support keeps
+                patterns updated and policies aligned.
+              </p>
+            </div>
+          </div>
+        </div>
 
-<div class="enterprise-cta">
-  <h2>Need to pass an audit?</h2>
-  <p>Book a 30-minute compliance consultation. We'll map your requirements to a deployment plan — no obligation.</p>
-  <div class="cta-buttons">
-    <a href="mailto:sales@getprivacycode.com?subject=Compliance%20Consultation" class="primary">Book a Compliance Call</a>
-    <a href="#/docs" data-nav class="secondary">Read the Docs</a>
-  </div>
-</div>
+        <div class="enterprise-cta">
+          <h2>Need to pass an audit?</h2>
+          <p>
+            Book a 30-minute compliance consultation. We'll map your requirements to a deployment plan — no obligation.
+          </p>
+          <div class="cta-buttons">
+            <a href="mailto:sales@getprivacycode.com?subject=Compliance%20Consultation" class="primary"
+              >Book a Compliance Call</a
+            >
+            <a href="#/docs" data-nav class="secondary">Read the Docs</a>
+          </div>
+        </div>
 
-<div class="page-content" style="max-width:900px">
-<h2 style="text-align:center;margin-top:60px">Enterprise &amp; Compliance Features</h2>
-<p style="text-align:center;max-width:500px;margin:0 auto 40px">Everything your organization needs for secure, auditable AI coding.</p>
-<div class="enterprise-grid">
-  <div class="enterprise-card">
-    <div class="icon">&#128274;</div>
-    <h3>Defender&trade; Tokenization</h3>
-    <p>18+ PII/PHI patterns detected and replaced before data reaches any AI provider. Custom patterns for healthcare identifiers, internal IDs, and proprietary formats.</p>
-  </div>
-  <div class="enterprise-card">
-    <div class="icon">&#128221;</div>
-    <h3>No BAA Required</h3>
-    <p>Since PHI is tokenized before transmission, your AI providers never receive protected health information. No Business Associate Agreement needed for AI services.</p>
-  </div>
-  <div class="enterprise-card">
-    <div class="icon">&#128214;</div>
-    <h3>Audit Logs &amp; SIEM</h3>
-    <p>Complete audit trail of every prompt, tokenization event, and approval. Export to Splunk, Datadog, or any SIEM. Ready for SOC 2 evidence collection.</p>
-  </div>
-  <div class="enterprise-card">
-    <div class="icon">&#128179;</div>
-    <h3>SSO &amp; Access Control</h3>
-    <p>Single sign-on via SAML 2.0 or OIDC. Role-based access controls. SCIM provisioning for automated onboarding and offboarding.</p>
-  </div>
-  <div class="enterprise-card">
-    <div class="icon">&#128200;</div>
-    <h3>Usage Analytics</h3>
-    <p>Team-wide dashboards showing model usage, tokenization volume, and cost per team. Exportable audit reports for compliance reviews.</p>
-  </div>
-  <div class="enterprise-card">
-    <div class="icon">&#127760;</div>
-    <h3>Data Residency Control</h3>
-    <p>Self-hosted or VPC deployment ensures data never leaves your infrastructure. Air-gapped option for classified or isolated environments.</p>
-  </div>
-</div>
-</div>
-</section>
+        <div class="page-content" style="max-width: 900px">
+          <h2 style="text-align: center; margin-top: 60px">Enterprise &amp; Compliance Features</h2>
+          <p style="text-align: center; max-width: 500px; margin: 0 auto 40px">
+            Everything your organization needs for secure, auditable AI coding.
+          </p>
+          <div class="enterprise-grid">
+            <div class="enterprise-card">
+              <div class="icon">&#128274;</div>
+              <h3>Defender&trade; Tokenization</h3>
+              <p>
+                18+ PII/PHI patterns detected and replaced before data reaches any AI provider. Custom patterns for
+                healthcare identifiers, internal IDs, and proprietary formats.
+              </p>
+            </div>
+            <div class="enterprise-card">
+              <div class="icon">&#128221;</div>
+              <h3>No BAA Required</h3>
+              <p>
+                Since PHI is tokenized before transmission, your AI providers never receive protected health
+                information. No Business Associate Agreement needed for AI services.
+              </p>
+            </div>
+            <div class="enterprise-card">
+              <div class="icon">&#128214;</div>
+              <h3>Audit Logs &amp; SIEM</h3>
+              <p>
+                Complete audit trail of every prompt, tokenization event, and approval. Export to Splunk, Datadog, or
+                any SIEM. Ready for SOC 2 evidence collection.
+              </p>
+            </div>
+            <div class="enterprise-card">
+              <div class="icon">&#128179;</div>
+              <h3>SSO &amp; Access Control</h3>
+              <p>
+                Single sign-on via SAML 2.0 or OIDC. Role-based access controls. SCIM provisioning for automated
+                onboarding and offboarding.
+              </p>
+            </div>
+            <div class="enterprise-card">
+              <div class="icon">&#128200;</div>
+              <h3>Usage Analytics</h3>
+              <p>
+                Team-wide dashboards showing model usage, tokenization volume, and cost per team. Exportable audit
+                reports for compliance reviews.
+              </p>
+            </div>
+            <div class="enterprise-card">
+              <div class="icon">&#127760;</div>
+              <h3>Data Residency Control</h3>
+              <p>
+                Self-hosted or VPC deployment ensures data never leaves your infrastructure. Air-gapped option for
+                classified or isolated environments.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<!-- ========== PRIVACY ========== -->
-<section class="page" id="page-privacy">
-<div class="page-content">
-<h1>Privacy Policy</h1>
-<p class="page-lead policy-date">Last updated: July 29, 2026</p>
+      <!-- ========== PRIVACY ========== -->
+      <section class="page" id="page-privacy">
+        <div class="page-content">
+          <h1>Privacy Policy</h1>
+          <p class="page-lead policy-date">Last updated: July 29, 2026</p>
 
-<div class="policy-section">
-<h2>What PrivacyCode Collects</h2>
-<p>PrivacyCode is designed with zero telemetry by default. The CLI application does not phone home, collect usage data, or send analytics. There are no background services or data collection servers.</p>
-<p>The only data that leaves your machine is what you explicitly send to your chosen AI provider through their API. This data is tokenized by Defender&trade; before transmission to remove PII, credentials, and secrets.</p>
-</div>
+          <div class="policy-section">
+            <h2>What PrivacyCode Collects</h2>
+            <p>
+              PrivacyCode is designed with zero telemetry by default. The CLI application does not phone home, collect
+              usage data, or send analytics. There are no background services or data collection servers.
+            </p>
+            <p>
+              The only data that leaves your machine is what you explicitly send to your chosen AI provider through
+              their API. This data is tokenized by Defender&trade; before transmission to remove PII, credentials, and
+              secrets.
+            </p>
+          </div>
 
-<div class="policy-section">
-<h2>Information You Provide</h2>
-<p>When you contact us or sign up for enterprise services, we collect:</p>
-<ul>
-<li>Name and email address</li>
-<li>Company name and billing information</li>
-<li>Communications you exchange with our team</li>
-</ul>
-<p>We do not sell your personal information. We do not share it with third parties except as required to provide our services (payment processing, email delivery).</p>
-</div>
+          <div class="policy-section">
+            <h2>Information You Provide</h2>
+            <p>When you contact us or sign up for enterprise services, we collect:</p>
+            <ul>
+              <li>Name and email address</li>
+              <li>Company name and billing information</li>
+              <li>Communications you exchange with our team</li>
+            </ul>
+            <p>
+              We do not sell your personal information. We do not share it with third parties except as required to
+              provide our services (payment processing, email delivery).
+            </p>
+          </div>
 
-<div class="policy-section">
-<h2>Cookies &amp; Tracking</h2>
-<p>This website uses no tracking cookies, no analytics scripts, and no third-party tracking. The site is statically served with no backend logging beyond standard HTTP access logs (IP address, timestamp, requested page) which are retained for 30 days and used solely for operational purposes.</p>
-</div>
+          <div class="policy-section">
+            <h2>Cookies &amp; Tracking</h2>
+            <p>
+              This website uses no tracking cookies, no analytics scripts, and no third-party tracking. The site is
+              statically served with no backend logging beyond standard HTTP access logs (IP address, timestamp,
+              requested page) which are retained for 30 days and used solely for operational purposes.
+            </p>
+          </div>
 
-<div class="policy-section">
-<h2>Open Source</h2>
-<p>PrivacyCode CLI is fully open source. You can verify exactly what it does by reading the source code at <a href="https://github.com/profullstack/getprivacycode" target="_blank">github.com/profullstack/getprivacycode</a>. No obfuscation, no hidden behavior.</p>
-</div>
+          <div class="policy-section">
+            <h2>Open Source</h2>
+            <p>
+              PrivacyCode CLI is fully open source. You can verify exactly what it does by reading the source code at
+              <a href="https://github.com/profullstack/getprivacycode" target="_blank"
+                >github.com/profullstack/getprivacycode</a
+              >. No obfuscation, no hidden behavior.
+            </p>
+          </div>
 
-<div class="policy-section">
-<h2>Contact</h2>
-<p>For privacy-related inquiries, contact us at <a href="mailto:privacy@getprivacycode.com">privacy@getprivacycode.com</a>.</p>
-</div>
-</div>
-</section>
+          <div class="policy-section">
+            <h2>Contact</h2>
+            <p>
+              For privacy-related inquiries, contact us at
+              <a href="mailto:privacy@getprivacycode.com">privacy@getprivacycode.com</a>.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
 
-</main>
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <strong style="font-size: 16px">Privacy<span style="color: var(--accent)">Code</span></strong>
+          <p>AI coding agent with built-in privacy. Tokenizes secrets before they leave your machine.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#/cli" data-nav>CLI</a>
+          <a href="#/docs" data-nav>Docs</a>
+          <a href="#/services" data-nav>Services</a>
+          <a href="https://github.com/profullstack/getprivacycode/releases" target="_blank">Releases</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="#/privacy" data-nav>Privacy Policy</a>
+          <a href="https://github.com/profullstack/getprivacycode" target="_blank">GitHub</a>
+        </div>
+        <div class="footer-col">
+          <h4>Community</h4>
+          <a href="https://github.com/profullstack/getprivacycode/issues" target="_blank">Issues</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 PrivacyCode. Open source MIT.</span>
+        <span>Built with &#128154; for privacy.</span>
+      </div>
+    </footer>
 
-<footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <strong style="font-size:16px">Privacy<span style="color:var(--accent)">Code</span></strong>
-      <p>AI coding agent with built-in privacy. Tokenizes secrets before they leave your machine.</p>
-    </div>
-    <div class="footer-col">
-      <h4>Product</h4>
-      <a href="#/cli" data-nav>CLI</a>
-      <a href="#/docs" data-nav>Docs</a>
-      <a href="#/services" data-nav>Services</a>
-      <a href="https://github.com/profullstack/getprivacycode/releases" target="_blank">Releases</a>
-    </div>
-    <div class="footer-col">
-      <h4>Company</h4>
-      <a href="#/privacy" data-nav>Privacy Policy</a>
-      <a href="https://github.com/profullstack/getprivacycode" target="_blank">GitHub</a>
-    </div>
-    <div class="footer-col">
-      <h4>Community</h4>
-      <a href="https://github.com/profullstack/getprivacycode/issues" target="_blank">Issues</a>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>&copy; 2026 PrivacyCode. Open source MIT.</span>
-    <span>Built with &#128154; for privacy.</span>
-  </div>
-</footer>
+    <script>
+      // SPA routing
+      function navigate() {
+        const hash = location.hash || "#/"
+        const pageId = hash.replace(/^#\/?/, "") || "home"
+        const target = document.getElementById("page-" + pageId)
+        if (!target) {
+          location.hash = "#/"
+          return
+        }
 
-<script>
-// SPA routing
-function navigate() {
-  const hash = location.hash || '#/'
-  const pageId = hash.replace(/^#\/?/, '') || 'home'
-  const target = document.getElementById('page-' + pageId)
-  if (!target) { location.hash = '#/'; return }
+        document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"))
+        target.classList.add("active")
+        document
+          .querySelectorAll("[data-nav]")
+          .forEach((a) => a.classList.toggle("active", a.getAttribute("href") === hash))
+        window.scrollTo(0, 0)
+      }
 
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
-  target.classList.add('active')
-  document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.getAttribute('href') === hash))
-  window.scrollTo(0, 0)
-}
+      window.addEventListener("hashchange", navigate)
+      window.addEventListener("DOMContentLoaded", navigate)
 
-window.addEventListener('hashchange', navigate)
-window.addEventListener('DOMContentLoaded', navigate)
+      // Mobile nav
+      document.getElementById("navToggle").addEventListener("click", () => {
+        document.getElementById("navLinks").classList.toggle("active")
+      })
+      document.querySelectorAll("[data-nav]").forEach((a) => {
+        a.addEventListener("click", () => {
+          document.getElementById("navLinks").classList.remove("active")
+        })
+      })
 
-// Mobile nav
-document.getElementById('navToggle').addEventListener('click', () => {
-  document.getElementById('navLinks').classList.toggle('active')
-})
-document.querySelectorAll('[data-nav]').forEach(a => {
-  a.addEventListener('click', () => {
-    document.getElementById('navLinks').classList.remove('active')
-  })
-})
+      // Copy command
+      function copyCmd(el, text) {
+        navigator.clipboard.writeText(text).then(() => {
+          el.classList.add("copied")
+          el.innerHTML =
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+          setTimeout(() => {
+            el.classList.remove("copied")
+            el.innerHTML =
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>'
+          }, 2000)
+        })
+      }
 
-// Copy command
-function copyCmd(el, text) {
-  navigator.clipboard.writeText(text).then(() => {
-    el.classList.add('copied')
-    el.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
-    setTimeout(() => {
-      el.classList.remove('copied')
-      el.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>'
-    }, 2000)
-  })
-}
-
-// Terminal animation delay stagger
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.terminal-line').forEach((el, i) => {
-    el.style.animationDelay = (i * 0.3) + 's'
-  })
-})
-</script>
-</body>
+      // Terminal animation delay stagger
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".terminal-line").forEach((el, i) => {
+          el.style.animationDelay = i * 0.3 + "s"
+        })
+      })
+    </script>
+  </body>
 </html>

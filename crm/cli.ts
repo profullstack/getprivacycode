@@ -12,9 +12,16 @@ import { OPERATOR, sealer } from "./mail-secrets"
 const BASE = process.env.CRM_URL || `http://127.0.0.1:${process.env.CRM_PORT || 3001}`
 
 async function call(path: string, body?: unknown) {
-  const res = await fetch(BASE + path, body === undefined ? undefined : {
-    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body),
-  })
+  const res = await fetch(
+    BASE + path,
+    body === undefined
+      ? undefined
+      : {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(body),
+        },
+  )
   const data = (await res.json()) as any
   if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`)
   return data
@@ -33,13 +40,24 @@ async function readHidden(label: string): Promise<string> {
   return await new Promise((resolve, reject) => {
     const onData = (buf: Buffer) => {
       for (const ch of buf.toString("utf8")) {
-        if (ch === "\r" || ch === "\n") { done(); return resolve(out) }
-        if (ch === "\u0003") { done(); return reject(new Error("cancelled")) }
+        if (ch === "\r" || ch === "\n") {
+          done()
+          return resolve(out)
+        }
+        if (ch === "\u0003") {
+          done()
+          return reject(new Error("cancelled"))
+        }
         if (ch === "\u007f") out = out.slice(0, -1)
         else out += ch
       }
     }
-    const done = () => { stdin.off("data", onData); stdin.setRawMode(false); stdin.pause(); process.stdout.write("\n") }
+    const done = () => {
+      stdin.off("data", onData)
+      stdin.setRawMode(false)
+      stdin.pause()
+      process.stdout.write("\n")
+    }
     stdin.on("data", onData)
   })
 }
@@ -59,12 +77,19 @@ try {
     if (!seal) throw new Error("mail is not set up; connect Gmail in the Settings page first")
     const phrase = await readHidden("Passphrase or recovery key: ")
     let dek: Uint8Array
-    try { dek = await sealer.unlockSeal(seal, phrase, OPERATOR) }
-    catch { dek = await sealer.unlockSealWithRecovery(seal, phrase, OPERATOR).catch(() => { throw new Error("wrong passphrase or recovery key") }) }
+    try {
+      dek = await sealer.unlockSeal(seal, phrase, OPERATOR)
+    } catch {
+      dek = await sealer.unlockSealWithRecovery(seal, phrase, OPERATOR).catch(() => {
+        throw new Error("wrong passphrase or recovery key")
+      })
+    }
     try {
       const r = await call("/api/email/unlock", { data_key: bytesToBase64(dek), ttl })
       console.log(`unlocked until ${r.expiresAt}`)
-    } finally { wipe(dek) }
+    } finally {
+      wipe(dek)
+    }
   } else if (cmd === "lock") {
     await call("/api/email/lock", {})
     console.log("locked")

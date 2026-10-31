@@ -13,8 +13,7 @@ ipcRenderer.on("stream-end", (_event, streamId: string) => {
 contextBridge.exposeInMainWorld("privacycode", {
   getServerUrl: () => ipcRenderer.invoke("get-server-url"),
 
-  fetchApi: (method: string, path: string, body?: unknown) =>
-    ipcRenderer.invoke("fetch-api", { method, path, body }),
+  fetchApi: (method: string, path: string, body?: unknown) => ipcRenderer.invoke("fetch-api", { method, path, body }),
 
   streamApi: (method: string, path: string, body: unknown, onChunk: StreamCallback) => {
     const streamId = Math.random().toString(36).slice(2)

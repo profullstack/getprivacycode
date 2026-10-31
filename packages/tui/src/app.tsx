@@ -257,7 +257,9 @@ export const run = Effect.fn("Tui.run")(function* (input: TuiInput) {
                     >
                       <TuiStartupProvider
                         value={{
-                          initialRoute: process.env.PRIVACYCODE_ROUTE ? JSON.parse(process.env.PRIVACYCODE_ROUTE) : undefined,
+                          initialRoute: process.env.PRIVACYCODE_ROUTE
+                            ? JSON.parse(process.env.PRIVACYCODE_ROUTE)
+                            : undefined,
                           skipInitialLoading: Boolean(process.env.PRIVACYCODE_FAST_BOOT),
                         }}
                       >

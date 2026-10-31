@@ -399,17 +399,13 @@ async function resolveConfigPath(baseDir: string, global = false) {
   // candidates[0] is what gets created — and that must carry this project's
   // name, not upstream's.
   const names = [...ConfigPaths.CONFIG_NAMES]
-  const candidates = names.flatMap((name) => [
-    path.join(baseDir, `${name}.json`),
-    path.join(baseDir, `${name}.jsonc`),
-  ])
+  const candidates = names.flatMap((name) => [path.join(baseDir, `${name}.json`), path.join(baseDir, `${name}.jsonc`)])
 
   if (!global) {
     for (const dir of ConfigPaths.PROJECT_DIRS) {
-      candidates.push(...names.flatMap((name) => [
-        path.join(baseDir, dir, `${name}.json`),
-        path.join(baseDir, dir, `${name}.jsonc`),
-      ]))
+      candidates.push(
+        ...names.flatMap((name) => [path.join(baseDir, dir, `${name}.json`), path.join(baseDir, dir, `${name}.jsonc`)]),
+      )
     }
   }
 

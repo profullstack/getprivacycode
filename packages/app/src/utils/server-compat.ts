@@ -1,6 +1,12 @@
 import type { ServerApi } from "./server"
 import type { ServerProtocol } from "./server-protocol"
-import type { AgentPartInput, FilePartInput, OpencodeClient, Session, TextPartInput } from "@privacycode-ai/sdk/v2/client"
+import type {
+  AgentPartInput,
+  FilePartInput,
+  OpencodeClient,
+  Session,
+  TextPartInput,
+} from "@privacycode-ai/sdk/v2/client"
 import type {
   Project,
   ProjectCurrent,

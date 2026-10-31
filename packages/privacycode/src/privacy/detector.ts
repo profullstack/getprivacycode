@@ -8,7 +8,8 @@ interface Pattern {
 
 const PATTERNS: Record<string, Pattern> = {
   creditCard: {
-    regex: /\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|6(?:011|5[0-9]{2})[0-9]{12}|(?:2131|1800|35\d{3})\d{11})\b/g,
+    regex:
+      /\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|6(?:011|5[0-9]{2})[0-9]{12}|(?:2131|1800|35\d{3})\d{11})\b/g,
     type: "creditCard",
     prefix: "CARD",
   },
@@ -128,10 +129,7 @@ function filterNonOverlapping(detections: Detection[]): Detection[] {
   return result
 }
 
-export function tokenize(
-  text: string,
-  vault: MemoryVault,
-): { tokenized: string; mapping: Record<string, string> } {
+export function tokenize(text: string, vault: MemoryVault): { tokenized: string; mapping: Record<string, string> } {
   const allDetections = detectSensitiveData(text)
 
   if (allDetections.length === 0) {

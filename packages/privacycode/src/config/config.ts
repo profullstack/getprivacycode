@@ -138,8 +138,8 @@ export class Service extends Context.Service<Service, Interface>()("@privacycode
 export const use = serviceUse(Service)
 
 function globalConfigFile() {
-  const candidates = ["privacycode.jsonc", "privacycode.json", "opencode.jsonc", "opencode.json", "config.json"].map((file) =>
-    path.join(Global.Path.config, file),
+  const candidates = ["privacycode.jsonc", "privacycode.json", "opencode.jsonc", "opencode.json", "config.json"].map(
+    (file) => path.join(Global.Path.config, file),
   )
   for (const file of candidates) {
     if (existsSync(file)) return file
