@@ -20,7 +20,7 @@ const InterleavedField = Schema.Union([
   Schema.String,
 ])
 
-const USER_AGENT = `opencode/${InstallationChannel}/${InstallationVersion}/${Flag.OPENCODE_CLIENT}`
+const USER_AGENT = `opencode/${InstallationChannel}/${InstallationVersion}/${Flag.PRIVACYCODE_CLIENT}`
 
 const CostTier = Schema.Struct({
   input: Schema.Finite,
@@ -157,7 +157,7 @@ const layer = Layer.effect(
       ),
     )
 
-    const source = Flag.OPENCODE_MODELS_URL || "https://models.opencode.ai"
+    const source = Flag.PRIVACYCODE_MODELS_URL || "https://models.opencode.ai"
     const filepath = path.join(
       Global.Path.cache,
       source === "https://models.opencode.ai" ? "models.json" : `models-${Hash.fast(source)}.json`,
