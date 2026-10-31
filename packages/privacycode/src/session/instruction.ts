@@ -10,7 +10,7 @@ import { RuntimeFlags } from "@/effect/runtime-flags"
 import { Flag } from "@privacycode-ai/core/flag/flag"
 import { FSUtil } from "@privacycode-ai/core/fs-util"
 import { withTransientReadRetry } from "@/util/effect-http-client"
-import { Global } from "@opencode-ai/core/global"
+import { Global } from "@privacycode-ai/core/global"
 import type { MessageID } from "./schema"
 
 function extract(messages: SessionV1.WithParts[]) {

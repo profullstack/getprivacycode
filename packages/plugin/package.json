@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@opencode-ai/plugin",
+  "name": "@privacycode-ai/plugin",
   "version": "1.19.5",
   "type": "module",
   "license": "MIT",

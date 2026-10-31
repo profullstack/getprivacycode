@@ -32,9 +32,6 @@ AI coding tools send your code, prompts, and context to cloud providers. But you
 # Install
 curl -fsSL https://getprivacycode.com/install.sh | sh
 
-# Or via npm
-npm install -g privacycode
-
 # Set your API key
 export OPENAI_API_KEY=sk-...
 

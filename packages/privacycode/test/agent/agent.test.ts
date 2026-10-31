@@ -1,5 +1,5 @@
 import { afterEach, expect } from "bun:test"
-import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
 import { Cause, Effect, Exit } from "effect"
 import path from "path"
 import { disposeAllInstances, TestInstance } from "../fixture/fixture"

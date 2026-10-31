@@ -17,11 +17,7 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "@opencode-ai/function#test": {
-      "outputs": []
-    },
-    "@opencode-ai/app#test": {
-      "dependsOn": ["^build"],
+    "@privacycode-ai/function#test": {
       "outputs": []
     },
     "@privacycode-ai/ui#test": {

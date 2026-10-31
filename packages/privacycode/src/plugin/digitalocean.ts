@@ -3,7 +3,7 @@ import type { Model } from "@privacycode-ai/sdk/v2"
 import { InstallationVersion } from "@privacycode-ai/core/installation/version"
 import { OauthCallbackPage } from "@privacycode-ai/core/oauth/page"
 import { createServer } from "http"
-import { openUrl } from "@opencode-ai/core/open"
+import { openUrl } from "@privacycode-ai/core/open"
 
 const DO_OAUTH_CLIENT_ID = "b1a6c5158156caac821fd1b30253ca8acb52454a48fa744420e41889cb589f82"
 const DO_AUTHORIZE_URL = "https://cloud.digitalocean.com/v1/oauth/authorize"

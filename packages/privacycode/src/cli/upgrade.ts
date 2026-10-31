@@ -2,9 +2,10 @@ import { Config } from "@/config/config"
 import { AppRuntime } from "@/effect/app-runtime"
 import { Flag } from "@privacycode-ai/core/flag/flag"
 import { Installation } from "@/installation"
-import { InstallationVersion } from "@opencode-ai/core/installation/version"
+import { InstallationVersion } from "@privacycode-ai/core/installation/version"
+import semver from "semver"
 
-// Checking never installs anything. Updates only happen when the user runs `/update` or `opencode upgrade`.
+// Check for PrivacyCode releases and leave the install choice to the user in /update.
 export function shouldNotify(input: {
   autoupdate: boolean | "notify" | undefined
   disabled: boolean
@@ -17,21 +18,27 @@ export function shouldNotify(input: {
   return Installation.isUpdate(input.current, input.latest)
 }
 
-// Returns undefined when checks are disabled or fail, so the TUI only suggests OpenCode 2 after a successful check.
+// Returns undefined when checks are disabled, fail, or the installed release is current.
 export async function upgrade() {
   const config = await AppRuntime.runPromise(Config.Service.use((cfg) => cfg.getGlobal()))
-  if (config.autoupdate === false || Flag.OPENCODE_DISABLE_AUTOUPDATE) return
+  if (config.autoupdate === false || Flag.PRIVACYCODE_DISABLE_AUTOUPDATE) return
   const latest = await Installation.latest(await Installation.method()).catch(() => {})
   if (!latest) return
   if (
     shouldNotify({
       autoupdate: config.autoupdate,
-      disabled: Flag.OPENCODE_DISABLE_AUTOUPDATE,
-      always: Flag.OPENCODE_ALWAYS_NOTIFY_UPDATE,
+      disabled: Flag.PRIVACYCODE_DISABLE_AUTOUPDATE,
+      always: Flag.PRIVACYCODE_ALWAYS_NOTIFY_UPDATE,
       current: InstallationVersion,
       latest,
     })
   )
     return { type: "available" as const, version: latest }
-  return { type: "major" as const }
+  if (
+    semver.valid(InstallationVersion) &&
+    semver.valid(latest) &&
+    semver.gt(latest, InstallationVersion) &&
+    Installation.getReleaseType(InstallationVersion, latest) === "major"
+  )
+    return { type: "major" as const }
 }

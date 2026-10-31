@@ -1,5 +1,5 @@
 import type { Argv, InferredOptionTypes } from "yargs"
-import { ConfigV1 } from "@opencode-ai/core/v1/config/config"
+import { ConfigV1 } from "@privacycode-ai/core/v1/config/config"
 import { Effect } from "effect"
 
 const options = {

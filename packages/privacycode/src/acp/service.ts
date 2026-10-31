@@ -29,9 +29,9 @@ import {
   type SetSessionModeRequest,
   type SetSessionModeResponse,
 } from "@agentclientprotocol/sdk"
-import { InstallationVersion } from "@opencode-ai/core/installation/version"
-import { AppNodeBuilder } from "@opencode-ai/core/effect/app-node-builder"
-import type { AssistantMessage, Message, OpencodeClient, Session, SessionMessageResponse } from "@opencode-ai/sdk/v2"
+import { InstallationVersion } from "@privacycode-ai/core/installation/version"
+import { AppNodeBuilder } from "@privacycode-ai/core/effect/app-node-builder"
+import type { AssistantMessage, Message, OpencodeClient, Session, SessionMessageResponse } from "@privacycode-ai/sdk/v2"
 import { Context, Effect, Layer, ManagedRuntime } from "effect"
 import * as ACPError from "./error"
 import { buildConfigOptions, DEFAULT_VARIANT_VALUE, parseModelSelection } from "./config-option"

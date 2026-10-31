@@ -339,8 +339,8 @@ footer{margin-top:80px;border-top:1px solid var(--border);padding:40px 0 60px}
   <p>AI coding agent with built-in privacy. Tokenizes API keys, credentials, and PII before they ever leave your machine.</p>
   <div class="hero-commands">
     <div class="hero-command">
-      <span><span class="cmd-prompt">$</span> <span class="cmd-text">curl -fsSL https://getprivacycode.com/install | sh</span></span>
-      <button class="cmd-copy" onclick="copyCmd(this,'curl -fsSL https://getprivacycode.com/install | sh')" aria-label="Copy command">
+      <span><span class="cmd-prompt">$</span> <span class="cmd-text">curl -fsSL https://getprivacycode.com/install.sh | sh</span></span>
+      <button class="cmd-copy" onclick="copyCmd(this,'curl -fsSL https://getprivacycode.com/install.sh | sh')" aria-label="Copy command">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
       </button>
     </div>
@@ -452,12 +452,12 @@ footer{margin-top:80px;border-top:1px solid var(--border);padding:40px 0 60px}
     <p>No signup. No credit card. Open source and free.</p>
     <div class="cta-buttons">
       <div class="cta-command">
-        <span>curl -fsSL https://getprivacycode.com/install | sh</span>
-        <button class="cmd-copy" onclick="copyCmd(this,'curl -fsSL https://getprivacycode.com/install | sh')" aria-label="Copy command">
+        <span>curl -fsSL https://getprivacycode.com/install.sh | sh</span>
+        <button class="cmd-copy" onclick="copyCmd(this,'curl -fsSL https://getprivacycode.com/install.sh | sh')" aria-label="Copy command">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
         </button>
       </div>
-      <div class="cta-alt">or <code>npm install -g privacycode</code> &nbsp;·&nbsp; Set your key and run <code>privacycode</code></div>
+      <div class="cta-alt">Set your key and run <code>privacycode</code></div>
     </div>
   </div>
 </div>
@@ -472,7 +472,7 @@ footer{margin-top:80px;border-top:1px solid var(--border);padding:40px 0 60px}
 
 <h2>Quick Start</h2>
 <pre><span class="comment"># Install</span>
-curl -fsSL https://getprivacycode.com/install | sh
+curl -fsSL https://getprivacycode.com/install.sh | sh
 
 <span class="comment"># Set your key</span>
 export OPENAI_API_KEY=sk-...
@@ -537,7 +537,7 @@ privacycode</pre>
 <p class="page-lead">Quick start guide for PrivacyCode.</p>
 
 <h2>Installation</h2>
-<pre>curl -fsSL https://getprivacycode.com/install | sh</pre>
+<pre>curl -fsSL https://getprivacycode.com/install.sh | sh</pre>
 <p>The install script detects your OS and architecture, downloads the latest release, and places it in <code>~/.local/bin</code>.</p>
 
 <h3>Verify Installation</h3>

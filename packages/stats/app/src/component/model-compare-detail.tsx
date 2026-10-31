@@ -6,7 +6,7 @@ import {
   type RetentionEntry,
   type StatsModelComparisonInput,
   type StatsModelComparisonEntry,
-} from "@opencode-ai/stats-core/domain/home"
+} from "@privacycode-ai/stats-core/domain/home"
 import { createAsync, query, useParams, useSearchParams } from "@solidjs/router"
 import { createEffect, createMemo, createSignal, For, onMount, Show } from "solid-js"
 import { getRequestEvent } from "solid-js/web"

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect } from "bun:test"
 import path from "path"
 import fs from "fs/promises"
-import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
 import { Cause, Deferred, Effect, Exit, Fiber } from "effect"
 import { EditTool } from "../../src/tool/edit"
 import { disposeAllInstances, TestInstance } from "../fixture/fixture"

@@ -2,9 +2,9 @@ name: typecheck
 
 on:
   push:
-    branches: [v1]
+    branches: [master]
   pull_request:
-    branches: [v1]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
 
   # Replaces the generate bot: pull requests must commit the regenerated SDK, OpenAPI document and formatting.
   generated:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1

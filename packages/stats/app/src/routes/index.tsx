@@ -1,5 +1,5 @@
 import { Meta, Title } from "@solidjs/meta"
-import { ProviderIcon } from "@opencode-ai/ui/provider-icon"
+import { ProviderIcon } from "@privacycode-ai/ui/provider-icon"
 import { scaleSqrt } from "d3-scale"
 import countryCodesSource from "i18n-iso-countries/codes.json?raw"
 import {

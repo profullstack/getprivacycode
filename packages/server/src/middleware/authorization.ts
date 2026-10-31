@@ -1,8 +1,8 @@
 import { ServerAuth } from "../auth"
-import { UnauthorizedError } from "@opencode-ai/protocol/errors"
-import { Authorization } from "@opencode-ai/protocol/middleware/authorization"
-export { Authorization } from "@opencode-ai/protocol/middleware/authorization"
-import { PTY_CONNECT_PATH, PTY_CONNECT_TICKET_QUERY } from "@opencode-ai/protocol/groups/pty"
+import { UnauthorizedError } from "@privacycode-ai/protocol/errors"
+import { Authorization } from "@privacycode-ai/protocol/middleware/authorization"
+export { Authorization } from "@privacycode-ai/protocol/middleware/authorization"
+import { PTY_CONNECT_PATH, PTY_CONNECT_TICKET_QUERY } from "@privacycode-ai/protocol/groups/pty"
 import { Effect, Encoding, Layer, Redacted } from "effect"
 import { HttpEffect, HttpRouter, HttpServerRequest, HttpServerResponse } from "effect/unstable/http"
 

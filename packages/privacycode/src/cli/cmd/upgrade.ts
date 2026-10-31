@@ -17,22 +17,18 @@ export const UpgradeCommand = {
         alias: "m",
         describe: "installation method to use",
         type: "string",
-        choices: ["curl", "npm", "pnpm", "bun", "brew", "choco", "scoop"],
-      })
-      .option("major", {
-        describe: "upgrade to OpenCode 2 and remove OpenCode 1",
-        type: "boolean",
+        choices: ["curl"],
       })
   },
-  handler: async (args: { target?: string; method?: string; major?: boolean }) => {
+  handler: async (args: { target?: string; method?: string }) => {
     UI.empty()
     UI.println(UI.logo("  "))
     UI.empty()
     prompts.intro("Upgrade")
     const detectedMethod = await Installation.method()
-    const method = (args.method as Installation.Method) ?? detectedMethod
+    let method = (args.method as Installation.Method) ?? detectedMethod
     if (method === "unknown") {
-      prompts.log.error(`opencode is installed to ${process.execPath} and may be managed by a package manager`)
+      prompts.log.error(`privacycode is installed to ${process.execPath} and its update method is unknown`)
       const install = await prompts.select({
         message: "Install anyways?",
         options: [
@@ -45,25 +41,9 @@ export const UpgradeCommand = {
         prompts.outro("Done")
         return
       }
+      method = "curl"
     }
     prompts.log.info("Using method: " + method)
-
-    if (args.major) {
-      prompts.log.info(`From ${InstallationVersion} → OpenCode 2`)
-      const spinner = prompts.spinner()
-      spinner.start("Installing OpenCode 2...")
-      const err = await Installation.upgradeMajor(method).catch((err) => err)
-      if (err) {
-        spinner.stop("Upgrade failed", 1)
-        if (err instanceof Error) prompts.log.error(err.message)
-        prompts.log.info(`To install OpenCode 2 manually, see ${Installation.MAJOR_INSTRUCTIONS}`)
-        prompts.outro("Done")
-        return
-      }
-      spinner.stop("OpenCode 2 installed")
-      prompts.outro("Done")
-      return
-    }
 
     const target = args.target
       ? args.target.replace(/^v/, "")
@@ -75,8 +55,7 @@ export const UpgradeCommand = {
     }
 
     if (InstallationVersion === target) {
-      prompts.log.warn(`opencode upgrade skipped: ${target} is already installed`)
-      prompts.log.info("OpenCode 2 is available. Upgrade with `opencode upgrade --major`")
+      prompts.log.warn(`privacycode upgrade skipped: ${target} is already installed`)
       prompts.outro("Done")
       return
     }
@@ -99,7 +78,6 @@ export const UpgradeCommand = {
       return
     }
     spinner.stop("Upgrade complete")
-    prompts.log.info("OpenCode 2 is available. Upgrade with `opencode upgrade --major`")
     prompts.outro("Done")
   },
 }

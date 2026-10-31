@@ -9,7 +9,7 @@ describe("upgrade check", () => {
     expect(shouldNotify({ ...base, latest: "1.10.0" })).toBe(true)
   })
 
-  test("does not treat OpenCode 2 or older releases as updates", () => {
+  test("does not treat major or older releases as regular updates", () => {
     expect(shouldNotify({ ...base, latest: "2.0.0" })).toBe(false)
     expect(shouldNotify({ ...base, latest: "1.3.9" })).toBe(false)
   })

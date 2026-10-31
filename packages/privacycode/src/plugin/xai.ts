@@ -1,6 +1,6 @@
 import type { Hooks, PluginInput } from "@privacycode-ai/plugin"
 import { OAUTH_DUMMY_KEY } from "../auth"
-import { InstallationVersion } from "@opencode-ai/core/installation/version"
+import { InstallationVersion } from "@privacycode-ai/core/installation/version"
 
 // Public Grok-CLI OAuth client.
 const CLIENT_ID = "b1a00492-073a-47ea-816f-4c329264a828"

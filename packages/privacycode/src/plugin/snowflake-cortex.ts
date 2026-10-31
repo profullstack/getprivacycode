@@ -3,7 +3,7 @@ import { OAUTH_DUMMY_KEY } from "../auth"
 import { InstallationVersion } from "@privacycode-ai/core/installation/version"
 import { OauthCallbackPage } from "@privacycode-ai/core/oauth/page"
 import { createServer } from "http"
-import { openUrl } from "@opencode-ai/core/open"
+import { openUrl } from "@privacycode-ai/core/open"
 
 const OAUTH_CLIENT_ID = "LOCAL_APPLICATION"
 const OAUTH_CALLBACK_HOST = "127.0.0.1"

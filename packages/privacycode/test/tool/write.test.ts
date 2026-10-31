@@ -1,5 +1,5 @@
 import { afterEach, describe, expect } from "bun:test"
-import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
 import { Effect } from "effect"
 import path from "path"
 import fs from "fs/promises"

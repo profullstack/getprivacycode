@@ -1,6 +1,6 @@
 import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
 import { Config } from "@/config/config"
-import { SessionV1 } from "@opencode-ai/core/v1/session"
+import { SessionV1 } from "@privacycode-ai/core/v1/session"
 import photonWasm from "@silvia-odwyer/photon-node/photon_rs_bg.wasm" with { type: "file" }
 import { Context, Effect, Layer, Schema } from "effect"
 import path from "node:path"

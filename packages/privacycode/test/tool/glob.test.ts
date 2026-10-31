@@ -1,7 +1,7 @@
 import { PermissionV1 } from "@privacycode-ai/core/v1/permission"
 import { describe, expect } from "bun:test"
 import path from "path"
-import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
 import { Cause, Effect, Exit } from "effect"
 import { GlobTool } from "../../src/tool/glob"
 import { SessionID, MessageID } from "../../src/session/schema"
