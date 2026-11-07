@@ -1,4 +1,4 @@
-import { describe, expect, beforeAll, beforeEach, afterAll } from "bun:test"
+import { describe, expect, beforeAll, beforeEach, afterAll, test } from "bun:test"
 import { Effect, Layer, Ref } from "effect"
 import { HttpClient, HttpClientResponse } from "effect/unstable/http"
 import { AppNodeBuilder } from "@privacycode-ai/core/effect/app-node-builder"
@@ -7,6 +7,7 @@ import { LayerNode } from "@privacycode-ai/core/effect/layer-node"
 import { Flag } from "@privacycode-ai/core/flag/flag"
 import { Global } from "@privacycode-ai/core/global"
 import { ModelsDev } from "@privacycode-ai/core/models-dev"
+import { C0MPUTE_PROVIDER, withC0mpute } from "@privacycode-ai/core/c0mpute-provider"
 import { it } from "./lib/effect"
 import { readFile, rm, writeFile, utimes, mkdir } from "fs/promises"
 import path from "path"
@@ -135,20 +136,20 @@ describe("ModelsDev Service", () => {
         state,
         ModelsDev.Service.use((s) => s.get()),
       )
-      expect(result).toEqual(fixture)
+      expect(result).toEqual(withC0mpute(fixture))
       const final = yield* Ref.get(state)
       expect(final.calls).toEqual([])
     }),
   )
 
-  it.live("get() returns empty catalog when disk empty, fetch disabled, and no bundled snapshot is injected", () =>
+  it.live("get() returns only the built-in c0mpute entry when disk empty, fetch disabled, and no bundled snapshot is injected", () =>
     Effect.gen(function* () {
       const state = yield* Ref.make(initialState)
       const result = yield* provided(
         state,
         ModelsDev.Service.use((s) => s.get()),
       )
-      expect(result).toEqual({})
+      expect(result).toEqual(withC0mpute({}))
       const final = yield* Ref.get(state)
       expect(final.calls).toEqual([])
     }),
@@ -169,7 +170,7 @@ describe("ModelsDev Service", () => {
             Flag.PRIVACYCODE_DISABLE_MODELS_FETCH = true
           }),
       )
-      expect(result).toEqual(fixture2)
+      expect(result).toEqual(withC0mpute(fixture2))
       expect(yield* Effect.promise(() => readFile(cacheFile, "utf8"))).toBe(JSON.stringify(fixture2))
       const final = yield* Ref.get(state)
       expect(final.calls.length).toBe(1)
@@ -189,7 +190,7 @@ describe("ModelsDev Service", () => {
           })
         }),
       )
-      for (const result of results) expect(result).toEqual(fixture)
+      for (const result of results) expect(result).toEqual(withC0mpute(fixture))
     }),
   )
 
@@ -208,8 +209,8 @@ describe("ModelsDev Service", () => {
           return { a, b }
         }),
       )
-      expect(first.a).toEqual(fixture)
-      expect(first.b).toEqual(fixture)
+      expect(first.a).toEqual(withC0mpute(fixture))
+      expect(first.b).toEqual(withC0mpute(fixture))
     }),
   )
 
@@ -227,8 +228,8 @@ describe("ModelsDev Service", () => {
           return { before, after }
         }),
       )
-      expect(result.before).toEqual(fixture)
-      expect(result.after).toEqual(fixture2)
+      expect(result.before).toEqual(withC0mpute(fixture))
+      expect(result.after).toEqual(withC0mpute(fixture2))
       const final = yield* Ref.get(state)
       expect(final.calls.length).toBe(1)
       expect(final.calls[0].url).toContain("/api.json")
@@ -265,7 +266,7 @@ describe("ModelsDev Service", () => {
       )
       const final = yield* Ref.get(state)
       expect(final.calls.length).toBe(1)
-      expect(after).toEqual(fixture2)
+      expect(after).toEqual(withC0mpute(fixture2))
     }),
   )
 
@@ -281,10 +282,25 @@ describe("ModelsDev Service", () => {
           return yield* svc.get()
         }),
       )
-      expect(result).toEqual(fixture)
+      expect(result).toEqual(withC0mpute(fixture))
       // retryTransient retries 5xx, so calls may be > 1.
       const final = yield* Ref.get(state)
       expect(final.calls.length).toBeGreaterThanOrEqual(1)
     }),
   )
+})
+
+describe("c0mpute provider entry", () => {
+  test("is added to a catalog that lacks it, as an opt-in BYO-key provider", () => {
+    const out = withC0mpute({})
+    expect(out.c0mpute).toBe(C0MPUTE_PROVIDER)
+    expect(C0MPUTE_PROVIDER.env).toEqual(["C0MPUTE_API_KEY"])
+    expect(C0MPUTE_PROVIDER.npm).toBe("@ai-sdk/openai-compatible")
+    expect(Object.values(C0MPUTE_PROVIDER.models).every((m) => m.tool_call === false)).toBe(true)
+  })
+
+  test("leaves a catalog entry from models.dev alone", () => {
+    const upstream = { ...C0MPUTE_PROVIDER, name: "c0mpute upstream" }
+    expect(withC0mpute({ c0mpute: upstream }).c0mpute).toBe(upstream)
+  })
 })

@@ -158,6 +158,19 @@ describe("ModelsDevPlugin", () => {
               ],
               connections: [],
             }),
+            // Built in, merged into every catalog that lacks it.
+            new Integration.Info({
+              id: Integration.ID.make("c0mpute"),
+              name: "c0mpute (peer network)",
+              methods: [
+                { type: "key" },
+                {
+                  type: "env",
+                  names: ["C0MPUTE_API_KEY"],
+                },
+              ],
+              connections: [],
+            }),
           ])
         }).pipe(Effect.provide(AppNodeBuilder.build(ModelsDev.node))),
       (previous) =>
