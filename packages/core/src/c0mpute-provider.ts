@@ -31,7 +31,12 @@ export const C0MPUTE_PROVIDER: Provider = {
   npm: "@ai-sdk/openai-compatible",
   api: "https://infernetprotocol.com/v1",
   models: {
-    "huihui_ai/qwen3.5-abliterated:9b": model("huihui_ai/qwen3.5-abliterated:9b", "Qwen 3.5 9B (house model)", 32768, 8192),
+    "huihui_ai/qwen3.5-abliterated:9b": model(
+      "huihui_ai/qwen3.5-abliterated:9b",
+      "Qwen 3.5 9B (house model)",
+      32768,
+      8192,
+    ),
     "qwen2.5:7b": model("qwen2.5:7b", "Qwen 2.5 7B", 32768, 8192),
     "qwen3:4b": model("qwen3:4b", "Qwen 3 4B", 32768, 8192),
     "gemma3:4b": model("gemma3:4b", "Gemma 3 4B", 32768, 8192),

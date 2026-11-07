@@ -142,17 +142,19 @@ describe("ModelsDev Service", () => {
     }),
   )
 
-  it.live("get() returns only the built-in c0mpute entry when disk empty, fetch disabled, and no bundled snapshot is injected", () =>
-    Effect.gen(function* () {
-      const state = yield* Ref.make(initialState)
-      const result = yield* provided(
-        state,
-        ModelsDev.Service.use((s) => s.get()),
-      )
-      expect(result).toEqual(withC0mpute({}))
-      const final = yield* Ref.get(state)
-      expect(final.calls).toEqual([])
-    }),
+  it.live(
+    "get() returns only the built-in c0mpute entry when disk empty, fetch disabled, and no bundled snapshot is injected",
+    () =>
+      Effect.gen(function* () {
+        const state = yield* Ref.make(initialState)
+        const result = yield* provided(
+          state,
+          ModelsDev.Service.use((s) => s.get()),
+        )
+        expect(result).toEqual(withC0mpute({}))
+        const final = yield* Ref.get(state)
+        expect(final.calls).toEqual([])
+      }),
   )
 
   it.live("get() recovers from a corrupted cache file by fetching a fresh catalog", () =>
