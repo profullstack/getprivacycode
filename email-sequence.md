@@ -170,7 +170,7 @@ Or if you want to self-deploy, everything you need is on GitHub.
 
 Perfect. It's free and open source:
 
-curl -fsSL https://getprivacycode.com/install | sh
+curl -fsSL https://getprivacycode.pwa.pit.world/install | sh
 
 Then run:
 privacycode

@@ -126,7 +126,7 @@ const layer: Layer.Layer<Service, never, HttpClient.HttpClient | AppProcess.Serv
 
     const upgradeCurl = Effect.fnUntraced(
       function* (target: string) {
-        const response = yield* httpOk.execute(HttpClientRequest.get("https://getprivacycode.com/install.sh"))
+        const response = yield* httpOk.execute(HttpClientRequest.get("https://getprivacycode.pwa.pit.world/install.sh"))
         const body = yield* response.text
         const bodyBytes = new TextEncoder().encode(body)
         const shell = yield* upgradeScriptShell()
@@ -175,7 +175,7 @@ const layer: Layer.Layer<Service, never, HttpClient.HttpClient | AppProcess.Serv
       upgrade: Effect.fn("Installation.upgrade")(function* (method: Method, target: string) {
         if (method !== "curl")
           return yield* new UpgradeFailedError({
-            stderr: "PrivacyCode updates use the install script: https://getprivacycode.com/install.sh",
+            stderr: "PrivacyCode updates use the install script: https://getprivacycode.pwa.pit.world/install.sh",
           })
         const outcome = yield* upgradeCurl(target)
         if (outcome.code !== 0) return yield* new UpgradeFailedError({ stderr: upgradeFailure(outcome) })

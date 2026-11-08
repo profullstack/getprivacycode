@@ -11,7 +11,7 @@ import { testEffect } from "../lib/effect"
 
 const encoder = new TextEncoder()
 const latestUrl = "https://api.github.com/repos/profullstack/getprivacycode/releases/latest"
-const installerUrl = "https://getprivacycode.com/install.sh"
+const installerUrl = "https://getprivacycode.pwa.pit.world/install.sh"
 
 function mockHttpClient(handler: (request: HttpClientRequest.HttpClientRequest) => Response | undefined) {
   const client = HttpClient.make((request) => {
