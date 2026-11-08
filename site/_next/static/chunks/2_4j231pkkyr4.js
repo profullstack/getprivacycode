@@ -707,7 +707,7 @@
               }),
               (0, t.jsx)("div", {
                 className: "space-y-3",
-                children: ["curl -fsSL https://getprivacycode.com/install | bash", "npm install -g privacycode"].map(
+                children: ["curl -fsSL https://getprivacycode.pwa.pit.world/install | bash", "npm install -g privacycode"].map(
                   (s) =>
                     (0, t.jsxs)(
                       "div",

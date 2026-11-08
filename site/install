@@ -21,8 +21,8 @@ Options:
         --no-modify-path    Don't modify shell config files (.zshrc, .bashrc, etc.)
 
 Examples:
-    curl -fsSL https://getprivacycode.com/install.sh | sh
-    curl -fsSL https://getprivacycode.com/install.sh | sh -s -- --version 1.0.180
+    curl -fsSL https://getprivacycode.pwa.pit.world/install.sh | sh
+    curl -fsSL https://getprivacycode.pwa.pit.world/install.sh | sh -s -- --version 1.0.180
     ./install --binary /path/to/privacycode
 EOF
 }
@@ -454,5 +454,5 @@ printf "\n"
 printf "cd <project>  ${MUTED}# Open directory${NC}\n"
 printf "privacycode   ${MUTED}# Run command${NC}\n"
 printf "\n"
-printf "${MUTED}For more information visit ${NC}https://getprivacycode.com/docs\n"
+printf "${MUTED}For more information visit ${NC}https://getprivacycode.pwa.pit.world/docs\n"
 printf "\n"
