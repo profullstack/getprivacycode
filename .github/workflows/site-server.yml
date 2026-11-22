@@ -62,6 +62,10 @@ jobs:
           check 200 /favicon.ico
           css=$(cd site && ls _next/static/chunks/*.css | head -1)
           check 200 "/$css"
+          check 200 /sitemap.xml -H 'Host: getprivacycode.pwa.pit.world'
+          check 200 /robots.txt -H 'Host: getprivacycode.pwa.pit.world'
+          curl -s -H 'Host: getprivacycode.pwa.pit.world' http://127.0.0.1:3000/sitemap.xml | grep -q '<loc>https://getprivacycode.pwa.pit.world/cli</loc>'
+          curl -s -H 'Host: getprivacycode.pwa.pit.world' http://127.0.0.1:3000/robots.txt | grep -qx 'Sitemap: https://getprivacycode.pwa.pit.world/sitemap.xml'
           check 404 /no-such-page
           check 301 /cli -H 'Host: www.getprivacycode.com'
           curl -s http://127.0.0.1:3000/ | grep -q '<title>'

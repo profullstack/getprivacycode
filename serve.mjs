@@ -40,6 +40,29 @@ const ALIASES = { "/install.sh": "/install" }
 const SHELL_SCRIPTS = new Set(["/install"])
 const SHELL_TYPE = "text/x-sh; charset=utf-8"
 
+// sitemap.xml and robots.txt are built per request from the host the visitor
+// asked for, so the site lists its own URLs on whichever hostname serves it
+// (getprivacycode.pwa.pit.world today). Public pages only.
+const SITEMAP_PAGES = ["/", "/cli", "/docs", "/enterprise", "/privacy"]
+
+function siteOrigin(req) {
+  const fwd = String(req.headers["x-forwarded-host"] || "").split(",")[0].trim()
+  const host = (fwd || req.headers.host || "").toLowerCase()
+  if (/^[a-z0-9.-]+(:\d+)?$/.test(host) && !host.startsWith("localhost") && !/^[\d.]+(:\d+)?$/.test(host)) {
+    return `https://${host.replace(/:\d+$/, "")}`
+  }
+  return (process.env.SITE_URL || "https://getprivacycode.pwa.pit.world").replace(/\/+$/, "")
+}
+
+function sitemapXml(origin) {
+  const urls = SITEMAP_PAGES.map((p) => `  <url><loc>${origin}${p}</loc></url>`).join("\n")
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`
+}
+
+function robotsTxt(origin) {
+  return `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`
+}
+
 async function exists(p) {
   try {
     const s = await stat(p)
@@ -76,6 +99,16 @@ const server = createServer(async (req, res) => {
 
     const requested = new URL(req.url, "http://localhost").pathname
     const pathname = ALIASES[requested] ?? requested
+    if (pathname === "/sitemap.xml" || pathname === "/robots.txt") {
+      const origin = siteOrigin(req)
+      const xml = pathname === "/sitemap.xml"
+      res.writeHead(200, {
+        "content-type": xml ? MIME[".xml"] : MIME[".txt"],
+        "cache-control": "public, max-age=3600",
+      })
+      res.end(req.method === "HEAD" ? undefined : xml ? sitemapXml(origin) : robotsTxt(origin))
+      return
+    }
     const match = (await resolve(pathname)) ?? (await resolve("/404.html"))
     if (!match) {
       res.writeHead(404, { "content-type": "text/plain; charset=utf-8" })
